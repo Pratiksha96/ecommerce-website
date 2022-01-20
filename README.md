@@ -3,7 +3,7 @@ As e-commerce is booming, we will be creating a website where user will be able 
 In this project we aim to develop an e-commerce store where general purpose items can be sold.
 
 
-# team-members
+# Team Members
 Aashish Dhalla, Pranav Seth, Pratiksha Jain, Swati Bansal
 
 # Tech stack
