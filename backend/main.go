@@ -2,6 +2,7 @@ package main
 
 import (
 	"ecommerce-website/app/server"
+	"ecommerce-website/internal/database"
 	"log"
 	"os"
 
@@ -16,6 +17,7 @@ func main() {
 		{
 			Name: "start-server",
 			Action: func(c *cli.Context) error {
+				database.InitDB()
 				server.StartServer()
 				return nil
 			},
