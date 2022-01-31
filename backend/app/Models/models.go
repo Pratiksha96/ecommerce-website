@@ -10,10 +10,10 @@ type Product struct {
 	Images      []*Image  `json:"images" bson:"images"`
 	Category    string    `json:"category" bson:"category"`
 	Stock       int       `json:"stock" bson:"stock"`
-	Riviews     []*Riview `json:"riviews" bson:"riviews"`
+	Reviews     []*Review `json:"reviews" bson:"reviews"`
 }
 
-type Riview struct {
+type Review struct {
 	Name    string `json:"name" bson:"name"`
 	Rating  int    `json:"rating" bson:"rating"`
 	Comment string `json:"comment" bson:"comment"`
