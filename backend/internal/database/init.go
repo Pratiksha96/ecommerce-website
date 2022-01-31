@@ -26,5 +26,5 @@ func InitDB() {
 		panic(err)
 	}
 	Coll_product = client.Database("ecommerce_website").Collection("product")
-	fmt.Println(Coll_product)
+	fmt.Println("Connection Established with database")
 }
