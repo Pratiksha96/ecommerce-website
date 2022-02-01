@@ -10,6 +10,10 @@ import (
 	"ecommerce-website/app/utils"
 
 	"ecommerce-website/internal/database"
+
+	"github.com/gorilla/mux"
+	"go.mongodb.org/mongo-driver/bson"
+	"go.mongodb.org/mongo-driver/bson/primitive"
 )
 
 func CreateProduct(w http.ResponseWriter, r *http.Request) {
@@ -31,6 +35,45 @@ func CreateProduct(w http.ResponseWriter, r *http.Request) {
 	fmt.Println("Inserted a Single Record ", insertResult.InsertedID)
 
 	// fmt.Println(task, r.Body)
+
+	json.NewEncoder(w).Encode(product)
+}
+
+func UpdateProduct(w http.ResponseWriter, r *http.Request) {
+	w.Header().Set("Content-Type", "application/json")
+
+	var params = mux.Vars(r)
+
+	id, _ := primitive.ObjectIDFromHex(params["id"])
+
+	var product models.Product
+
+	filter := bson.M{"_id": id}
+
+	_ = json.NewDecoder(r.Body).Decode(&product)
+
+	var oldProduct models.Product
+
+	// prepare update model.
+	update := bson.D{
+		{"$set", bson.D{
+			{"name", product.Name},
+			{"description", product.Description},
+			{"price", product.Price},
+			{"ratings", product.Ratings},
+			{"images", product.Images},
+			{"category", product.Category},
+			{"Stock", product.Stock},
+			{"reviews", product.Reviews},
+		}},
+	}
+
+	err := database.Coll_product.FindOneAndUpdate(context.TODO(), filter, update).Decode(&oldProduct)
+
+	if err != nil {
+		utils.GetError(err, w)
+		return
+	}
 
 	json.NewEncoder(w).Encode(product)
 }
