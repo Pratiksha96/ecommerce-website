@@ -18,6 +18,7 @@ func StartServer() {
 	r.HandleFunc("/ping", handler.PingHandler())
 	r.HandleFunc("/addProduct", controller.CreateProduct).Methods("POST", "OPTIONS")
 	r.HandleFunc("/updateProduct/{id}", controller.UpdateProduct).Methods("PUT", "OPTIONS")
+	r.HandleFunc("/deleteProduct/{id}", controller.DeleteProduct).Methods("DELETE", "OPTIONS")
 
 	srv := &http.Server{
 		Handler:      r,
