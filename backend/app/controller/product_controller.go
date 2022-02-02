@@ -77,3 +77,31 @@ func UpdateProduct(w http.ResponseWriter, r *http.Request) {
 
 	json.NewEncoder(w).Encode(product)
 }
+
+func DeleteProduct(w http.ResponseWriter, r *http.Request) {
+	// Set header
+	w.Header().Set("Content-Type", "application/json")
+
+	// get params
+	var params = mux.Vars(r)
+
+	// string to primitve.ObjectID
+	id, err := primitive.ObjectIDFromHex(params["id"])
+
+	if err != nil {
+		utils.GetError(err, w)
+		return
+	}
+
+	// prepare filter.
+	filter := bson.M{"_id": id}
+
+	deleteResult, err := database.Coll_product.DeleteOne(context.TODO(), filter)
+
+	if err != nil {
+		utils.GetError(err, w)
+		return
+	}
+
+	json.NewEncoder(w).Encode(deleteResult)
+}
