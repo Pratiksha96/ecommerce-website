@@ -8,4 +8,4 @@ Aashish Dhalla, Pranav Seth, Pratiksha Jain, Swati Bansal
 
 # Tech stack
 An ecommerce website written in Go and React.
-We plan to use relational DB postgresql to store data. We may also use NoSQL to store images. 
+We plan to use NoSQL database for this application. 
