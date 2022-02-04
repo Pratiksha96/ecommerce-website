@@ -6,7 +6,6 @@ import (
 	"net/http"
 	"time"
 
-	"ecommerce-website/app/controller"
 	"ecommerce-website/app/handler"
 
 	"github.com/gorilla/mux"
@@ -16,9 +15,10 @@ func StartServer() {
 	r := mux.NewRouter()
 
 	r.HandleFunc("/ping", handler.PingHandler())
-	r.HandleFunc("/addProduct", controller.CreateProduct).Methods("POST", "OPTIONS")
-	r.HandleFunc("/updateProduct/{id}", controller.UpdateProduct).Methods("PUT", "OPTIONS")
-	r.HandleFunc("/deleteProduct/{id}", controller.DeleteProduct).Methods("DELETE", "OPTIONS")
+	r.HandleFunc("/product/get", handler.GetAllProducts).Methods("GET", "OPTIONS")
+	r.HandleFunc("/product/add", handler.CreateProduct).Methods("POST", "OPTIONS")
+	r.HandleFunc("/product/update/{id}", handler.UpdateProduct).Methods("PUT", "OPTIONS")
+	r.HandleFunc("/product/delete/{id}", handler.DeleteProduct).Methods("DELETE", "OPTIONS")
 
 	srv := &http.Server{
 		Handler:      r,

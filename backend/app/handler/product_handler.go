@@ -1,4 +1,4 @@
-package controller
+package handler
 
 import (
 	"context"
@@ -16,6 +16,37 @@ import (
 	"go.mongodb.org/mongo-driver/bson/primitive"
 )
 
+func GetAllProducts(w http.ResponseWriter, r *http.Request) {
+	w.Header().Set("Context-Type", "application/x-www-form-urlencoded")
+	w.Header().Set("Access-Control-Allow-Origin", "*")
+	cur, err := database.Coll_product.Find(context.Background(), bson.D{{}})
+	if err != nil {
+		utils.GetError(err, w)
+		return
+	}
+
+	var results []primitive.M
+	for cur.Next(context.Background()) {
+		var result bson.M
+		e := cur.Decode(&result)
+		if e != nil {
+			utils.GetError(err, w)
+			return
+		}
+		results = append(results, result)
+
+	}
+
+	if err := cur.Err(); err != nil {
+		utils.GetError(err, w)
+		return
+	}
+
+	cur.Close(context.Background())
+	payload := results
+	json.NewEncoder(w).Encode(payload)
+}
+
 func CreateProduct(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Context-Type", "application/x-www-form-urlencoded")
 	w.Header().Set("Access-Control-Allow-Origin", "*")
@@ -24,17 +55,14 @@ func CreateProduct(w http.ResponseWriter, r *http.Request) {
 	var product models.Product
 	_ = json.NewDecoder(r.Body).Decode(&product)
 
-	//fmt.Println("this is produc + ", product)
-	insertResult, err := database.Coll_product.InsertOne(context.TODO(), product)
+	_, err := database.Coll_product.InsertOne(context.TODO(), product)
 
 	if err != nil {
 		utils.GetError(err, w)
 		return
 	}
 
-	fmt.Println("Inserted a Single Record ", insertResult.InsertedID)
-
-	// fmt.Println(task, r.Body)
+	fmt.Println("Product Inserted")
 
 	json.NewEncoder(w).Encode(product)
 }
