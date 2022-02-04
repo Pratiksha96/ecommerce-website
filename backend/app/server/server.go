@@ -19,6 +19,7 @@ func StartServer() {
 	r.HandleFunc("/product/add", handler.CreateProduct).Methods("POST", "OPTIONS")
 	r.HandleFunc("/product/update/{id}", handler.UpdateProduct).Methods("PUT", "OPTIONS")
 	r.HandleFunc("/product/delete/{id}", handler.DeleteProduct).Methods("DELETE", "OPTIONS")
+	r.HandleFunc("/product/get/{id}", handler.GetProduct).Methods("GET", "OPTIONS")
 
 	srv := &http.Server{
 		Handler:      r,
