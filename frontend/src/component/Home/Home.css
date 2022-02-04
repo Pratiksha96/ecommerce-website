@@ -50,7 +50,7 @@
     clip-path: polygon(100% 68%, 0 100%, 100% 100%);
     max-width: 100%;
   }
-/*   
+  
   .homeHeading {
     text-align: center;
     font-family: Roboto;
@@ -136,4 +136,4 @@
       margin: 0 0.5vmax;
       font: 300 1vmax "Roboto";
     }
-  } */
+  }
