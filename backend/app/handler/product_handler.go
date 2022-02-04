@@ -106,6 +106,7 @@ func UpdateProduct(w http.ResponseWriter, r *http.Request) {
 	json.NewEncoder(w).Encode(product)
 }
 
+//delete product using product id
 func DeleteProduct(w http.ResponseWriter, r *http.Request) {
 	// Set header
 	w.Header().Set("Content-Type", "application/json")
@@ -132,4 +133,28 @@ func DeleteProduct(w http.ResponseWriter, r *http.Request) {
 	}
 
 	json.NewEncoder(w).Encode(deleteResult)
+}
+
+//get product details by sending a product id
+func GetProduct(w http.ResponseWriter, r *http.Request) {
+	// set header.
+	w.Header().Set("Content-Type", "application/json")
+
+	var product models.Product
+	// we get params with mux.
+	var params = mux.Vars(r)
+
+	// string to primitive.ObjectID
+	id, _ := primitive.ObjectIDFromHex(params["id"])
+
+	// We create filter. If it is unnecessary to sort data for you, you can use bson.M{}
+	filter := bson.M{"_id": id}
+	err := database.Coll_product.FindOne(context.TODO(), filter).Decode(&product)
+
+	if err != nil {
+		utils.GetError(err, w)
+		return
+	}
+
+	json.NewEncoder(w).Encode(product)
 }
