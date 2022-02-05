@@ -3,10 +3,10 @@ package handler
 import (
 	"context"
 	"encoding/json"
-	"fmt"
 	"net/http"
 
 	models "ecommerce-website/app/Models"
+	"ecommerce-website/app/middleware"
 	"ecommerce-website/app/utils"
 
 	"ecommerce-website/internal/database"
@@ -19,6 +19,7 @@ import (
 func GetAllProducts(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Context-Type", "application/x-www-form-urlencoded")
 	w.Header().Set("Access-Control-Allow-Origin", "*")
+
 	cur, err := database.Coll_product.Find(context.Background(), bson.D{{}})
 	if err != nil {
 		utils.GetError(err, w)
@@ -52,19 +53,11 @@ func CreateProduct(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Access-Control-Allow-Origin", "*")
 	w.Header().Set("Access-Control-Allow-Methods", "POST")
 	w.Header().Set("Access-Control-Allow-Headers", "Content-Type")
+
 	var product models.Product
 	_ = json.NewDecoder(r.Body).Decode(&product)
+	middleware.CreateProduct(product, w)
 
-	_, err := database.Coll_product.InsertOne(context.TODO(), product)
-
-	if err != nil {
-		utils.GetError(err, w)
-		return
-	}
-
-	fmt.Println("Product Inserted")
-
-	json.NewEncoder(w).Encode(product)
 }
 
 func UpdateProduct(w http.ResponseWriter, r *http.Request) {
@@ -140,9 +133,9 @@ func GetProduct(w http.ResponseWriter, r *http.Request) {
 	// set header.
 	w.Header().Set("Content-Type", "application/json")
 
-	var product models.Product
 	// we get params with mux.
 	var params = mux.Vars(r)
+	var product models.Product
 
 	// string to primitive.ObjectID
 	id, _ := primitive.ObjectIDFromHex(params["id"])
@@ -157,4 +150,5 @@ func GetProduct(w http.ResponseWriter, r *http.Request) {
 	}
 
 	json.NewEncoder(w).Encode(product)
+
 }
