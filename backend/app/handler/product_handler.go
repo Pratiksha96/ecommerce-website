@@ -20,7 +20,9 @@ func GetAllProducts(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Context-Type", "application/x-www-form-urlencoded")
 	w.Header().Set("Access-Control-Allow-Origin", "*")
 
-	cur, err := database.Coll_product.Find(context.Background(), bson.D{{}})
+	middleware.GetAllProducts(w)
+
+	/*cur, err := database.Coll_product.Find(context.Background(), bson.D{{}})
 	if err != nil {
 		utils.GetError(err, w)
 		return
@@ -45,7 +47,7 @@ func GetAllProducts(w http.ResponseWriter, r *http.Request) {
 
 	cur.Close(context.Background())
 	payload := results
-	json.NewEncoder(w).Encode(payload)
+	json.NewEncoder(w).Encode(payload)*/
 }
 
 func CreateProduct(w http.ResponseWriter, r *http.Request) {
@@ -135,13 +137,15 @@ func GetProduct(w http.ResponseWriter, r *http.Request) {
 
 	// we get params with mux.
 	var params = mux.Vars(r)
-	var product models.Product
+	//var product models.Product
 
 	// string to primitive.ObjectID
 	id, _ := primitive.ObjectIDFromHex(params["id"])
 
+	middleware.GetProduct(id, w)
+
 	// We create filter. If it is unnecessary to sort data for you, you can use bson.M{}
-	filter := bson.M{"_id": id}
+	/*filter := bson.M{"_id": id}
 	err := database.Coll_product.FindOne(context.TODO(), filter).Decode(&product)
 
 	if err != nil {
@@ -149,6 +153,6 @@ func GetProduct(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	json.NewEncoder(w).Encode(product)
+	json.NewEncoder(w).Encode(product)*/
 
 }
