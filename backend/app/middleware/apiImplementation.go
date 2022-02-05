@@ -72,3 +72,49 @@ func GetAllProducts(w http.ResponseWriter) {
 	json.NewEncoder(w).Encode(payload)
 
 }
+
+func UpdateProduct(id primitive.ObjectID, product models.Product, w http.ResponseWriter) {
+
+	filter := bson.M{"_id": id}
+
+	var oldProduct models.Product
+
+	// prepare update model.
+	update := bson.D{
+		{"$set", bson.D{
+			{"name", product.Name},
+			{"description", product.Description},
+			{"price", product.Price},
+			{"ratings", product.Ratings},
+			{"images", product.Images},
+			{"category", product.Category},
+			{"Stock", product.Stock},
+			{"reviews", product.Reviews},
+		}},
+	}
+
+	err := database.Coll_product.FindOneAndUpdate(context.TODO(), filter, update).Decode(&oldProduct)
+
+	if err != nil {
+		utils.GetError(err, w)
+		return
+	}
+
+	json.NewEncoder(w).Encode(product)
+
+}
+
+func DeleteProduct(id primitive.ObjectID, w http.ResponseWriter) {
+
+	filter := bson.M{"_id": id}
+
+	deleteResult, err := database.Coll_product.DeleteOne(context.TODO(), filter)
+
+	if err != nil {
+		utils.GetError(err, w)
+		return
+	}
+
+	json.NewEncoder(w).Encode(deleteResult)
+
+}
