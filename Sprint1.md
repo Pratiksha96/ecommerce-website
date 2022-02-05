@@ -19,15 +19,224 @@ Admin:
 - [Updating products for website](https://github.com/Pratiksha96/ecommerce-website/issues/11)
 
 User:
-- [Adding new products to website](https://github.com/Pratiksha96/ecommerce-website/issues/8)
-- [Adding new products to website](https://github.com/Pratiksha96/ecommerce-website/issues/18)
+- [View products](https://github.com/Pratiksha96/ecommerce-website/issues/8)
+- [Landing page for website](https://github.com/Pratiksha96/ecommerce-website/issues/18)
 
 
 # Backend
 
-## API Contracts 
 ## Database Schema
+- A database named "ecommerce_website" was created using MongoDB.
+- Collection named product was created in this database.
+- Schema of this product is as -
+```
+   { 
+       Name        string    
+       Description string    
+       Price       int       
+       Ratings     int       
+       Images      []*Image  
+       Category    string    
+       Stock       int       
+       Reviews     []*Review 
+   }
+```
+
+## API Contracts
+We are using http request for operations. The exposed endpoints are - 
+
+```
+/ping
+/product/get
+/product/get/{id}
+/product/add
+/product/update/{id}
+/product/delete/{id}
+```
+
+### /ping
+Sends a GET request.
+Returns a string:
+
+pong
+
+This is only to check if server is running.
+
+### GET /product/get
+Returns all users in the system.
+```
+URL Params
+None
+Data Params
+None
+Headers
+Content-Type: application/json
+Success Response:
+Code: 200
+Content:
+```
+```
+{
+  users: [
+           {<user_object>},
+           {<user_object>},
+           {<user_object>}
+         ]
+}
+``` 
+### GET /product/get/{id}
+Returns a single product with given pruduct id"
+```
+URL Params
+Product id
+Data Params
+None
+Headers
+Content-Type: application/json
+Success Response:
+Code: 200
+Content:
+```
+Returns product as given - 
+
+```
+{
+    "name" : "Book",
+    "description" : "Shakespeare Othello",
+    "price"  : 1000,
+    "ratings" : 8,
+    "category" : "romance",
+    "stock" :  5,
+    "images" :[ {
+        "public_id" : "shkp020",
+        "url" : "url://to//book"
+    }],
+    "reviews" : [
+        {
+            "name" : "user1",
+            "rating" : 5,
+            "comment" : "amazing book"
+        },
+        {
+            "name" : "user2",
+            "rating" : 4,
+            "comment" : "good read"
+        }
+    ]
+}
+```
+
+### POST /product/add
+Adds a new product to database. \
+Send a POST request with a json body. Eg. 
+```
+{
+    "name" : "Book",
+    "description" : "Shakespeare Othello",
+    "price"  : 1000,
+    "ratings" : 8,
+    "category" : "romance",
+    "stock" :  5,
+    "images" :[ {
+        "public_id" : "shkp020",
+        "url" : "url://to//book"
+    }],
+    "reviews" : [
+        {
+            "name" : "user1",
+            "rating" : 5,
+            "comment" : "amazing book"
+        },
+        {
+            "name" : "user2",
+            "rating" : 4,
+            "comment" : "good read"
+        }
+    ]
+}
+```
+Response - Return the added product.
+### PUT /product/update/{id}
+
+Update the product corresponding to product id passed.
+
+```
+URL Params
+Product id
+Data Params
+None
+Headers
+Content-Type: application/json
+Success Response:
+Code: 200
+```
+In body Json of object to be updated is passed and update product Json is returned, eg if price is updated to 500-
+
+```
+{
+    "name" : "Book",
+    "description" : "Shakespeare Othello",
+    "price"  : 500,
+    "ratings" : 8,
+    "category" : "romance",
+    "stock" :  5,
+    "images" :[ {
+        "public_id" : "shkp020",
+        "url" : "url://to//book"
+    }],
+    "reviews" : [
+        {
+            "name" : "user1",
+            "rating" : 5,
+            "comment" : "amazing book"
+        },
+        {
+            "name" : "user2",
+            "rating" : 4,
+            "comment" : "good read"
+        }
+    ]
+}
+```
+
+
+### DELETE /product/delete/{id}
+
+Delete product corresponding to passed product id.
+
+```
+URL Params
+Product id
+Data Params
+None
+Headers
+Content-Type: application/json
+Success Response:
+Code: 200
+```
+
+Response is of type String which tells number of products deleted. eg- 
+```
+{
+    Deleted Count : 1
+}
+```
+
 ## How to run
+ - download mongo db - make sure it is running by running command - `mongo`
+- checkout main branch and cd into backend
+- run - go run main.go start-server 
+- It should show in your terminal that Db is connected.
+- Verify server is running by running this - localhost:8081/ping - it should result in pong on your screen
+- 
+
+## API Development
+
+- REST apis for create, get, update and delete product were made using Go lang. 
+- All of the development was done VS code.
+- The server was hosted using mux router and the APIs were configured on this.
+- APIs were also configured with MongoDB database, and were tested using POSTMAN tool.
+
 ## Test results
 
 # Frontend 
