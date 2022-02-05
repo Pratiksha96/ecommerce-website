@@ -1,9 +1,10 @@
 import React from 'react'
 import {ReactNavbar} from "overlay-navbar"
-
+import logo from '../../../images/logo.png'
 const options = {
     burgerColorHover: "#eb4034",
-    logoWidth: "20vmax",
+    logo,
+    logoWidth: "10vmax",
     navColor1: "white",
     logoHoverSize: "10px",
     logoHoverColor: "#eb4034",
@@ -12,7 +13,7 @@ const options = {
     link3Text: "Contact",
     link4Text: "About",
     link1Url: "/",
-    link2Url: "/products",
+    link2Url: "/",
     link3Url: "/contact",
     link4Url: "/about",
     link1Size: "1.3vmax",
@@ -35,7 +36,7 @@ const options = {
   
 
  const Header = () => {
-    return <ReactNavbar  {...options}/>
+    return <ReactNavbar  {...options} />
 }
 
 export default Header;

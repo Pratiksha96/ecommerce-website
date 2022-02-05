@@ -1,6 +1,6 @@
 .banner {
     /* background-image: url("../../images/cover.jfif"); */
-    background-image: linear-gradient(to right, #635dc0,#3027ae);
+    background-image: linear-gradient(to right, #04cbfb,#0444ac);
     background-position: center;
     background-repeat: no-repeat;
     background-size: cover;
@@ -11,6 +11,7 @@
     align-items: center;
     justify-content: center;
     color: white;
+    font-family: "Georgia";
   }
   
   .banner > h1 {
