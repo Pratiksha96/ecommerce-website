@@ -1,12 +1,9 @@
 import React, { Fragment } from 'react'
 import Product from './Product.js'
-// import {CgMouse} from 'react-icons'
-import axios from 'axios'
 import './Home.css'
 import Metadata from '../layout/MetaData'
 const Home = () => {
 
-    const data=axios.post('https://localhost:8080/addProduct')
     const product ={
         name:'Blue Tshirt',
         images:[{url:"https://i.ibb.co/DRST11n/1.webp"}],
@@ -17,9 +14,9 @@ const Home = () => {
     return (
         <Fragment>
             <Metadata title="Ecommerce"/>
-         <div className="banner">
-        <p> Welcome to the Future</p>
-        <h1>FIND AMAZING PRODUCTS BELOW</h1>
+            <div className="banner">
+            <p>Buy for less!</p>
+            <h1>Shop Stoppers</h1>
 
         <a href="#container">
             <button>
