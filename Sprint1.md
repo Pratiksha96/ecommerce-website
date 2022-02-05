@@ -271,7 +271,7 @@ Redux store in setup to store the data fetched from the backend at a single plac
 ## Test results 
 
 ### Home Page
-![alt text](https://github.com/Pratiksha96/ecommerce-website/blob/sprint1/sprintImages/homepage.png?raw=true)
+![alt text](https://github.com/Pratiksha96/ecommerce-website/blob/sprint1/sprintImages/homePage.png?raw=true)
 
 ### Product Page
 ![alt text](https://github.com/Pratiksha96/ecommerce-website/blob/sprint1/sprintImages/ProductsPage.png?raw=true)
