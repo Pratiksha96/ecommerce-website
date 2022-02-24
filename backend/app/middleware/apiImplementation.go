@@ -5,6 +5,7 @@ import (
 	models "ecommerce-website/app/Models"
 	"ecommerce-website/app/utils"
 	"ecommerce-website/internal/database"
+	"errors"
 
 	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/bson/primitive"
@@ -65,6 +66,9 @@ func GetAllProducts(w http.ResponseWriter) {
 	if err := cur.Err(); err != nil {
 		utils.GetError(err, w)
 		return
+	} else if len(results) == 0 {
+		utils.GetError(errors.New("product list is empty"), w)
+		return
 	}
 
 	cur.Close(context.Background())
@@ -112,6 +116,9 @@ func DeleteProduct(id primitive.ObjectID, w http.ResponseWriter) {
 
 	if err != nil {
 		utils.GetError(err, w)
+		return
+	} else if deleteResult.DeletedCount == 0 {
+		utils.GetError(errors.New("no such document present"), w)
 		return
 	}
 
