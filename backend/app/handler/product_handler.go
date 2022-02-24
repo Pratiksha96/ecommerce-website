@@ -6,6 +6,8 @@ import (
 
 	models "ecommerce-website/app/Models"
 	"ecommerce-website/app/middleware"
+	"ecommerce-website/app/utils"
+	"log"
 
 	"github.com/gorilla/mux"
 	"go.mongodb.org/mongo-driver/bson/primitive"
@@ -27,7 +29,15 @@ func CreateProduct(w http.ResponseWriter, r *http.Request) {
 
 	var product models.Product
 	_ = json.NewDecoder(r.Body).Decode(&product)
-	middleware.CreateProduct(product, w)
+
+	if errors := utils.Validate(product); len(errors) > 0 {
+		log.Println("Received invalid json request!")
+		err := map[string]interface{}{"success": false, "message": errors}
+		w.WriteHeader(http.StatusBadRequest)
+		json.NewEncoder(w).Encode(err)
+	} else {
+		middleware.CreateProduct(product, w)
+	}
 
 }
 
@@ -42,7 +52,14 @@ func UpdateProduct(w http.ResponseWriter, r *http.Request) {
 
 	_ = json.NewDecoder(r.Body).Decode(&product)
 
-	middleware.UpdateProduct(id, product, w)
+	if errors := utils.Validate(product); len(errors) > 0 {
+		log.Println("Received invalid json request!")
+		err := map[string]interface{}{"success": false, "message": errors}
+		w.WriteHeader(http.StatusBadRequest)
+		json.NewEncoder(w).Encode(err)
+	} else {
+		middleware.UpdateProduct(id, product, w)
+	}
 }
 
 //delete product using product id
