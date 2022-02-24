@@ -2,6 +2,7 @@ package handler
 
 import (
 	"encoding/json"
+	"errors"
 	"net/http"
 
 	models "ecommerce-website/app/Models"
@@ -18,7 +19,6 @@ func GetAllProducts(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Access-Control-Allow-Origin", "*")
 
 	middleware.GetAllProducts(w)
-
 }
 
 func CreateProduct(w http.ResponseWriter, r *http.Request) {
@@ -70,8 +70,17 @@ func DeleteProduct(w http.ResponseWriter, r *http.Request) {
 	// get params
 	var params = mux.Vars(r)
 
+	if params["id"] == "" {
+		utils.GetError(errors.New("input id for delete is invalid"), w)
+		return
+	}
 	// string to primitve.ObjectID
-	id, _ := primitive.ObjectIDFromHex(params["id"])
+	id, err := primitive.ObjectIDFromHex(params["id"])
+
+	if err != nil {
+		utils.GetError(errors.New("invalid object id"), w)
+		return
+	}
 
 	middleware.DeleteProduct(id, w)
 }
@@ -83,9 +92,12 @@ func GetProduct(w http.ResponseWriter, r *http.Request) {
 
 	// we get params with mux.
 	var params = mux.Vars(r)
-
 	// string to primitive.ObjectID
-	id, _ := primitive.ObjectIDFromHex(params["id"])
+	id, err := primitive.ObjectIDFromHex(params["id"])
+	if err != nil {
+		utils.GetError(errors.New("invalid object id"), w)
+		return
+	}
 
 	middleware.GetProduct(id, w)
 }
