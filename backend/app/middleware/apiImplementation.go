@@ -13,6 +13,8 @@ import (
 	"encoding/json"
 	"fmt"
 	"net/http"
+	"net/url"
+	"strconv"
 )
 
 func CreateProduct(product models.Product, w http.ResponseWriter) {
@@ -77,8 +79,29 @@ func GetAllProducts(w http.ResponseWriter) {
 
 }
 
-func SearchProducts(w http.ResponseWriter, name string) {
-	filter := bson.D{{"name", primitive.Regex{Pattern: name, Options: ""}}}
+func SearchProducts(w http.ResponseWriter, query url.Values) {
+
+	keyword, keywordPresent := query["keyword"]
+	categoryType, categoryPresent := query["category"]
+	priceRange, pricePresent := query["price"]
+
+	if (keywordPresent || len(keyword) > 0) && (categoryPresent || len(categoryType) > 0) && (pricePresent || len(priceRange) > 0) {
+		name := keyword[0]
+		category := categoryType[0]
+		price := priceRange[0]
+		priceNum, _ := strconv.Atoi(price)
+
+		fmt.Print(name)
+		fmt.Print(category)
+		fmt.Print(price)
+
+		filter := bson.D{{"name", primitive.Regex{Pattern: name, Options: ""}}, {"category", category}, {"price", bson.D{{"$lte", priceNum}}}}
+		GetData(filter, w)
+	}
+
+}
+
+func GetData(filter bson.D, w http.ResponseWriter) {
 	cur, err := database.Coll_product.Find(context.Background(), filter)
 
 	if err != nil {
