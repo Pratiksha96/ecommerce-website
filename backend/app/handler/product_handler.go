@@ -21,6 +21,15 @@ func GetAllProducts(w http.ResponseWriter, r *http.Request) {
 	middleware.GetAllProducts(w)
 }
 
+func SearchProducts(w http.ResponseWriter, r *http.Request) {
+	w.Header().Set("Context-Type", "application/x-www-form-urlencoded")
+	w.Header().Set("Access-Control-Allow-Origin", "*")
+
+	vars := mux.Vars(r)
+	nameToSearch := vars["name"]
+	middleware.SearchProducts(w, nameToSearch)
+}
+
 func CreateProduct(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Context-Type", "application/x-www-form-urlencoded")
 	w.Header().Set("Access-Control-Allow-Origin", "*")

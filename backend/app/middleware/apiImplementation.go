@@ -77,6 +77,39 @@ func GetAllProducts(w http.ResponseWriter) {
 
 }
 
+func SearchProducts(w http.ResponseWriter, name string) {
+	filter := bson.D{{"name", primitive.Regex{Pattern: name, Options: ""}}}
+	cur, err := database.Coll_product.Find(context.Background(), filter)
+
+	if err != nil {
+		utils.GetError(err, w)
+		return
+	}
+
+	var results []primitive.M
+	for cur.Next(context.Background()) {
+		var result bson.M
+		e := cur.Decode(&result)
+		if e != nil {
+			utils.GetError(err, w)
+			return
+		}
+		results = append(results, result)
+	}
+
+	if err := cur.Err(); err != nil {
+		utils.GetError(err, w)
+		return
+	} else if len(results) == 0 {
+		utils.GetError(errors.New("product list is empty"), w)
+		return
+	}
+
+	cur.Close(context.Background())
+	payload := results
+	json.NewEncoder(w).Encode(payload)
+}
+
 func UpdateProduct(id primitive.ObjectID, product models.Product, w http.ResponseWriter) {
 
 	filter := bson.M{"_id": id}
