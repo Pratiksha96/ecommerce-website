@@ -11,7 +11,7 @@ type ProductManager interface {
 	CreateProduct(product models.Product, w http.ResponseWriter)
 	GetProduct(id primitive.ObjectID, w http.ResponseWriter)
 	GetAllProducts(w http.ResponseWriter)
-	SearchProducts(w http.ResponseWriter, name string)
+	SearchProducts(w http.ResponseWriter)
 	UpdateProduct(id primitive.ObjectID, product models.Product, w http.ResponseWriter)
 	DeleteProduct(id primitive.ObjectID, w http.ResponseWriter)
 }
