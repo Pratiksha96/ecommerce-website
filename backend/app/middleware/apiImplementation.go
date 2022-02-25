@@ -83,22 +83,103 @@ func SearchProducts(w http.ResponseWriter, query url.Values) {
 
 	keyword, keywordPresent := query["keyword"]
 	categoryType, categoryPresent := query["category"]
-	priceRange, pricePresent := query["price"]
+	priceMinRange, priceMinPresent := query["priceMin"]
+	priceMaxRange, priceMaxPresent := query["priceMax"]
 
-	if (keywordPresent || len(keyword) > 0) && (categoryPresent || len(categoryType) > 0) && (pricePresent || len(priceRange) > 0) {
-		name := keyword[0]
+	if (keywordPresent || len(keyword) > 0) && (categoryPresent || len(categoryType) > 0) {
+		if (priceMinPresent || len(priceMinRange) > 0) && (priceMaxPresent || len(priceMaxRange) > 0) {
+			name := keyword[0]
+			category := categoryType[0]
+			priceMin := priceMinRange[0]
+			priceMinNum, _ := strconv.Atoi(priceMin)
+
+			priceMax := priceMaxRange[0]
+			priceMaxNum, _ := strconv.Atoi(priceMax)
+
+			filter := bson.D{{"name", primitive.Regex{Pattern: name, Options: ""}}, {"category", category}, {"price", bson.D{{"$gte", priceMinNum}, {"$lte", priceMaxNum}}}}
+			GetData(filter, w)
+		} else if priceMaxPresent || len(priceMaxRange) > 0 {
+			name := keyword[0]
+			category := categoryType[0]
+			priceMax := priceMaxRange[0]
+			priceMaxNum, _ := strconv.Atoi(priceMax)
+
+			filter := bson.D{{"name", primitive.Regex{Pattern: name, Options: ""}}, {"category", category}, {"price", bson.D{{"$gte", 1}, {"$lte", priceMaxNum}}}}
+			GetData(filter, w)
+		} else if priceMinPresent || len(priceMinRange) > 0 {
+			name := keyword[0]
+			category := categoryType[0]
+			priceMin := priceMinRange[0]
+			priceMinNum, _ := strconv.Atoi(priceMin)
+
+			filter := bson.D{{"name", primitive.Regex{Pattern: name, Options: ""}}, {"category", category}, {"price", bson.D{{"$gte", priceMinNum}, {"$lte", 99999999}}}}
+			GetData(filter, w)
+		} else {
+			name := keyword[0]
+			category := categoryType[0]
+			filter := bson.D{{"name", primitive.Regex{Pattern: name, Options: ""}}, {"category", category}}
+			GetData(filter, w)
+		}
+
+	} else if keywordPresent || len(keyword) > 0 {
+		if (priceMinPresent || len(priceMinRange) > 0) && (priceMaxPresent || len(priceMaxRange) > 0) {
+			name := keyword[0]
+			priceMin := priceMinRange[0]
+			priceMinNum, _ := strconv.Atoi(priceMin)
+
+			priceMax := priceMaxRange[0]
+			priceMaxNum, _ := strconv.Atoi(priceMax)
+
+			filter := bson.D{{"name", primitive.Regex{Pattern: name, Options: ""}}, {"price", bson.D{{"$gte", priceMinNum}, {"$lte", priceMaxNum}}}}
+			GetData(filter, w)
+		} else if priceMaxPresent || len(priceMaxRange) > 0 {
+			name := keyword[0]
+			priceMax := priceMaxRange[0]
+			priceMaxNum, _ := strconv.Atoi(priceMax)
+
+			filter := bson.D{{"name", primitive.Regex{Pattern: name, Options: ""}}, {"price", bson.D{{"$gte", 1}, {"$lte", priceMaxNum}}}}
+			GetData(filter, w)
+		} else if priceMinPresent || len(priceMinRange) > 0 {
+			name := keyword[0]
+			priceMin := priceMinRange[0]
+			priceMinNum, _ := strconv.Atoi(priceMin)
+
+			filter := bson.D{{"name", primitive.Regex{Pattern: name, Options: ""}}, {"price", bson.D{{"$gte", priceMinNum}, {"$lte", 99999999}}}}
+			GetData(filter, w)
+		} else {
+			name := keyword[0]
+			filter := bson.D{{"name", primitive.Regex{Pattern: name, Options: ""}}}
+			GetData(filter, w)
+		}
+	} else if categoryPresent || len(categoryType) > 0 {
 		category := categoryType[0]
-		price := priceRange[0]
-		priceNum, _ := strconv.Atoi(price)
+		filter := bson.D{{"category", category}}
+		GetData(filter, w)
+	} else if (priceMinPresent || len(priceMinRange) > 0) && (priceMaxPresent || len(priceMaxRange) > 0) {
+		priceMin := priceMinRange[0]
+		priceMinNum, _ := strconv.Atoi(priceMin)
 
-		fmt.Print(name)
-		fmt.Print(category)
-		fmt.Print(price)
+		priceMax := priceMaxRange[0]
+		priceMaxNum, _ := strconv.Atoi(priceMax)
 
-		filter := bson.D{{"name", primitive.Regex{Pattern: name, Options: ""}}, {"category", category}, {"price", bson.D{{"$lte", priceNum}}}}
+		filter := bson.D{{"price", bson.D{{"$gte", priceMinNum}, {"$lte", priceMaxNum}}}}
+		GetData(filter, w)
+	} else if priceMaxPresent || len(priceMaxRange) > 0 {
+		priceMax := priceMaxRange[0]
+		priceMaxNum, _ := strconv.Atoi(priceMax)
+
+		filter := bson.D{{"price", bson.D{{"$gte", 1}, {"$lte", priceMaxNum}}}}
+		GetData(filter, w)
+	} else if priceMinPresent || len(priceMinRange) > 0 {
+		priceMin := priceMinRange[0]
+		priceMinNum, _ := strconv.Atoi(priceMin)
+
+		filter := bson.D{{"price", bson.D{{"$gte", priceMinNum}, {"$lte", 99999999}}}}
+		GetData(filter, w)
+	} else {
+		filter := bson.D{{}}
 		GetData(filter, w)
 	}
-
 }
 
 func GetData(filter bson.D, w http.ResponseWriter) {
