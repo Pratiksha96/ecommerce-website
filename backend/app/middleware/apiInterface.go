@@ -18,4 +18,5 @@ type ProductManager interface {
 
 type UserManager interface {
 	RegisterUser(user models.User, w http.ResponseWriter)
+	LoginUser(user models.User, w http.ResponseWriter)
 }
