@@ -12,6 +12,7 @@ import (
 var (
 	db           *mongo.Database
 	Coll_product *mongo.Collection
+	Coll_user    *mongo.Collection
 )
 
 func InitDB() {
@@ -25,6 +26,7 @@ func InitDB() {
 	if err != nil {
 		panic(err)
 	}
-	Coll_product = client.Database("ecommerce_website").Collection("product")
+	db := client.Database("ecommerce_website")
+	Coll_product = db.Collection("product")
 	fmt.Println("Connection Established with database")
 }

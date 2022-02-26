@@ -15,3 +15,7 @@ type ProductManager interface {
 	UpdateProduct(id primitive.ObjectID, product models.Product, w http.ResponseWriter)
 	DeleteProduct(id primitive.ObjectID, w http.ResponseWriter)
 }
+
+type UserManager interface {
+	RegisterUser(user models.User, w http.ResponseWriter)
+}
