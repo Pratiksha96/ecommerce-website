@@ -69,7 +69,7 @@ func Validate(product models.Product) url.Values {
 	return errors
 }
 
-func UserValidation(user models.User) url.Values {
+func UserRegisterValidation(user models.User) url.Values {
 
 	errors := url.Values{}
 
@@ -96,6 +96,21 @@ func UserValidation(user models.User) url.Values {
 
 	if len(user.Avatar) < 1 {
 		errors.Add("avatar", "User should provide profile image!")
+	}
+
+	return errors
+}
+
+func UserLoginValidation(user models.User) url.Values {
+
+	errors := url.Values{}
+
+	if len(user.Email) == 0 {
+		errors.Add("email", "User email address is mandatory!")
+	}
+
+	if len(user.Password) == 0 {
+		errors.Add("password", "User password is required to login!")
 	}
 
 	return errors
