@@ -5,6 +5,7 @@ import (
 	"encoding/json"
 	"log"
 	"net/http"
+	"net/mail"
 	"net/url"
 )
 
@@ -63,6 +64,38 @@ func Validate(product models.Product) url.Values {
 
 	if product.Stock == 0 {
 		errors.Add("stock", "Please enter product stock!")
+	}
+
+	return errors
+}
+
+func UserValidation(user models.User) url.Values {
+
+	errors := url.Values{}
+
+	if user.Name == "" {
+		errors.Add("name", "Please enter user name!")
+	}
+
+	if len(user.Name) > 30 || len(user.Name) < 4 {
+		errors.Add("name", "User name should lie between length 4 and 30!")
+	}
+
+	if len(user.Email) == 0 {
+		errors.Add("email", "User email address is mandatory!")
+	}
+
+	if len(user.Password) < 8 {
+		errors.Add("password", "User password should be atleast 8 characters long!")
+	}
+
+	_, err := mail.ParseAddress(user.Email)
+	if err != nil {
+		errors.Add("email", "Invalid email address given!")
+	}
+
+	if len(user.Avatar) < 1 {
+		errors.Add("avatar", "User should provide profile image!")
 	}
 
 	return errors

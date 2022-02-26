@@ -22,6 +22,8 @@ func StartServer() {
 	r.HandleFunc("/product/delete/{id}", handler.DeleteProduct).Methods("DELETE", "OPTIONS")
 	r.HandleFunc("/product/get/{id}", handler.GetProduct).Methods("GET", "OPTIONS")
 
+	r.HandleFunc("/user/register", handler.RegisterUser).Methods("POST", "OPTIONS")
+
 	srv := &http.Server{
 		Handler:      r,
 		Addr:         "127.0.0.1:8081",
