@@ -23,7 +23,7 @@ func StartServer() {
 	r.HandleFunc("/product/get/{id}", handler.GetProduct).Methods("GET", "OPTIONS")
 
 	r.HandleFunc("/user/register", handler.RegisterUser).Methods("POST", "OPTIONS")
-	r.HandleFunc("/user/login", handler.LoginUser).Methods("POST", "OPTIONS")
+	r.HandleFunc("/login", handler.LoginUser).Methods("POST", "OPTIONS")
 
 	srv := &http.Server{
 		Handler:      r,

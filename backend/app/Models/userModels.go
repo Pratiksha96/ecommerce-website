@@ -2,7 +2,11 @@ package models
 
 import (
 	"time"
+
+	"github.com/dgrijalva/jwt-go"
 )
+
+const SecretKey = "ThisIsMySecretKey"
 
 type User struct {
 	Name                string          `json:"name" bson:"name"`
@@ -26,4 +30,21 @@ func (u *User) GetBSON() (interface{}, error) {
 	}
 	type my *User
 	return my(u), nil
+}
+
+//get user token
+func (user *User) GetJwtToken() (string, error) {
+
+	// Declaring the expiration time of the user  token here
+	// We have kept it as 5 minutes
+	expirationTime := time.Now().Add(5 * time.Minute).Unix()
+
+	// Create the JWT claims, which includes the user email and expiry time
+	claims := jwt.NewWithClaims(jwt.SigningMethodHS256, jwt.StandardClaims{
+		Issuer:    user.Email,
+		ExpiresAt: expirationTime,
+	})
+
+	token, err := claims.SignedString([]byte(SecretKey))
+	return token, err
 }
