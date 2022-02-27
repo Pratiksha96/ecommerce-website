@@ -17,15 +17,18 @@ import (
 func GetAllProducts(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Context-Type", "application/x-www-form-urlencoded")
 	w.Header().Set("Access-Control-Allow-Origin", "*")
-
-	middleware.GetAllProducts(w)
+	if middleware.AuthenticateUser(w, r) {
+		middleware.GetAllProducts(w)
+	}
 }
 
 func SearchProducts(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Context-Type", "application/x-www-form-urlencoded")
 	w.Header().Set("Access-Control-Allow-Origin", "*")
 	query := r.URL.Query()
-	middleware.SearchProducts(w, query)
+	if middleware.AuthenticateUser(w, r) {
+		middleware.SearchProducts(w, query)
+	}
 
 }
 
@@ -44,7 +47,9 @@ func CreateProduct(w http.ResponseWriter, r *http.Request) {
 		w.WriteHeader(http.StatusBadRequest)
 		json.NewEncoder(w).Encode(err)
 	} else {
-		middleware.CreateProduct(product, w)
+		if middleware.AuthenticateUser(w, r) {
+			middleware.CreateProduct(product, w)
+		}
 	}
 
 }
@@ -66,7 +71,9 @@ func UpdateProduct(w http.ResponseWriter, r *http.Request) {
 		w.WriteHeader(http.StatusBadRequest)
 		json.NewEncoder(w).Encode(err)
 	} else {
-		middleware.UpdateProduct(id, product, w)
+		if middleware.AuthenticateUser(w, r) {
+			middleware.UpdateProduct(id, product, w)
+		}
 	}
 }
 
@@ -89,8 +96,9 @@ func DeleteProduct(w http.ResponseWriter, r *http.Request) {
 		utils.GetError(errors.New("invalid object id"), w)
 		return
 	}
-
-	middleware.DeleteProduct(id, w)
+	if middleware.AuthenticateUser(w, r) {
+		middleware.DeleteProduct(id, w)
+	}
 }
 
 //get product details by sending a product id
@@ -106,6 +114,7 @@ func GetProduct(w http.ResponseWriter, r *http.Request) {
 		utils.GetError(errors.New("invalid object id"), w)
 		return
 	}
-
-	middleware.GetProduct(id, w)
+	if middleware.AuthenticateUser(w, r) {
+		middleware.GetProduct(id, w)
+	}
 }
