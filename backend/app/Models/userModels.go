@@ -6,6 +6,7 @@ import (
 	"github.com/dgrijalva/jwt-go"
 )
 
+//TODO to be changed
 const SecretKey = "ThisIsMySecretKey"
 
 type User struct {
@@ -21,6 +22,11 @@ type User struct {
 type ProfileImage struct {
 	Public_id string `json:"public_id" bson:"public_id"`
 	Url       string `json:"url" bson:"url"`
+}
+
+type Claims struct {
+	Email string `json:"email"`
+	jwt.StandardClaims
 }
 
 //setting role as user by default
@@ -39,12 +45,17 @@ func (user *User) GetJwtToken() (string, error) {
 	// We have kept it as 5 minutes
 	expirationTime := time.Now().Add(5 * time.Minute).Unix()
 
-	// Create the JWT claims, which includes the user email and expiry time
-	claims := jwt.NewWithClaims(jwt.SigningMethodHS256, jwt.StandardClaims{
-		Issuer:    user.Email,
-		ExpiresAt: expirationTime,
-	})
+	claims := &Claims{
+		Email: user.Email,
+		StandardClaims: jwt.StandardClaims{
+			// In JWT, the expiry time is expressed as unix milliseconds
+			ExpiresAt: expirationTime,
+		},
+	}
 
-	token, err := claims.SignedString([]byte(SecretKey))
-	return token, err
+	// Create the JWT claims, which includes the user email and expiry time
+	token := jwt.NewWithClaims(jwt.SigningMethodHS256, claims)
+
+	tokenStr, err := token.SignedString([]byte(SecretKey))
+	return tokenStr, err
 }
