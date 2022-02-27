@@ -18,21 +18,23 @@ import (
 	"strconv"
 )
 
-func CreateProduct(product models.Product, w http.ResponseWriter) {
+func CreateProduct(product models.Product, w http.ResponseWriter, role string, email string) {
 
-	insertedProduct, err := database.Coll_product.InsertOne(context.TODO(), product)
+	if AuthorizeUser(w, role, email) {
+		insertedProduct, err := database.Coll_product.InsertOne(context.TODO(), product)
 
-	if err != nil {
-		utils.GetError(err, w)
-		return
+		if err != nil {
+			utils.GetError(err, w)
+			return
+		}
+
+		fmt.Println("Product Inserted", insertedProduct.InsertedID)
+
+		json.NewEncoder(w).Encode(product)
 	}
 
-	fmt.Println("Product Inserted", insertedProduct.InsertedID)
-
-	json.NewEncoder(w).Encode(product)
-
 }
-func GetProduct(id primitive.ObjectID, w http.ResponseWriter) {
+func GetProduct(id primitive.ObjectID, w http.ResponseWriter, email string) {
 
 	var product models.Product
 	filter := bson.M{"_id": id}
@@ -47,7 +49,7 @@ func GetProduct(id primitive.ObjectID, w http.ResponseWriter) {
 
 }
 
-func GetAllProducts(w http.ResponseWriter) {
+func GetAllProducts(w http.ResponseWriter, email string) {
 	cur, err := database.Coll_product.Find(context.Background(), bson.D{{}})
 	if err != nil {
 		utils.GetError(err, w)
@@ -80,7 +82,7 @@ func GetAllProducts(w http.ResponseWriter) {
 
 }
 
-func SearchProducts(w http.ResponseWriter, query url.Values) {
+func SearchProducts(w http.ResponseWriter, query url.Values, email string) {
 
 	keyword, keywordPresent := query["keyword"]
 	categoryType, categoryPresent := query["category"]
@@ -230,54 +232,56 @@ func GetFilteredProducts(filter bson.D, w http.ResponseWriter, resultsPerPage in
 	json.NewEncoder(w).Encode(payload)
 }
 
-func UpdateProduct(id primitive.ObjectID, product models.Product, w http.ResponseWriter) {
+func UpdateProduct(id primitive.ObjectID, product models.Product, w http.ResponseWriter, role string, email string) {
 
-	filter := bson.M{"_id": id}
+	if AuthorizeUser(w, role, email) {
 
-	var oldProduct models.Product
+		filter := bson.M{"_id": id}
 
-	// prepare update model.
-	update := bson.D{
-		{"$set", bson.D{
-			{"name", product.Name},
-			{"description", product.Description},
-			{"price", product.Price},
-			{"ratings", product.Ratings},
-			{"images", product.Images},
-			{"category", product.Category},
-			{"Stock", product.Stock},
-			{"reviews", product.Reviews},
-		}},
+		var oldProduct models.Product
+
+		// prepare update model.
+		update := bson.D{
+			{"$set", bson.D{
+				{"name", product.Name},
+				{"description", product.Description},
+				{"price", product.Price},
+				{"ratings", product.Ratings},
+				{"images", product.Images},
+				{"category", product.Category},
+				{"Stock", product.Stock},
+				{"reviews", product.Reviews},
+			}},
+		}
+
+		err := database.Coll_product.FindOneAndUpdate(context.TODO(), filter, update).Decode(&oldProduct)
+
+		if err != nil {
+			utils.GetError(err, w)
+			return
+		}
+
+		json.NewEncoder(w).Encode(product)
 	}
-
-	err := database.Coll_product.FindOneAndUpdate(context.TODO(), filter, update).Decode(&oldProduct)
-
-	if err != nil {
-		utils.GetError(err, w)
-		return
-	}
-
-	json.NewEncoder(w).Encode(product)
-
 }
 
-func DeleteProduct(id primitive.ObjectID, w http.ResponseWriter) {
+func DeleteProduct(id primitive.ObjectID, w http.ResponseWriter, role string, email string) {
 
-	filter := bson.M{"_id": id}
+	if AuthorizeUser(w, role, email) {
+		filter := bson.M{"_id": id}
 
-	deleteResult, err := database.Coll_product.DeleteOne(context.TODO(), filter)
+		deleteResult, err := database.Coll_product.DeleteOne(context.TODO(), filter)
 
-	if err != nil {
-		utils.GetError(err, w)
-		return
-	} else if deleteResult.DeletedCount == 0 {
-		utils.GetError(errors.New("no such document present"), w)
-		return
+		if err != nil {
+			utils.GetError(err, w)
+			return
+		} else if deleteResult.DeletedCount == 0 {
+			utils.GetError(errors.New("no such document present"), w)
+			return
+		}
+
+		deleteResponse := map[string]interface{}{"success": true, "message": "document has been successfully deleted"}
+		json.NewEncoder(w).Encode(deleteResponse)
 	}
 
-	json.NewEncoder(w).Encode(deleteResult)
-
-}
-func LogoutUser(token string, w http.ResponseWriter) {
-	utils.DeleteUserToken(token, w)
 }

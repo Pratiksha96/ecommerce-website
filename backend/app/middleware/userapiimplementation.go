@@ -72,3 +72,7 @@ func LoginUser(user models.User, w http.ResponseWriter) {
 	tokenResponse := map[string]interface{}{"success": true, "token": token}
 	json.NewEncoder(w).Encode(tokenResponse)
 }
+
+func LogoutUser(token string, w http.ResponseWriter) {
+	utils.DeleteUserToken(token, w)
+}
