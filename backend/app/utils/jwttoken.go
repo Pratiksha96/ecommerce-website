@@ -16,3 +16,13 @@ func StoreUserToken(token string, w http.ResponseWriter) {
 	http.SetCookie(w, cookie)
 	w.WriteHeader(200)
 }
+
+func DeleteUserToken(token string, w http.ResponseWriter) {
+	cookie := &http.Cookie{
+		Name:    "token",
+		Value:   "",
+		Expires: time.Now(),
+	}
+	http.SetCookie(w, cookie)
+	w.WriteHeader(200)
+}

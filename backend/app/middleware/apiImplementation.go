@@ -278,3 +278,6 @@ func DeleteProduct(id primitive.ObjectID, w http.ResponseWriter) {
 	json.NewEncoder(w).Encode(deleteResult)
 
 }
+func LogoutUser(token string, w http.ResponseWriter) {
+	utils.DeleteUserToken(token, w)
+}
