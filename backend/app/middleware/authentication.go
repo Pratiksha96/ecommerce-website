@@ -8,7 +8,7 @@ import (
 	"github.com/dgrijalva/jwt-go"
 )
 
-func AuthenticateUser(w http.ResponseWriter, r *http.Request) bool {
+func AuthenticateUser(w http.ResponseWriter, r *http.Request) (bool, string) {
 
 	cookieToken, err := r.Cookie("token")
 
@@ -17,17 +17,16 @@ func AuthenticateUser(w http.ResponseWriter, r *http.Request) bool {
 			// If the cookie is not set, return an unauthorized status
 			w.WriteHeader(http.StatusUnauthorized)
 			utils.GetError(errors.New("received ErrNoCookie, please login to access this resource"), w)
-			return false
+			return false, ""
 		}
 		// For any other type of error, return a bad request status
 		w.WriteHeader(http.StatusBadRequest)
 		utils.GetError(errors.New("please login to access this resource"), w)
-		return false
+		return false, ""
 	}
 
 	tokenStr := cookieToken.Value
 
-	// Initialize a new instance of `Claims`
 	claims := jwt.MapClaims{}
 
 	//TODO to change jkey
@@ -39,16 +38,20 @@ func AuthenticateUser(w http.ResponseWriter, r *http.Request) bool {
 		if err == jwt.ErrSignatureInvalid {
 			w.WriteHeader(http.StatusUnauthorized)
 			utils.GetError(errors.New("signature invalid"), w)
-			return false
+			return false, ""
 		}
 		w.WriteHeader(http.StatusBadRequest)
 		utils.GetError(errors.New("received error while validating token"), w)
-		return false
+		return false, ""
 	}
 	if !tkn.Valid {
 		w.WriteHeader(http.StatusUnauthorized)
 		utils.GetError(errors.New("token is invalid"), w)
-		return false
+		return false, ""
 	}
-	return true
+
+	tknClaims, _ := tkn.Claims.(jwt.MapClaims)
+	email, _ := tknClaims["email"].(string)
+	println("User email received is: ", email)
+	return true, email
 }

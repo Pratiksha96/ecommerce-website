@@ -17,8 +17,9 @@ import (
 func GetAllProducts(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Context-Type", "application/x-www-form-urlencoded")
 	w.Header().Set("Access-Control-Allow-Origin", "*")
-	if middleware.AuthenticateUser(w, r) {
-		middleware.GetAllProducts(w)
+	isValid, email := middleware.AuthenticateUser(w, r)
+	if isValid {
+		middleware.GetAllProducts(w, email)
 	}
 }
 
@@ -26,8 +27,9 @@ func SearchProducts(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Context-Type", "application/x-www-form-urlencoded")
 	w.Header().Set("Access-Control-Allow-Origin", "*")
 	query := r.URL.Query()
-	if middleware.AuthenticateUser(w, r) {
-		middleware.SearchProducts(w, query)
+	isValid, email := middleware.AuthenticateUser(w, r)
+	if isValid {
+		middleware.SearchProducts(w, query, email)
 	}
 
 }
@@ -47,8 +49,9 @@ func CreateProduct(w http.ResponseWriter, r *http.Request) {
 		w.WriteHeader(http.StatusBadRequest)
 		json.NewEncoder(w).Encode(err)
 	} else {
-		if middleware.AuthenticateUser(w, r) {
-			middleware.CreateProduct(product, w)
+		isValid, email := middleware.AuthenticateUser(w, r)
+		if isValid {
+			middleware.CreateProduct(product, w, "admin", email)
 		}
 	}
 
@@ -71,8 +74,9 @@ func UpdateProduct(w http.ResponseWriter, r *http.Request) {
 		w.WriteHeader(http.StatusBadRequest)
 		json.NewEncoder(w).Encode(err)
 	} else {
-		if middleware.AuthenticateUser(w, r) {
-			middleware.UpdateProduct(id, product, w)
+		isValid, email := middleware.AuthenticateUser(w, r)
+		if isValid {
+			middleware.UpdateProduct(id, product, w, "admin", email)
 		}
 	}
 }
@@ -96,8 +100,9 @@ func DeleteProduct(w http.ResponseWriter, r *http.Request) {
 		utils.GetError(errors.New("invalid object id"), w)
 		return
 	}
-	if middleware.AuthenticateUser(w, r) {
-		middleware.DeleteProduct(id, w)
+	isValid, email := middleware.AuthenticateUser(w, r)
+	if isValid {
+		middleware.DeleteProduct(id, w, "admin", email)
 	}
 }
 
@@ -114,7 +119,8 @@ func GetProduct(w http.ResponseWriter, r *http.Request) {
 		utils.GetError(errors.New("invalid object id"), w)
 		return
 	}
-	if middleware.AuthenticateUser(w, r) {
-		middleware.GetProduct(id, w)
+	isValid, email := middleware.AuthenticateUser(w, r)
+	if isValid {
+		middleware.GetProduct(id, w, email)
 	}
 }
