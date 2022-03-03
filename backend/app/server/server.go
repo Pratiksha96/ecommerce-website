@@ -22,7 +22,7 @@ func StartServer() {
 	r.HandleFunc("/product/delete/{id}", handler.DeleteProduct).Methods("DELETE", "OPTIONS")
 	r.HandleFunc("/product/get/{id}", handler.GetProduct).Methods("GET", "OPTIONS")
 
-	r.HandleFunc("/user/register", handler.RegisterUser).Methods("POST", "OPTIONS")
+	r.HandleFunc("/register", handler.RegisterUser).Methods("POST", "OPTIONS")
 	r.HandleFunc("/login", handler.LoginUser).Methods("POST", "OPTIONS")
 	r.HandleFunc("/logout", handler.LogoutUser).Methods("POST", "OPTIONS")
 
