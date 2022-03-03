@@ -1,7 +1,7 @@
 package utils
 
 import (
-	models "ecommerce-website/app/Models"
+	models "ecommerce-website/app/models"
 	"encoding/json"
 	"log"
 	"net/http"

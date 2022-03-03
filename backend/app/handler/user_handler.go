@@ -1,8 +1,8 @@
 package handler
 
 import (
-	models "ecommerce-website/app/Models"
 	"ecommerce-website/app/middleware"
+	models "ecommerce-website/app/models"
 	"ecommerce-website/app/utils"
 	"encoding/json"
 	"errors"
@@ -27,7 +27,6 @@ func RegisterUser(w http.ResponseWriter, r *http.Request) {
 	} else {
 		middleware.RegisterUser(user, w)
 	}
-
 }
 
 func LoginUser(w http.ResponseWriter, r *http.Request) {

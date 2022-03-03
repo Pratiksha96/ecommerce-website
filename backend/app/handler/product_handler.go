@@ -5,8 +5,8 @@ import (
 	"errors"
 	"net/http"
 
-	models "ecommerce-website/app/Models"
 	"ecommerce-website/app/middleware"
+	models "ecommerce-website/app/models"
 	"ecommerce-website/app/utils"
 	"log"
 
