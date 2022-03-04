@@ -3,6 +3,7 @@ package utils
 import (
 	models "ecommerce-website/app/models"
 	"encoding/json"
+	"fmt"
 	"log"
 	"net/http"
 	"net/mail"
@@ -28,42 +29,55 @@ func GetError(err error, w http.ResponseWriter) {
 
 	w.WriteHeader(http.StatusInternalServerError)
 	w.Write(message)
-
 }
 
-func Validate(product models.Product) url.Values {
-	errors := url.Values{}
+func GetErrorWithStatus(err error, w http.ResponseWriter, statusCode int) {
+
+	log.Printf(err.Error())
+	var response = ErrorResponse{
+		ErrorMessage: err.Error(),
+		Success:      false,
+	}
+
+	message, _ := json.Marshal(response)
+
+	w.WriteHeader(statusCode)
+	w.Write(message)
+}
+
+func Validate(product models.Product) []error {
+	errors := []error{}
 
 	if product.Name == "" {
-		errors.Add("name", "Please enter product name!")
+		errors = append(errors, fmt.Errorf("Please enter product name!"))
 	}
 
 	if product.Description == "" {
-		errors.Add("description", "Please enter product description!")
+		errors = append(errors, fmt.Errorf("Please enter product description!"))
 	}
 
 	if product.Price == 0 {
-		errors.Add("price", "Please enter product price!")
+		errors = append(errors, fmt.Errorf("Please enter product price!"))
 	}
 
 	if product.Price > 99999999 {
-		errors.Add("prices", "Product price can not exceed length 8!")
+		errors = append(errors, fmt.Errorf("Product price can not exceed length 8!"))
 	}
 
 	if product.Ratings <= 0 {
-		errors.Add("ratings", "Product ratings can not be negative or empty!")
+		errors = append(errors, fmt.Errorf("Product ratings can not be negative or empty!"))
 	}
 
 	if len(product.Images) == 0 {
-		errors.Add("images", "Product images can not be empty!")
+		errors = append(errors, fmt.Errorf("Product images can not be empty!"))
 	}
 
 	if product.Category == "" {
-		errors.Add("category", "Product category can not be empty!")
+		errors = append(errors, fmt.Errorf("Product category can not be empty!"))
 	}
 
 	if product.Stock == 0 {
-		errors.Add("stock", "Please enter product stock!")
+		errors = append(errors, fmt.Errorf("Please enter product stock!"))
 	}
 
 	return errors
