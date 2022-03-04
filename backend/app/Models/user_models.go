@@ -13,7 +13,7 @@ type User struct {
 	Name                string          `json:"name" bson:"name"`
 	Email               string          `json:"email" bson:"email"`
 	Password            string          `json:"password" bson:"password"`
-	Avatar              []*ProfileImage `json:"avatar" bson:"avatar"`
+	Avatar              ProfileImage   `json:"avatar" bson:"avatar"`
 	Role                string          `json:"role" bson:"role"`
 	ResetPasswordToken  string          `json:"resetPasswordToken" bson:"resetPasswordToken"`
 	ResetPasswordExpire time.Time       `json:"resetPasswordExpire" bson:"resetPasswordExpire"`

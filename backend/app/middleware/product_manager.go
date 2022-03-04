@@ -6,20 +6,19 @@ import (
 	"ecommerce-website/app/utils"
 	"ecommerce-website/internal/database"
 	"errors"
+	"log"
 
 	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/bson/primitive"
 	"go.mongodb.org/mongo-driver/mongo/options"
 
 	"encoding/json"
-	"fmt"
 	"net/http"
 	"net/url"
 	"strconv"
 )
 
 func CreateProduct(product models.Product, w http.ResponseWriter, role string, email string) {
-
 	if AuthorizeUser(w, role, email) {
 		insertedProduct, err := database.Coll_product.InsertOne(context.TODO(), product)
 
@@ -28,7 +27,7 @@ func CreateProduct(product models.Product, w http.ResponseWriter, role string, e
 			return
 		}
 
-		fmt.Println("Product Inserted", insertedProduct.InsertedID)
+		log.Println("Product Inserted", insertedProduct.InsertedID)
 
 		json.NewEncoder(w).Encode(product)
 	}

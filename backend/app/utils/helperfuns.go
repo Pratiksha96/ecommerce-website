@@ -94,10 +94,6 @@ func UserRegisterValidation(user models.User) url.Values {
 		errors.Add("email", "Invalid email address given!")
 	}
 
-	if len(user.Avatar) < 1 {
-		errors.Add("avatar", "User should provide profile image!")
-	}
-
 	return errors
 }
 
