@@ -76,13 +76,8 @@ debugger
         <Fragment>
           <MetaData title="PRODUCTS -- ECOMMERCE" />
           <h2 className="productsHeading">Products</h2>
+        <div className="test123">
         
-          <div className="products">
-            {products &&
-              products.map((product) => (
-                <ProductCard key={product._id} product={product} />
-               ))} 
-          </div>
 
           <div className="filterBox">
             <Typography>Price</Typography>
@@ -121,6 +116,13 @@ debugger
                 max={5}
               />
             </fieldset>
+          </div>
+          <div className="products">
+            {products &&
+              products.map((product) => (
+                <ProductCard key={product._id} product={product} />
+               ))} 
+          </div>
           </div>
           {resultPerPage < count && (
             <div className="paginationBox">

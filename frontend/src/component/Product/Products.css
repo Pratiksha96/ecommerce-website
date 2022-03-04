@@ -7,11 +7,17 @@
     font: 500 1.5vmax "Roboto";
     text-align: center;
   }
-  
+  .test123{
+    display: flex;
+    /* background-color:yellow; */
+    justify-content: flex-end;
+  }
   .products {
     display: flex;
+    /* background-color:green; */
     flex-wrap: wrap;
     padding: 0 5vmax;
+    width:70%;
     justify-content: center;
     min-height: 30vh;
   }
