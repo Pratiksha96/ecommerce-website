@@ -40,6 +40,7 @@ const Products = ({ match }) => {
     resultPerPage,
     filteredProductsCount,
   } = useSelector((state) => state.products);
+  console.log(products.length);
 debugger
   const keyword = match.params.keyword;
 
@@ -50,14 +51,14 @@ debugger
   const priceHandler = (event, newPrice) => {
     setPrice(newPrice);
   };
-  let count = filteredProductsCount;
-  const product ={
-    name:'Blue Tshirt',
-    images:[{url:`https://i.ibb.co/DRST11n/1.webp`}],
-    price:'$400',
-    _id:'aashish'
+  let count = productsCount;
+//   const product ={
+//     name:'Blue Tshirt',
+//     images:[{url:`https://i.ibb.co/DRST11n/1.webp`}],
+//     price:'$400',
+//     _id:'aashish'
 
-}
+// }
   useEffect(() => {
     if (error) {
       alert.error(error);
@@ -77,10 +78,10 @@ debugger
           <h2 className="productsHeading">Products</h2>
         
           <div className="products">
-            {/* {products &&
-              products.map((product) => ( */}
+            {products &&
+              products.map((product) => (
                 <ProductCard key={product._id} product={product} />
-              {/* ))} */}
+               ))} 
           </div>
 
           <div className="filterBox">
@@ -121,7 +122,7 @@ debugger
               />
             </fieldset>
           </div>
-          {/* {resultPerPage < count && ( */}
+          {resultPerPage < count && (
             <div className="paginationBox">
               <Pagination
                 activePage={currentPage}
@@ -138,7 +139,7 @@ debugger
                 activeLinkClass="pageLinkActive"
               />
             </div>
-          {/* )} */}
+           )} 
         </Fragment>
       )}
     </Fragment>

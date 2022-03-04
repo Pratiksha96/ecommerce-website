@@ -8,7 +8,7 @@ import FaceIcon from "@material-ui/icons/Face";
 import { useDispatch, useSelector } from "react-redux";
 import { clearErrors, login, register } from "../../actions/userAction";
 import { useAlert } from "react-alert";
-
+import axios from 'axios'
 const LoginSignUp = ({ history, location }) => {
   const dispatch = useDispatch();
   const alert = useAlert();
@@ -37,7 +37,12 @@ const LoginSignUp = ({ history, location }) => {
 
   const loginSubmit = (e) => {
     e.preventDefault();
+    // const data=axios.get('http://localhost:8081/product/get')
+    console.log("here")
+    // console.log(data)
     dispatch(login(loginEmail, loginPassword));
+    // dispatch(login("swati16@gmail.com", "sbansal20"));
+
   };
 
   const registerSubmit = (e) => {
@@ -49,7 +54,7 @@ const LoginSignUp = ({ history, location }) => {
     myForm.set("email", email);
     myForm.set("password", password);
     myForm.set("avatar", avatar);
-    dispatch(register(myForm));
+    dispatch(register(name,email,password));
   };
 
   const registerDataChange = (e) => {
@@ -69,7 +74,7 @@ const LoginSignUp = ({ history, location }) => {
     }
   };
 
-  const redirect = location.search ? location.search.split("=")[1] : "/account";
+  const redirect = location.search ? location.search.split("=")[1] : "/";
 
   useEffect(() => {
     if (error) {

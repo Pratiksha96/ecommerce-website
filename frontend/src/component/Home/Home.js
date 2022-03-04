@@ -12,14 +12,14 @@ const Home = () => {
   const alert = useAlert();
   const dispatch = useDispatch();
   const { loading, error, products } = useSelector((state) => state.products);
-
-  const product ={
-            name:'Blue Tshirt',
-            images:[{url:"https://i.ibb.co/DRST11n/1.webp"}],
-            price:'$400',
-            _id:'aashish'
+  
+  // const product ={
+  //           name:'Blue Tshirt',
+  //           images:[{url:"https://i.ibb.co/DRST11n/1.webp"}],
+  //           price:'$400',
+  //           _id:'aashish'
     
-        }
+  //       }
 
   useEffect(() => {
     if (error) {
@@ -51,10 +51,10 @@ const Home = () => {
           <h2 className="homeHeading">Featured Products</h2>
 
           <div className="container" id="container">
-            {/* {products &&
-              products.map((product) => ( */}
+            {products &&
+              products.map((product) => (
                 <ProductCard key={product._id} product={product} />
-              {/* ))} */}
+               ))} 
           </div>
         </Fragment>
       )}
