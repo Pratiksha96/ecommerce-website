@@ -325,7 +325,7 @@ Removes token from the cookies for the respective user
 
 ### Testing product/search/page={page} api
 
-![alt text](https://github.com/Pratiksha96/ecommerce-website/blob/main/resources/sprintImages/Pagination.png)
+![alt text](https://github.com/Pratiksha96/ecommerce-website/blob/main/resources/Pagination.png)
 
 
 ### Testing /register api
