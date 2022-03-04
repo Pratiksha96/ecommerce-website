@@ -98,6 +98,9 @@
     margin: 0.5vmax;
     font: 300 0.7vmax "Roboto";
   }
+  .productCardImage{
+    height:150px;
+  }
   
   .productCard > p {
     font-family: "Roboto";

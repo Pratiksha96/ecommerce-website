@@ -1,59 +1,65 @@
-import React, { Fragment } from 'react'
-import Product from './Product.js'
-import './Home.css'
-import Metadata from '../layout/MetaData'
-import axios from 'axios';
+import React, { Fragment, useEffect } from "react";
+import { CgMouse } from "react-icons/all";
+import "./Home.css";
+import ProductCard from "./ProductCard.js";
+import MetaData from "../layout/MetaData";
+import { clearErrors, getProduct } from "../../actions/productAction";
+import { useSelector, useDispatch } from "react-redux";
+import Loader from "../layout/Loader/Loader";
+import { useAlert } from "react-alert";
 
 const Home = () => {
-
-    async function getData(){
-        const data=await axios.get('http://localhost:8081/product/get')
-        console.log(data)
-    }
-    getData();
+  const alert = useAlert();
+  const dispatch = useDispatch();
+  const { loading, error, products } = useSelector((state) => state.products);
+  
+  // const product ={
+  //           name:'Blue Tshirt',
+  //           images:[{url:"https://i.ibb.co/DRST11n/1.webp"}],
+  //           price:'$400',
+  //           _id:'aashish'
     
-    const product ={
-        name:'Blue Tshirt',
-        images:[{url:"https://i.ibb.co/DRST11n/1.webp"}],
-        price:'$400',
-        _id:'aashish'
+  //       }
 
+  useEffect(() => {
+    if (error) {
+      alert.error(error);
+      dispatch(clearErrors());
     }
-    return (
+    dispatch(getProduct());
+  }, [dispatch, error, alert]);
+
+  return (
+    <Fragment>
+      {loading ? (
+        <Loader />
+      ) : (
         <Fragment>
-            <Metadata title="Ecommerce"/>
-            <div className="banner">
-            <p>Buy for less!</p>
-            <h1>Shop Stoppers</h1>
+          <MetaData title="ECOMMERCE" />
 
-        <a href="#container">
-            <button>
-                Scroll
-                {/* Scroll <CgMouse/> */}
-            </button>
-        </a>
-         </div>
-        <h2 className="homeHeading">
-            Featured Products
-        </h2>
-        <div className="container" id="container">
-            <Product product={product}/>
-            <Product product={product}/>
-            <Product product={product}/>
-            <Product product={product}/>
-            <Product product={product}/>
-            <Product product={product}/>
-            <Product product={product}/>
-            <Product product={product}/>
-            <Product product={product}/>
-            <Product product={product}/>
-            <Product product={product}/>
+          <div className="banner">
+            <p>Welcome to Ecommerce</p>
+            <h1>FIND AMAZING PRODUCTS BELOW</h1>
 
+            <a href="#container">
+              <button>
+                Scroll <CgMouse />
+              </button>
+            </a>
+          </div>
 
-        </div>
+          <h2 className="homeHeading">Featured Products</h2>
 
+          <div className="container" id="container">
+            {products &&
+              products.map((product) => (
+                <ProductCard key={product._id} product={product} />
+               ))} 
+          </div>
         </Fragment>
-    )
-}
+      )}
+    </Fragment>
+  );
+};
 
-export default Home
+export default Home;
