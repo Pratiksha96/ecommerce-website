@@ -3,7 +3,6 @@ package utils
 import (
 	models "ecommerce-website/app/models"
 	"encoding/json"
-	"fmt"
 	"log"
 	"net/http"
 	"net/mail"
@@ -45,39 +44,39 @@ func GetErrorWithStatus(err error, w http.ResponseWriter, statusCode int) {
 	w.Write(message)
 }
 
-func Validate(product models.Product) []error {
-	errors := []error{}
+func Validate(product models.Product) url.Values {
+	errors := url.Values{}
 
 	if product.Name == "" {
-		errors = append(errors, fmt.Errorf("Please enter product name!"))
+		errors.Add("Name", "Please enter product name!")
 	}
 
 	if product.Description == "" {
-		errors = append(errors, fmt.Errorf("Please enter product description!"))
+		errors.Add("Description", "Please enter product description!")
 	}
 
 	if product.Price == 0 {
-		errors = append(errors, fmt.Errorf("Please enter product price!"))
+		errors.Add("Price", "Please enter product price!")
 	}
 
 	if product.Price > 99999999 {
-		errors = append(errors, fmt.Errorf("Product price can not exceed length 8!"))
+		errors.Add("Prices", "Product price can not exceed length 8!")
 	}
 
 	if product.Ratings <= 0 {
-		errors = append(errors, fmt.Errorf("Product ratings can not be negative or empty!"))
+		errors.Add("Ratings", "Product ratings can not be negative or empty!")
 	}
 
 	if len(product.Images) == 0 {
-		errors = append(errors, fmt.Errorf("Product images can not be empty!"))
+		errors.Add("Images", "Product images can not be empty!")
 	}
 
 	if product.Category == "" {
-		errors = append(errors, fmt.Errorf("Product category can not be empty!"))
+		errors.Add("Category", "Product category can not be empty!")
 	}
 
 	if product.Stock == 0 {
-		errors = append(errors, fmt.Errorf("Please enter product stock!"))
+		errors.Add("Stock", "Please enter product stock!")
 	}
 
 	return errors

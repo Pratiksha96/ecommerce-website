@@ -35,3 +35,12 @@ func (m *MockProductManager) CreateProduct(product models.Product, role string, 
 	}
 	return args.Get(0).(*models.Product), nil
 }
+
+// GetAllProducts mocks base method.
+func (m *MockProductManager) GetAllProducts(email string) ([]primitive.M, error) {
+	args := m.Called(email)
+	if args.Error(1) != nil {
+		return nil, args.Error(1)
+	}
+	return args.Get(0).([]primitive.M), nil
+}

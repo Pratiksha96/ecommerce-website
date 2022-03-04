@@ -21,6 +21,7 @@ import (
 type ProductManager interface {
 	GetProduct(id primitive.ObjectID, email string) (*models.Product, error)
 	CreateProduct(product models.Product, role string, email string) (*models.Product, error)
+	GetAllProducts(email string) ([]primitive.M, error)
 }
 
 type productManager struct{}
@@ -55,11 +56,10 @@ func (pm *productManager) GetProduct(id primitive.ObjectID, email string) (*mode
 	return product, nil
 }
 
-func GetAllProducts(w http.ResponseWriter, email string) {
+func (pm *productManager) GetAllProducts(email string) ([]primitive.M, error) {
 	cur, err := database.Coll_product.Find(context.Background(), bson.D{{}})
 	if err != nil {
-		utils.GetError(err, w)
-		return
+		return nil, err
 	}
 
 	var results []primitive.M
@@ -67,24 +67,20 @@ func GetAllProducts(w http.ResponseWriter, email string) {
 		var result bson.M
 		e := cur.Decode(&result)
 		if e != nil {
-			utils.GetError(err, w)
-			return
+			return nil, err
 		}
 		results = append(results, result)
-
 	}
 
 	if err := cur.Err(); err != nil {
-		utils.GetError(err, w)
-		return
+		return nil, err
 	} else if len(results) == 0 {
-		utils.GetError(errors.New("product list is empty"), w)
-		return
+		return nil, errors.New("Product list is empty")
 	}
 
 	cur.Close(context.Background())
 	payload := results
-	json.NewEncoder(w).Encode(payload)
+	return payload, nil
 }
 
 func SearchProducts(w http.ResponseWriter, query url.Values, email string) {

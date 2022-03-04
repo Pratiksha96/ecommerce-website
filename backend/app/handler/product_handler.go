@@ -14,13 +14,18 @@ import (
 	"go.mongodb.org/mongo-driver/bson/primitive"
 )
 
-func GetAllProducts() http.HandlerFunc {
+func GetAllProducts(productManager manager.ProductManager) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		w.Header().Set("Context-Type", "application/x-www-form-urlencoded")
 		w.Header().Set("Access-Control-Allow-Origin", "*")
 		ctx := r.Context()
 		email := ctx.Value("email").(string)
-		manager.GetAllProducts(w, email)
+		payload, err := productManager.GetAllProducts(email)
+		if err != nil {
+			utils.GetErrorWithStatus(errors.New("invalid object id"), w, http.StatusUnprocessableEntity)
+			return
+		}
+		json.NewEncoder(w).Encode(payload)
 	}
 }
 
