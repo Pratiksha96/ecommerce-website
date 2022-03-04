@@ -1,7 +1,7 @@
 package handler
 
 import (
-	"ecommerce-website/app/middleware"
+	"ecommerce-website/app/manager"
 	models "ecommerce-website/app/models"
 	"ecommerce-website/app/utils"
 	"encoding/json"
@@ -26,7 +26,7 @@ func RegisterUser() http.HandlerFunc {
 			w.WriteHeader(http.StatusBadRequest)
 			json.NewEncoder(w).Encode(err)
 		} else {
-			middleware.RegisterUser(user, w)
+			manager.RegisterUser(user, w)
 		}
 	}
 }
@@ -47,7 +47,7 @@ func LoginUser() http.HandlerFunc {
 			w.WriteHeader(http.StatusBadRequest)
 			json.NewEncoder(w).Encode(err)
 		} else {
-			middleware.LoginUser(user, w)
+			manager.LoginUser(user, w)
 		}
 	}
 }
@@ -75,6 +75,6 @@ func LogoutUser() http.HandlerFunc {
 		}
 
 		tokenStr := cookieToken.Value
-		middleware.LogoutUser(tokenStr, w)
+		manager.LogoutUser(tokenStr, w)
 	}
 }

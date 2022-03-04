@@ -1,4 +1,4 @@
-package middleware
+package manager
 
 import (
 	"context"
@@ -18,33 +18,41 @@ import (
 	"strconv"
 )
 
-func CreateProduct(product models.Product, w http.ResponseWriter, role string, email string) {
-	if AuthorizeUser(w, role, email) {
-		insertedProduct, err := database.Coll_product.InsertOne(context.TODO(), product)
-
-		if err != nil {
-			utils.GetError(err, w)
-			return
-		}
-
-		log.Println("Product Inserted", insertedProduct.InsertedID)
-
-		json.NewEncoder(w).Encode(product)
-	}
+type ProductManager interface {
+	GetProduct(id primitive.ObjectID, email string) (*models.Product, error)
+	CreateProduct(product models.Product, role string, email string) (*models.Product, error)
 }
 
-func GetProduct(id primitive.ObjectID, w http.ResponseWriter, email string) {
+type productManager struct{}
 
-	var product models.Product
-	filter := bson.M{"_id": id}
-	err := database.Coll_product.FindOne(context.TODO(), filter).Decode(&product)
+func NewProductManager() ProductManager {
+	return &productManager{}
+}
 
+func (pm *productManager) CreateProduct(product models.Product, role string, email string) (*models.Product, error) {
+	err := authorizeUser(role, email)
 	if err != nil {
-		utils.GetError(err, w)
-		return
+		return nil, err
 	}
 
-	json.NewEncoder(w).Encode(product)
+	insertedProduct, err := database.Coll_product.InsertOne(context.TODO(), product)
+	if err != nil {
+		return nil, err
+	}
+
+	log.Println("Product Inserted", insertedProduct.InsertedID)
+	return &product, nil
+}
+
+func (pm *productManager) GetProduct(id primitive.ObjectID, email string) (*models.Product, error) {
+	product := &models.Product{}
+	filter := bson.M{"_id": id}
+	err := database.Coll_product.FindOne(context.TODO(), filter).Decode(product)
+	if err != nil {
+		return product, err
+	}
+
+	return product, nil
 }
 
 func GetAllProducts(w http.ResponseWriter, email string) {
@@ -231,54 +239,72 @@ func GetFilteredProducts(filter bson.D, w http.ResponseWriter, resultsPerPage in
 
 func UpdateProduct(id primitive.ObjectID, product models.Product, w http.ResponseWriter, role string, email string) {
 
-	if AuthorizeUser(w, role, email) {
-
-		filter := bson.M{"_id": id}
-
-		var oldProduct models.Product
-
-		// prepare update model.
-		update := bson.D{
-			{"$set", bson.D{
-				{"name", product.Name},
-				{"description", product.Description},
-				{"price", product.Price},
-				{"ratings", product.Ratings},
-				{"images", product.Images},
-				{"category", product.Category},
-				{"Stock", product.Stock},
-				{"reviews", product.Reviews},
-			}},
-		}
-
-		err := database.Coll_product.FindOneAndUpdate(context.TODO(), filter, update).Decode(&oldProduct)
-
-		if err != nil {
-			utils.GetError(err, w)
-			return
-		}
-
-		json.NewEncoder(w).Encode(product)
+	err := authorizeUser(role, email)
+	if err != nil {
+		return
 	}
+	filter := bson.M{"_id": id}
+
+	var oldProduct models.Product
+
+	// prepare update model.
+	update := bson.D{
+		{"$set", bson.D{
+			{"name", product.Name},
+			{"description", product.Description},
+			{"price", product.Price},
+			{"ratings", product.Ratings},
+			{"images", product.Images},
+			{"category", product.Category},
+			{"Stock", product.Stock},
+			{"reviews", product.Reviews},
+		}},
+	}
+
+	err = database.Coll_product.FindOneAndUpdate(context.TODO(), filter, update).Decode(&oldProduct)
+
+	if err != nil {
+		utils.GetError(err, w)
+		return
+	}
+
+	json.NewEncoder(w).Encode(product)
 }
 
 func DeleteProduct(id primitive.ObjectID, w http.ResponseWriter, role string, email string) {
 
-	if AuthorizeUser(w, role, email) {
-		filter := bson.M{"_id": id}
-
-		deleteResult, err := database.Coll_product.DeleteOne(context.TODO(), filter)
-
-		if err != nil {
-			utils.GetError(err, w)
-			return
-		} else if deleteResult.DeletedCount == 0 {
-			utils.GetError(errors.New("no such document present"), w)
-			return
-		}
-
-		deleteResponse := map[string]interface{}{"success": true, "message": "document has been successfully deleted"}
-		json.NewEncoder(w).Encode(deleteResponse)
+	err := authorizeUser(role, email)
+	if err != nil {
+		return
 	}
 
+	filter := bson.M{"_id": id}
+
+	deleteResult, err := database.Coll_product.DeleteOne(context.TODO(), filter)
+
+	if err != nil {
+		utils.GetError(err, w)
+		return
+	} else if deleteResult.DeletedCount == 0 {
+		utils.GetError(errors.New("no such document present"), w)
+		return
+	}
+
+	deleteResponse := map[string]interface{}{"success": true, "message": "document has been successfully deleted"}
+	json.NewEncoder(w).Encode(deleteResponse)
+}
+
+func authorizeUser(role string, email string) error {
+	var user models.User
+	userFilter := bson.M{"email": email}
+	userErr := database.Coll_user.FindOne(context.TODO(), userFilter).Decode(&user)
+
+	if userErr != nil {
+		return userErr
+	}
+
+	if role == "admin" && (role != user.Role) {
+		return errors.New("sorry, you don't have access to this resource")
+	}
+	return nil
 }
