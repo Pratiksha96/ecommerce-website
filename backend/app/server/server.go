@@ -18,7 +18,7 @@ func StartServer() {
 	productManager := manager.NewProductManager()
 
 	r.HandleFunc("/ping", handler.PingHandler())
-	r.HandleFunc("/product/get", middleware.AuthenticateUser(handler.GetAllProducts())).Methods("GET", "OPTIONS")
+	r.HandleFunc("/product/get", middleware.AuthenticateUser(handler.GetAllProducts(productManager))).Methods("GET", "OPTIONS")
 	r.HandleFunc("/product/search", middleware.AuthenticateUser(handler.SearchProducts())).Methods("GET", "OPTIONS")
 	r.HandleFunc("/product/add", middleware.AuthenticateUser(handler.CreateProduct(productManager))).Methods("POST", "OPTIONS")
 	r.HandleFunc("/product/update/{id}", middleware.AuthenticateUser(handler.UpdateProduct())).Methods("PUT", "OPTIONS")

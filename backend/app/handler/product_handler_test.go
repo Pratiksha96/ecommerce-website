@@ -15,6 +15,7 @@ import (
 	"github.com/gorilla/mux"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
+	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/bson/primitive"
 )
 
@@ -184,6 +185,79 @@ func Test_CreateProduct(t *testing.T) {
 		productManager.On("CreateProduct", *sampleProduct, "admin", sampleEmail).Return(sampleProduct, nil)
 
 		handler := CreateProduct(productManager)
+		handler.ServeHTTP(recorder, req)
+		assert.Equal(t, string(expectedResponse), string(recorder.Body.Bytes()))
+		assert.Equal(t, http.StatusOK, recorder.Code)
+	})
+}
+
+func Test_GetAllProducts(t *testing.T) {
+	t.Run("When no product exists, it should return error", func(t *testing.T) {
+		recorder := httptest.NewRecorder()
+		sampleEmail := "sample@email.com"
+
+		req, err := http.NewRequest("GET", "/product/get", nil)
+		require.NoError(t, err)
+
+		req = req.WithContext(context.WithValue(req.Context(), "email", sampleEmail))
+		productManager := mock.NewMockProductManager(t)
+
+		sampleErr := fmt.Errorf("invalid object id")
+		productManager.On("GetAllProducts", sampleEmail).Return(nil, sampleErr)
+		handler := GetAllProducts(productManager)
+		handler.ServeHTTP(recorder, req)
+		expectedResponse := utils.ErrorResponse{
+			ErrorMessage: sampleErr.Error(),
+			Success:      false,
+		}
+		expectedResponseBody, err := json.Marshal(expectedResponse)
+		require.NoError(t, err)
+		assert.Equal(t, string(expectedResponseBody), string(recorder.Body.Bytes()))
+		assert.Equal(t, http.StatusUnprocessableEntity, recorder.Code)
+	})
+
+	t.Run("When products exists, it should return all product successfully", func(t *testing.T) {
+		recorder := httptest.NewRecorder()
+		sampleEmail := "sample@email.com"
+		sampleProduct := &models.Product{
+			Name:        "sample",
+			Description: "sample",
+			Price:       700,
+			Ratings:     8,
+			Images: []*models.Image{
+				{
+					Public_id: "sampleid",
+					Url:       "sampleurl",
+				},
+			},
+			Category: "sample",
+			Stock:    10,
+			Reviews: []*models.Review{
+				{
+					Name:    "sample",
+					Rating:  6,
+					Comment: "sample",
+				},
+			},
+		}
+
+		requestBody, err := json.Marshal(sampleProduct)
+		require.NoError(t, err)
+		var val interface{}
+		err = bson.UnmarshalExtJSON(requestBody, true, &val)
+		require.NoError(t, err)
+		expectedResponse := append(requestBody, byte('\n'))
+
+		req, err := http.NewRequest("POST", "/product/add", strings.NewReader(string(requestBody)))
+		require.NoError(t, err)
+
+		req = req.WithContext(context.WithValue(req.Context(), "email", sampleEmail))
+
+		productManager := mock.NewMockProductManager(t)
+		handler := CreateProduct(productManager)
+		productManager.On("GetAllProducts", sampleEmail).Return(sampleProduct, nil)
+
+		handler = GetAllProducts(productManager)
 		handler.ServeHTTP(recorder, req)
 		assert.Equal(t, string(expectedResponse), string(recorder.Body.Bytes()))
 		assert.Equal(t, http.StatusOK, recorder.Code)
