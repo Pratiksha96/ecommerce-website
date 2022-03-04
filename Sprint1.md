@@ -63,7 +63,7 @@ pong
 This is only to check if server is running.
 
 ### GET /product/get
-Returns all users in the system.
+Returns all products in the system.
 ```
 URL Params
 None
@@ -77,10 +77,10 @@ Content:
 ```
 ```
 {
-  users: [
-           {<user_object>},
-           {<user_object>},
-           {<user_object>}
+  products: [
+           {<product_object>},
+           {<product_object>},
+           {<product_object>}
          ]
 }
 ``` 
@@ -305,6 +305,5 @@ Redux store in setup to store the data fetched from the backend at a single plac
 - Verify server is running by running this - localhost:3000 - it should display the home pages 
 
 ## Note
-- On Feb 4, we squashed many commits due to which some of our commits lost their history. User stories closing date will give an idea of our actual commit history.
-- Due to git email config issue faced earlier, some commits are shown in two different commit history bar graphs.
+- On March 4, we squashed many commits of frontend due to which some of our commits lost their history.
 
