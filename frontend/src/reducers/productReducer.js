@@ -45,10 +45,10 @@ export const productsReducer = (state = { products: [] }, action) => {
     case ALL_PRODUCT_SUCCESS:
       return {
         loading: false,
-        products: action.payload,
-        productsCount: action.payload.productsCount,
-        resultPerPage: action.payload.resultsPerPage,
-        filteredProductsCount: action.payload.filteredProductsCount,
+        products: action.payload.payload,
+        productsCount: action.payload.totalProducts,
+        resultPerPage: 8,
+        filteredProductsCount: action.payload.payload.length,
       };
 
     case ADMIN_PRODUCT_SUCCESS:
