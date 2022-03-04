@@ -6,10 +6,10 @@ import (
 	"ecommerce-website/app/utils"
 	"ecommerce-website/internal/database"
 	"encoding/json"
+	"log"
 
 	"golang.org/x/crypto/bcrypt"
 
-	"fmt"
 	"net/http"
 
 	"errors"
@@ -25,8 +25,8 @@ func RegisterUser(user models.User, w http.ResponseWriter) {
 		panic(err)
 	}
 	user.Password = string(hashedPassword)
-	registeredUser, err := database.Coll_user.InsertOne(context.TODO(), user)
 
+	registeredUser, err := database.Coll_user.InsertOne(context.TODO(), user)
 	if err != nil {
 		utils.GetError(err, w)
 		return
@@ -37,7 +37,7 @@ func RegisterUser(user models.User, w http.ResponseWriter) {
 		utils.GetError(err, w)
 		return
 	}
-	fmt.Println("User registered successfully with id: ", user.Email, registeredUser.InsertedID)
+	log.Println("User registered successfully with id: ", user.Email, registeredUser.InsertedID)
 	utils.StoreUserToken(token, w)
 	tokenResponse := map[string]interface{}{"success": true, "token": token}
 	json.NewEncoder(w).Encode(tokenResponse)
@@ -66,7 +66,7 @@ func LoginUser(user models.User, w http.ResponseWriter) {
 		return
 	}
 
-	fmt.Println("User logged in successfully: ", user.Email)
+	log.Println("User logged in successfully!")
 	utils.StoreUserToken(token, w)
 
 	tokenResponse := map[string]interface{}{"success": true, "token": token}

@@ -1,12 +1,12 @@
 package server
 
 import (
-	"fmt"
 	"log"
 	"net/http"
 	"time"
 
 	"ecommerce-website/app/handler"
+	"ecommerce-website/app/middleware"
 
 	"github.com/gorilla/mux"
 )
@@ -15,16 +15,16 @@ func StartServer() {
 	r := mux.NewRouter()
 
 	r.HandleFunc("/ping", handler.PingHandler())
-	r.HandleFunc("/product/get", handler.GetAllProducts).Methods("GET", "OPTIONS")
-	r.HandleFunc("/product/search", handler.SearchProducts).Methods("GET", "OPTIONS")
-	r.HandleFunc("/product/add", handler.CreateProduct).Methods("POST", "OPTIONS")
-	r.HandleFunc("/product/update/{id}", handler.UpdateProduct).Methods("PUT", "OPTIONS")
-	r.HandleFunc("/product/delete/{id}", handler.DeleteProduct).Methods("DELETE", "OPTIONS")
-	r.HandleFunc("/product/get/{id}", handler.GetProduct).Methods("GET", "OPTIONS")
+	r.HandleFunc("/product/get", middleware.AuthenticateUser(handler.GetAllProducts())).Methods("GET", "OPTIONS")
+	r.HandleFunc("/product/search", middleware.AuthenticateUser(handler.SearchProducts())).Methods("GET", "OPTIONS")
+	r.HandleFunc("/product/add", middleware.AuthenticateUser(handler.CreateProduct())).Methods("POST", "OPTIONS")
+	r.HandleFunc("/product/update/{id}", middleware.AuthenticateUser(handler.UpdateProduct())).Methods("PUT", "OPTIONS")
+	r.HandleFunc("/product/delete/{id}", middleware.AuthenticateUser(handler.DeleteProduct())).Methods("DELETE", "OPTIONS")
+	r.HandleFunc("/product/get/{id}", middleware.AuthenticateUser(handler.GetProduct())).Methods("GET", "OPTIONS")
 
-	r.HandleFunc("/register", handler.RegisterUser).Methods("POST", "OPTIONS")
-	r.HandleFunc("/login", handler.LoginUser).Methods("POST", "OPTIONS")
-	r.HandleFunc("/logout", handler.LogoutUser).Methods("POST", "OPTIONS")
+	r.HandleFunc("/register", handler.RegisterUser()).Methods("POST", "OPTIONS")
+	r.HandleFunc("/login", handler.LoginUser()).Methods("POST", "OPTIONS")
+	r.HandleFunc("/logout", handler.LogoutUser()).Methods("POST", "OPTIONS")
 
 	srv := &http.Server{
 		Handler:      r,
@@ -32,6 +32,6 @@ func StartServer() {
 		WriteTimeout: 15 * time.Second,
 		ReadTimeout:  15 * time.Second,
 	}
-	fmt.Println("Starting server...")
+	log.Println("Starting server...")
 	log.Fatal(srv.ListenAndServe())
 }

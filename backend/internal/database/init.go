@@ -2,7 +2,7 @@ package database
 
 import (
 	"context"
-	"fmt"
+	"log"
 	"time"
 
 	"go.mongodb.org/mongo-driver/bson"
@@ -41,9 +41,9 @@ func InitDB() {
 	)
 
 	if err != nil {
-		fmt.Println(err)
+		log.Println(err)
 		return
 	}
-	fmt.Println("Email Index created in user collection: ", indexName)
-	fmt.Println("Connection Established with database")
+	log.Println("Email Index created in user collection: ", indexName)
+	log.Println("Connection Established with database")
 }
