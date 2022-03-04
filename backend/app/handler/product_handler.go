@@ -53,6 +53,7 @@ func CreateProduct(productManager manager.ProductManager) http.HandlerFunc {
 		if errors := utils.Validate(product); len(errors) > 0 {
 			log.Println("Received invalid json request!")
 			err := map[string]interface{}{"success": false, "message": errors}
+
 			w.WriteHeader(http.StatusBadRequest)
 			json.NewEncoder(w).Encode(err)
 			return
