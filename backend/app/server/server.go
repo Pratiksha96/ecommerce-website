@@ -22,7 +22,7 @@ func StartServer() {
 	r.HandleFunc("/product/search", middleware.AuthenticateUser(handler.SearchProducts())).Methods("GET", "OPTIONS")
 	r.HandleFunc("/product/add", middleware.AuthenticateUser(handler.CreateProduct(productManager))).Methods("POST", "OPTIONS")
 	r.HandleFunc("/product/update/{id}", middleware.AuthenticateUser(handler.UpdateProduct(productManager))).Methods("PUT", "OPTIONS")
-	r.HandleFunc("/product/delete/{id}", middleware.AuthenticateUser(handler.DeleteProduct())).Methods("DELETE", "OPTIONS")
+	r.HandleFunc("/product/delete/{id}", middleware.AuthenticateUser(handler.DeleteProduct(productManager))).Methods("DELETE", "OPTIONS")
 	r.HandleFunc("/product/get/{id}", middleware.AuthenticateUser(handler.GetProduct(productManager))).Methods("GET", "OPTIONS")
 
 	r.HandleFunc("/register", handler.RegisterUser()).Methods("POST", "OPTIONS")

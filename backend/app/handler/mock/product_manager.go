@@ -53,3 +53,12 @@ func (m *MockProductManager) UpdateProduct(id primitive.ObjectID, product models
 	}
 	return args.Get(0).(*models.Product), nil
 }
+
+// DeleteProduct mocks base method.
+func (m *MockProductManager) DeleteProduct(id primitive.ObjectID, role string, email string) (map[string]interface{}, error) {
+	args := m.Called(id, role, email)
+	if args.Error(1) != nil {
+		return nil, args.Error(1)
+	}
+	return args.Get(0).(map[string]interface{}), nil
+}

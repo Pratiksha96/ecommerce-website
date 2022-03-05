@@ -99,24 +99,24 @@ func UpdateProduct(productManager manager.ProductManager) http.HandlerFunc {
 	}
 }
 
-func DeleteProduct() http.HandlerFunc {
+func DeleteProduct(productManager manager.ProductManager) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		w.Header().Set("Content-Type", "application/json")
 
 		var params = mux.Vars(r)
-		if params["id"] == "" {
-			utils.GetError(errors.New("input id for delete is invalid"), w)
-			return
-		}
-
 		id, err := primitive.ObjectIDFromHex(params["id"])
-		if err != nil {
-			utils.GetError(errors.New("invalid object id"), w)
+		if err != nil || params["id"] == "" {
+			utils.GetErrorWithStatus(errors.New("invalid object id"), w, http.StatusUnprocessableEntity)
 			return
 		}
 		ctx := r.Context()
 		email := ctx.Value("email").(string)
-		manager.DeleteProduct(id, w, "admin", email)
+		deleteResponse, err := productManager.DeleteProduct(id, "admin", email)
+		if err != nil {
+			utils.GetError(err, w)
+			return
+		}
+		json.NewEncoder(w).Encode(deleteResponse)
 	}
 }
 
