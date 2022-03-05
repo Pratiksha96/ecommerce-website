@@ -216,7 +216,7 @@ func Test_GetAllProducts(t *testing.T) {
 		assert.Equal(t, http.StatusUnprocessableEntity, recorder.Code)
 	})
 
-	t.Run("When products exists, it should return all product successfully", func(t *testing.T) {
+	t.Run("When products exists, it should return all products successfully", func(t *testing.T) {
 		recorder := httptest.NewRecorder()
 		sampleEmail := "sample@email.com"
 		sampleProduct := &models.Product{
@@ -384,6 +384,124 @@ func Test_UpdateProduct(t *testing.T) {
 		handler := UpdateProduct(productManager)
 		handler.ServeHTTP(recorder, req)
 		assert.Equal(t, string(expectedResponse), string(recorder.Body.Bytes()))
+		assert.Equal(t, http.StatusOK, recorder.Code)
+	})
+}
+
+func Test_DeleteProduct(t *testing.T) {
+	t.Run("When product is nil, it should return error", func(t *testing.T) {
+		sampleEmail := "sample@email.com"
+		recorder := httptest.NewRecorder()
+
+		req, err := http.NewRequest("POST", "/product/delete", strings.NewReader("{}"))
+		require.NoError(t, err)
+
+		req = req.WithContext(context.WithValue(req.Context(), "email", sampleEmail))
+
+		productManager := mock.NewMockProductManager(t)
+		handler := DeleteProduct(productManager)
+		handler.ServeHTTP(recorder, req)
+		assert.Equal(t, http.StatusUnprocessableEntity, recorder.Code)
+	})
+
+	t.Run("When unable to delete product, it should return error", func(t *testing.T) {
+		recorder := httptest.NewRecorder()
+		sampleId := primitive.NewObjectID()
+		sampleEmail := "sample@email.com"
+		sampleErr := fmt.Errorf("some error")
+		expectedResponse := utils.ErrorResponse{
+			ErrorMessage: sampleErr.Error(),
+			Success:      false,
+		}
+		expectedResponseBody, err := json.Marshal(expectedResponse)
+		require.NoError(t, err)
+
+		sampleProduct := &models.Product{
+			Name:        "sample",
+			Description: "sample",
+			Price:       700,
+			Ratings:     8,
+			Images: []*models.Image{
+				{
+					Public_id: "sampleid",
+					Url:       "sampleurl",
+				},
+			},
+			Category: "sample",
+			Stock:    10,
+			Reviews: []*models.Review{
+				{
+					Name:    "sample",
+					Rating:  6,
+					Comment: "sample",
+				},
+			},
+		}
+		requestBody, err := json.Marshal(sampleProduct)
+		require.NoError(t, err)
+
+		vars := map[string]string{
+			"id": sampleId.Hex(),
+		}
+
+		req, err := http.NewRequest("POST", "/product/add", strings.NewReader(string(requestBody)))
+		require.NoError(t, err)
+
+		req = mux.SetURLVars(req, vars)
+		req = req.WithContext(context.WithValue(req.Context(), "email", sampleEmail))
+
+		productManager := mock.NewMockProductManager(t)
+		productManager.On("DeleteProduct", sampleId, "admin", sampleEmail).Return(nil, sampleErr)
+		handler := DeleteProduct(productManager)
+		handler.ServeHTTP(recorder, req)
+
+		assert.Equal(t, expectedResponseBody, recorder.Body.Bytes())
+		assert.Equal(t, http.StatusInternalServerError, recorder.Code)
+	})
+
+	t.Run("When product is deleted, it should return delete response successfully", func(t *testing.T) {
+		recorder := httptest.NewRecorder()
+		sampleId := primitive.NewObjectID()
+		sampleEmail := "sample@email.com"
+		sampleProduct := &models.Product{
+			Name:        "sample",
+			Description: "sample",
+			Price:       700,
+			Ratings:     8,
+			Images: []*models.Image{
+				{
+					Public_id: "sampleid",
+					Url:       "sampleurl",
+				},
+			},
+			Category: "sample",
+			Stock:    10,
+			Reviews: []*models.Review{
+				{
+					Name:    "sample",
+					Rating:  6,
+					Comment: "sample",
+				},
+			},
+		}
+		requestBody, err := json.Marshal(sampleProduct)
+		require.NoError(t, err)
+		expectedResponse := map[string]interface{}{"success": true, "message": "document has been successfully deleted"}
+		vars := map[string]string{
+			"id": sampleId.Hex(),
+		}
+
+		req, err := http.NewRequest("POST", "/product/add", strings.NewReader(string(requestBody)))
+		require.NoError(t, err)
+
+		req = mux.SetURLVars(req, vars)
+		req = req.WithContext(context.WithValue(req.Context(), "email", sampleEmail))
+
+		productManager := mock.NewMockProductManager(t)
+		productManager.On("DeleteProduct", sampleId, "admin", sampleEmail).Return(expectedResponse, nil)
+		handler := DeleteProduct(productManager)
+		handler.ServeHTTP(recorder, req)
+		assert.Equal(t, expectedResponse, string(recorder.Body.Bytes()))
 		assert.Equal(t, http.StatusOK, recorder.Code)
 	})
 }

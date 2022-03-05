@@ -23,6 +23,7 @@ type ProductManager interface {
 	CreateProduct(product models.Product, role string, email string) (*models.Product, error)
 	GetAllProducts(email string) ([]primitive.M, error)
 	UpdateProduct(id primitive.ObjectID, product models.Product, role string, email string) (*models.Product, error)
+	DeleteProduct(id primitive.ObjectID, role string, email string) (map[string]interface{}, error)
 }
 
 type productManager struct{}
@@ -266,27 +267,23 @@ func (pm *productManager) UpdateProduct(id primitive.ObjectID, product models.Pr
 	return &product, nil
 }
 
-func DeleteProduct(id primitive.ObjectID, w http.ResponseWriter, role string, email string) {
-
+func (pm *productManager) DeleteProduct(id primitive.ObjectID, role string, email string) (map[string]interface{}, error) {
 	err := authorizeUser(role, email)
 	if err != nil {
-		return
+		return nil, err
 	}
 
 	filter := bson.M{"_id": id}
-
 	deleteResult, err := database.Coll_product.DeleteOne(context.TODO(), filter)
 
 	if err != nil {
-		utils.GetError(err, w)
-		return
+		return nil, err
 	} else if deleteResult.DeletedCount == 0 {
-		utils.GetError(errors.New("no such document present"), w)
-		return
+		return nil, errors.New("no such document present")
 	}
 
 	deleteResponse := map[string]interface{}{"success": true, "message": "document has been successfully deleted"}
-	json.NewEncoder(w).Encode(deleteResponse)
+	return deleteResponse, nil
 }
 
 func authorizeUser(role string, email string) error {
