@@ -6,7 +6,7 @@ import (
 	"ecommerce-website/app/models"
 	"ecommerce-website/app/utils"
 	"encoding/json"
-	"fmt"
+	"errors"
 	"net/http"
 	"net/http/httptest"
 	"strings"
@@ -43,7 +43,7 @@ func Test_GetProduct(t *testing.T) {
 		req = req.WithContext(context.WithValue(req.Context(), "email", sampleEmail))
 
 		productManager := mock.NewMockProductManager(t)
-		sampleErr := fmt.Errorf("some error")
+		sampleErr := errors.New("some error")
 		productManager.On("GetProduct", sampleId, sampleEmail).Return(nil, sampleErr)
 		handler := GetProduct(productManager)
 		handler.ServeHTTP(recorder, req)
@@ -102,7 +102,7 @@ func Test_CreateProduct(t *testing.T) {
 	t.Run("When unable to create product, it should return error", func(t *testing.T) {
 		recorder := httptest.NewRecorder()
 		sampleEmail := "sample@email.com"
-		sampleErr := fmt.Errorf("some error")
+		sampleErr := errors.New("some error")
 		expectedResponse := utils.ErrorResponse{
 			ErrorMessage: sampleErr.Error(),
 			Success:      false,
@@ -202,7 +202,7 @@ func Test_GetAllProducts(t *testing.T) {
 		req = req.WithContext(context.WithValue(req.Context(), "email", sampleEmail))
 		productManager := mock.NewMockProductManager(t)
 
-		sampleErr := fmt.Errorf("invalid object id")
+		sampleErr := errors.New("invalid object id")
 		productManager.On("GetAllProducts", sampleEmail).Return(nil, sampleErr)
 		handler := GetAllProducts(productManager)
 		handler.ServeHTTP(recorder, req)
@@ -289,7 +289,7 @@ func Test_UpdateProduct(t *testing.T) {
 		recorder := httptest.NewRecorder()
 		sampleId := primitive.NewObjectID()
 		sampleEmail := "sample@email.com"
-		sampleErr := fmt.Errorf("some error")
+		sampleErr := errors.New("some error")
 		expectedResponse := utils.ErrorResponse{
 			ErrorMessage: sampleErr.Error(),
 			Success:      false,
@@ -408,7 +408,7 @@ func Test_DeleteProduct(t *testing.T) {
 		recorder := httptest.NewRecorder()
 		sampleId := primitive.NewObjectID()
 		sampleEmail := "sample@email.com"
-		sampleErr := fmt.Errorf("some error")
+		sampleErr := errors.New("some error")
 		expectedResponse := utils.ErrorResponse{
 			ErrorMessage: sampleErr.Error(),
 			Success:      false,
