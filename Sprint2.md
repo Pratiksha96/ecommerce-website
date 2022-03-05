@@ -63,15 +63,17 @@ We are using http request for operations. The exposed endpoints are -
 /logout
 ```
 
-### GET /product/search
+### GET /product/search?
 Returns filtered products in the system based on product name, category, minimum and maximum product prices, page numbers
+Sample: http://localhost:8081/product/search?keyword=Green&priceMax=4
 ```
 URL Params
-None
+keyword, category, priceMin, priceMax, page
 Data Params
 None
 Headers
 Content-Type: application/json
+
 Success Response:
 Code: 200
 Content:
@@ -242,14 +244,23 @@ Content:
 ``` 
 
 ### POST /register
-Returns User token.
+Returns User token and status.
 ```
 URL Params
 None
 Data Params
-None
+{
+    "name" : "Test2",
+	"email" : "test2@gmail.com",
+	"password"  : "testUser1",
+    "avatar" :{
+        "public_id" : "id2",
+        "url" : "url2"
+    }
+}
 Headers
 Content-Type: application/json
+
 Success Response:
 Code: 200
 Content:
@@ -262,14 +273,18 @@ Content:
 ``` 
 
 ### POST /login
-Returns User token.
+Returns User token and status.
 ```
 URL Params
 None
 Data Params
-None
+{
+	"email" : "test2@gmail.com",
+    "password"  : "testUser1"
+}
 Headers
 Content-Type: application/json
+
 Success Response:
 Code: 200
 Content:
@@ -282,14 +297,18 @@ Content:
 ``` 
 
 ### POST /logout
-Returns User token.
+Removes User token and cleans cookie.
 ```
 URL Params
 None
 Data Params
-None
+{
+	"email" : "test2@gmail.com",
+    "password"  : "testUser1"
+}
 Headers
 Content-Type: application/json
+
 Success Response:
 Code: 200
 Content:
