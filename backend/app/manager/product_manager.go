@@ -22,6 +22,7 @@ type ProductManager interface {
 	GetProduct(id primitive.ObjectID, email string) (*models.Product, error)
 	CreateProduct(product models.Product, role string, email string) (*models.Product, error)
 	GetAllProducts(email string) ([]primitive.M, error)
+	UpdateProduct(id primitive.ObjectID, product models.Product, role string, email string) (*models.Product, error)
 }
 
 type productManager struct{}
@@ -233,11 +234,11 @@ func GetFilteredProducts(filter bson.D, w http.ResponseWriter, resultsPerPage in
 	json.NewEncoder(w).Encode(payload)
 }
 
-func UpdateProduct(id primitive.ObjectID, product models.Product, w http.ResponseWriter, role string, email string) {
+func (pm *productManager) UpdateProduct(id primitive.ObjectID, product models.Product, role string, email string) (*models.Product, error) {
 
 	err := authorizeUser(role, email)
 	if err != nil {
-		return
+		return nil, err
 	}
 	filter := bson.M{"_id": id}
 
@@ -260,11 +261,9 @@ func UpdateProduct(id primitive.ObjectID, product models.Product, w http.Respons
 	err = database.Coll_product.FindOneAndUpdate(context.TODO(), filter, update).Decode(&oldProduct)
 
 	if err != nil {
-		utils.GetError(err, w)
-		return
+		return nil, err
 	}
-
-	json.NewEncoder(w).Encode(product)
+	return &product, nil
 }
 
 func DeleteProduct(id primitive.ObjectID, w http.ResponseWriter, role string, email string) {

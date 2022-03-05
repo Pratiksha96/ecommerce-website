@@ -3,6 +3,7 @@ package handler
 import (
 	"encoding/json"
 	"errors"
+	"fmt"
 	"net/http"
 
 	"ecommerce-website/app/manager"
@@ -60,6 +61,7 @@ func CreateProduct(productManager manager.ProductManager) http.HandlerFunc {
 		}
 		ctx := r.Context()
 		email := ctx.Value("email").(string)
+		fmt.Println("Creating product")
 		response, err := productManager.CreateProduct(product, "admin", email)
 		if err != nil {
 			utils.GetError(err, w)
@@ -69,7 +71,7 @@ func CreateProduct(productManager manager.ProductManager) http.HandlerFunc {
 	}
 }
 
-func UpdateProduct() http.HandlerFunc {
+func UpdateProduct(productManager manager.ProductManager) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		w.Header().Set("Content-Type", "application/json")
 
@@ -87,7 +89,12 @@ func UpdateProduct() http.HandlerFunc {
 		} else {
 			ctx := r.Context()
 			email := ctx.Value("email").(string)
-			manager.UpdateProduct(id, product, w, "admin", email)
+			product, err := productManager.UpdateProduct(id, product, "admin", email)
+			if err != nil {
+				utils.GetError(err, w)
+				return
+			}
+			json.NewEncoder(w).Encode(product)
 		}
 	}
 }
