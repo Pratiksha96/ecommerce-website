@@ -3,7 +3,6 @@ package handler
 import (
 	"encoding/json"
 	"errors"
-	"fmt"
 	"net/http"
 
 	"ecommerce-website/app/manager"
@@ -54,14 +53,12 @@ func CreateProduct(productManager manager.ProductManager) http.HandlerFunc {
 		if errors := utils.Validate(product); len(errors) > 0 {
 			log.Println("Received invalid json request!")
 			err := map[string]interface{}{"success": false, "message": errors}
-
 			w.WriteHeader(http.StatusBadRequest)
 			json.NewEncoder(w).Encode(err)
 			return
 		}
 		ctx := r.Context()
 		email := ctx.Value("email").(string)
-		fmt.Println("Creating product")
 		response, err := productManager.CreateProduct(product, "admin", email)
 		if err != nil {
 			utils.GetError(err, w)

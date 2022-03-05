@@ -3,3 +3,9 @@ build:
 
 run: build
 	brew services start mongodb-community && go run main.go start-server
+
+test: test
+	go test ./app/handler
+
+lint: lint
+	golangci-lint run
