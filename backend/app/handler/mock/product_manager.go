@@ -44,3 +44,12 @@ func (m *MockProductManager) GetAllProducts(email string) ([]primitive.M, error)
 	}
 	return args.Get(0).([]primitive.M), nil
 }
+
+// UpdateProduct mocks base method.
+func (m *MockProductManager) UpdateProduct(id primitive.ObjectID, product models.Product, role string, email string) (*models.Product, error) {
+	args := m.Called(id, product, role, email)
+	if args.Error(1) != nil {
+		return nil, args.Error(1)
+	}
+	return args.Get(0).(*models.Product), nil
+}
