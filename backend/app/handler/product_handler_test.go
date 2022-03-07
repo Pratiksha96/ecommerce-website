@@ -248,6 +248,9 @@ func Test_GetAllProducts(t *testing.T) {
 		require.NoError(t, err)
 		var reqBody []primitive.M
 		reqBody = append(reqBody, doc.Map())
+		expectedResponse, err := json.Marshal(reqBody)
+		require.NoError(t, err)
+		expectedResponse = append(expectedResponse, byte('\n'))
 
 		req, err := http.NewRequest("POST", "/product/add", strings.NewReader(string(bsonReq)))
 		require.NoError(t, err)
@@ -259,7 +262,7 @@ func Test_GetAllProducts(t *testing.T) {
 
 		handler := GetAllProducts(productManager)
 		handler.ServeHTTP(recorder, req)
-		assert.Equal(t, reqBody, string(recorder.Body.Bytes()))
+		assert.Equal(t, string(expectedResponse), string(recorder.Body.Bytes()))
 		assert.Equal(t, http.StatusOK, recorder.Code)
 	})
 }
@@ -486,7 +489,10 @@ func Test_DeleteProduct(t *testing.T) {
 		}
 		requestBody, err := json.Marshal(sampleProduct)
 		require.NoError(t, err)
-		expectedResponse := map[string]interface{}{"success": true, "message": "document has been successfully deleted"}
+		reqBody := map[string]interface{}{"success": true, "message": "document has been successfully deleted"}
+		expectedResponse, err := json.Marshal(reqBody)
+		require.NoError(t, err)
+		expectedResponse = append(expectedResponse, byte('\n'))
 		vars := map[string]string{
 			"id": sampleId.Hex(),
 		}
@@ -498,10 +504,10 @@ func Test_DeleteProduct(t *testing.T) {
 		req = req.WithContext(context.WithValue(req.Context(), "email", sampleEmail))
 
 		productManager := mock.NewMockProductManager(t)
-		productManager.On("DeleteProduct", sampleId, "admin", sampleEmail).Return(expectedResponse, nil)
+		productManager.On("DeleteProduct", sampleId, "admin", sampleEmail).Return(reqBody, nil)
 		handler := DeleteProduct(productManager)
 		handler.ServeHTTP(recorder, req)
-		assert.Equal(t, expectedResponse, string(recorder.Body.Bytes()))
+		assert.Equal(t, string(expectedResponse), string(recorder.Body.Bytes()))
 		assert.Equal(t, http.StatusOK, recorder.Code)
 	})
 }
