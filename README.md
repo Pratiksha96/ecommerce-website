@@ -5,6 +5,9 @@ In this project we aim to develop an e-commerce store where general purpose item
 # Team Members
 Aashish Dhalla, Pranav Seth, Pratiksha Jain, Swati Bansal
 
+Front End Members: Aashish Dhalla, Pratiksha Jain
+Back End Memebers: Pranav Seth, Swati Bansal
+
 # Tech stack
 An ecommerce website written in Go and React.
 We plan to use NoSQL database for this application. 
