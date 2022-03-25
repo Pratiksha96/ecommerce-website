@@ -1,7 +1,9 @@
 package mock
 
 import (
+	"ecommerce-website/app/manager"
 	models "ecommerce-website/app/models"
+	"net/url"
 	"testing"
 
 	"github.com/stretchr/testify/mock"
@@ -61,4 +63,13 @@ func (m *MockProductManager) DeleteProduct(id primitive.ObjectID, role string, e
 		return nil, args.Error(1)
 	}
 	return args.Get(0).(map[string]interface{}), nil
+}
+
+// SearchProducts mocks base method.
+func (m *MockProductManager) SearchProducts(query url.Values) (manager.SearchResponse, error) {
+	args := m.Called(query)
+	if args.Error(1) != nil {
+		return manager.SearchResponse{}, args.Error(1)
+	}
+	return args.Get(0).(manager.SearchResponse), nil
 }

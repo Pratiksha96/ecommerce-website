@@ -19,7 +19,7 @@ func StartServer() {
 
 	r.HandleFunc("/ping", handler.PingHandler())
 	r.HandleFunc("/product/get", handler.GetAllProducts(productManager)).Methods("GET", "OPTIONS")
-	r.HandleFunc("/product/search", handler.SearchProducts()).Methods("GET", "OPTIONS")
+	r.HandleFunc("/product/search", handler.SearchProducts(productManager)).Methods("GET", "OPTIONS")
 	r.HandleFunc("/product/add", middleware.AuthenticateUser(handler.CreateProduct(productManager))).Methods("POST", "OPTIONS")
 	r.HandleFunc("/product/update/{id}", middleware.AuthenticateUser(handler.UpdateProduct(productManager))).Methods("PUT", "OPTIONS")
 	r.HandleFunc("/product/delete/{id}", middleware.AuthenticateUser(handler.DeleteProduct(productManager))).Methods("DELETE", "OPTIONS")
