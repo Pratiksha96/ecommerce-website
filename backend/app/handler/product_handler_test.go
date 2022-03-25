@@ -3,6 +3,7 @@ package handler
 import (
 	"context"
 	"ecommerce-website/app/handler/mock"
+	"ecommerce-website/app/manager"
 	"ecommerce-website/app/models"
 	"ecommerce-website/app/utils"
 	"encoding/json"
@@ -509,5 +510,99 @@ func Test_DeleteProduct(t *testing.T) {
 		handler.ServeHTTP(recorder, req)
 		assert.Equal(t, string(expectedResponse), string(recorder.Body.Bytes()))
 		assert.Equal(t, http.StatusOK, recorder.Code)
+	})
+}
+
+func Test_SearchProducts(t *testing.T) {
+	t.Run("When search manager returns error, it should return error", func(t *testing.T) {
+		recorder := httptest.NewRecorder()
+
+		req, err := http.NewRequest("GET", "/product/search", nil)
+		require.NoError(t, err)
+
+		q := req.URL.Query()
+
+		q.Add("keyword", "hello")
+		q.Add("priceMax", "700")
+		q.Add("page", "1")
+
+		req.URL.RawQuery = q.Encode()
+
+		productManager := mock.NewMockProductManager(t)
+
+		sampleErr := errors.New("invalid object id")
+		productManager.On("SearchProducts", q).Return(manager.SearchResponse{}, sampleErr)
+		handler := SearchProducts(productManager)
+		handler.ServeHTTP(recorder, req)
+		expectedResponse := utils.ErrorResponse{
+			ErrorMessage: sampleErr.Error(),
+			Success:      false,
+		}
+		expectedResponseBody, err := json.Marshal(expectedResponse)
+		require.NoError(t, err)
+		assert.Equal(t, string(expectedResponseBody), string(recorder.Body.Bytes()))
+		assert.Equal(t, http.StatusInternalServerError, recorder.Code)
+	})
+
+	t.Run("When search results exists, it should return searched products successfully", func(t *testing.T) {
+
+		recorder := httptest.NewRecorder()
+		sampleProduct := &models.Product{
+			Name:        "sample",
+			Description: "sample",
+			Price:       700,
+			Ratings:     8,
+			Images: []*models.Image{
+				{
+					Public_id: "sampleid",
+					Url:       "sampleurl",
+				},
+			},
+			Category: "sample",
+			Stock:    10,
+			Reviews: []*models.Review{
+				{
+					Name:    "sample",
+					Rating:  6,
+					Comment: "sample",
+				},
+			},
+		}
+
+		var doc *bson.D
+		bsonReq, err := bson.Marshal(sampleProduct)
+		require.NoError(t, err)
+		err = bson.Unmarshal(bsonReq, &doc)
+		require.NoError(t, err)
+		var searchResult []primitive.M
+		searchResult = append(searchResult, doc.Map())
+
+		response := manager.SearchResponse{
+			Results:       searchResult,
+			TotalProducts: 1,
+		}
+		expectedResponse, err := json.Marshal(response)
+		require.NoError(t, err)
+		expectedResponse = append(expectedResponse, byte('\n'))
+
+		req, err := http.NewRequest("GET", "/product/search", nil)
+		require.NoError(t, err)
+
+		q := req.URL.Query()
+
+		q.Add("keyword", "hello")
+		q.Add("priceMax", "700")
+		q.Add("page", "1")
+
+		req.URL.RawQuery = q.Encode()
+
+		productManager := mock.NewMockProductManager(t)
+		productManager.On("SearchProducts", q).Return(response, nil)
+
+		handler := SearchProducts(productManager)
+		handler.ServeHTTP(recorder, req)
+		assert.Equal(t, string(expectedResponse), string(recorder.Body.Bytes()))
+		assert.Equal(t, http.StatusOK, recorder.Code)
+
 	})
 }
