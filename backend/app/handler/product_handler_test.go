@@ -203,7 +203,7 @@ func Test_GetAllProducts(t *testing.T) {
 		productManager := mock.NewMockProductManager(t)
 
 		sampleErr := errors.New("invalid object id")
-		productManager.On("GetAllProducts", sampleEmail).Return(nil, sampleErr)
+		productManager.On("GetAllProducts").Return(nil, sampleErr)
 		handler := GetAllProducts(productManager)
 		handler.ServeHTTP(recorder, req)
 		expectedResponse := utils.ErrorResponse{
@@ -258,7 +258,7 @@ func Test_GetAllProducts(t *testing.T) {
 		req = req.WithContext(context.WithValue(req.Context(), "email", sampleEmail))
 
 		productManager := mock.NewMockProductManager(t)
-		productManager.On("GetAllProducts", sampleEmail).Return(reqBody, nil)
+		productManager.On("GetAllProducts").Return(reqBody, nil)
 
 		handler := GetAllProducts(productManager)
 		handler.ServeHTTP(recorder, req)

@@ -2,8 +2,9 @@ package database
 
 import (
 	"context"
-	"log"
 	"time"
+
+	log "github.com/sirupsen/logrus"
 
 	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/mongo"
@@ -44,6 +45,7 @@ func InitDB() {
 		log.Println(err)
 		return
 	}
-	log.Println("Email Index created in user collection: ", indexName)
-	log.Println("Connection Established with database")
+
+	log.Debug("Email Index created in user collection: ", indexName)
+	log.Info("Connection Established with database")
 }

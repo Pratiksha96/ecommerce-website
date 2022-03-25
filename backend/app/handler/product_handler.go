@@ -18,9 +18,8 @@ func GetAllProducts(productManager manager.ProductManager) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		w.Header().Set("Context-Type", "application/x-www-form-urlencoded")
 		w.Header().Set("Access-Control-Allow-Origin", "*")
-		ctx := r.Context()
-		email := ctx.Value("email").(string)
-		payload, err := productManager.GetAllProducts(email)
+
+		payload, err := productManager.GetAllProducts()
 		if err != nil {
 			utils.GetErrorWithStatus(errors.New("invalid object id"), w, http.StatusUnprocessableEntity)
 			return
@@ -33,10 +32,8 @@ func SearchProducts() http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		w.Header().Set("Context-Type", "application/x-www-form-urlencoded")
 		w.Header().Set("Access-Control-Allow-Origin", "*")
-		ctx := r.Context()
-		email := ctx.Value("email").(string)
 		query := r.URL.Query()
-		manager.SearchProducts(w, query, email)
+		manager.SearchProducts(w, query)
 	}
 }
 

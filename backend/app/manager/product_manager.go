@@ -21,7 +21,7 @@ import (
 type ProductManager interface {
 	GetProduct(id primitive.ObjectID, email string) (*models.Product, error)
 	CreateProduct(product models.Product, role string, email string) (*models.Product, error)
-	GetAllProducts(email string) ([]primitive.M, error)
+	GetAllProducts() ([]primitive.M, error)
 	UpdateProduct(id primitive.ObjectID, product models.Product, role string, email string) (*models.Product, error)
 	DeleteProduct(id primitive.ObjectID, role string, email string) (map[string]interface{}, error)
 }
@@ -58,7 +58,7 @@ func (pm *productManager) GetProduct(id primitive.ObjectID, email string) (*mode
 	return product, nil
 }
 
-func (pm *productManager) GetAllProducts(email string) ([]primitive.M, error) {
+func (pm *productManager) GetAllProducts() ([]primitive.M, error) {
 	cur, err := database.Coll_product.Find(context.Background(), bson.D{{}})
 	if err != nil {
 		return nil, err
@@ -85,7 +85,7 @@ func (pm *productManager) GetAllProducts(email string) ([]primitive.M, error) {
 	return payload, nil
 }
 
-func SearchProducts(w http.ResponseWriter, query url.Values, email string) {
+func SearchProducts(w http.ResponseWriter, query url.Values) {
 
 	keyword, keywordPresent := query["keyword"]
 	categoryType, categoryPresent := query["category"]
