@@ -205,7 +205,7 @@ func GetFilteredProducts(filter bson.D, w http.ResponseWriter, resultsPerPage in
 		Limit: &resultsPerPage,
 	}
 	cur, err := database.Coll_product.Find(context.TODO(), filter, &opts)
-
+	totalProducts, err := database.Coll_product.CountDocuments(context.TODO(), &opts)
 	if err != nil {
 		utils.GetError(err, w)
 		return
@@ -231,7 +231,8 @@ func GetFilteredProducts(filter bson.D, w http.ResponseWriter, resultsPerPage in
 	}
 
 	cur.Close(context.Background())
-	payload := results
+	//payload := results
+	payload := map[string]interface{}{"payload": results, "totalProducts": totalProducts}
 	json.NewEncoder(w).Encode(payload)
 }
 
