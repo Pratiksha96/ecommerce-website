@@ -3,7 +3,6 @@ package manager
 import (
 	"context"
 	models "ecommerce-website/app/models"
-	"ecommerce-website/app/utils"
 	"ecommerce-website/internal/database"
 	"errors"
 	"log"
@@ -12,8 +11,6 @@ import (
 	"go.mongodb.org/mongo-driver/bson/primitive"
 	"go.mongodb.org/mongo-driver/mongo/options"
 
-	"encoding/json"
-	"net/http"
 	"net/url"
 	"strconv"
 )
@@ -24,6 +21,12 @@ type ProductManager interface {
 	GetAllProducts() ([]primitive.M, error)
 	UpdateProduct(id primitive.ObjectID, product models.Product, role string, email string) (*models.Product, error)
 	DeleteProduct(id primitive.ObjectID, role string, email string) (map[string]interface{}, error)
+	SearchProducts(query url.Values) (SearchResponse, error)
+}
+
+type SearchResponse struct {
+	Results       []primitive.M `json:"results" bson:"results"`
+	TotalProducts int64         `json:"totalproducts"`
 }
 
 type productManager struct{}
@@ -85,8 +88,7 @@ func (pm *productManager) GetAllProducts() ([]primitive.M, error) {
 	return payload, nil
 }
 
-func SearchProducts(w http.ResponseWriter, query url.Values) {
-
+func (pm *productManager) SearchProducts(query url.Values) (SearchResponse, error) {
 	keyword, keywordPresent := query["keyword"]
 	categoryType, categoryPresent := query["category"]
 	priceMinRange, priceMinPresent := query["priceMin"]
@@ -95,6 +97,7 @@ func SearchProducts(w http.ResponseWriter, query url.Values) {
 	currentPage, isPagePresent := query["page"]
 	var resultsPerPage int64 = 10
 	var skips int64 = 0
+	filter := bson.D{{}}
 
 	if isPagePresent || len(currentPage) > 0 {
 		current := currentPage[0]
@@ -108,33 +111,28 @@ func SearchProducts(w http.ResponseWriter, query url.Values) {
 			category := categoryType[0]
 			priceMin := priceMinRange[0]
 			priceMinNum, _ := strconv.Atoi(priceMin)
-
 			priceMax := priceMaxRange[0]
 			priceMaxNum, _ := strconv.Atoi(priceMax)
 
-			filter := bson.D{{"name", primitive.Regex{Pattern: name, Options: ""}}, {"category", category}, {"price", bson.D{{"$gte", priceMinNum}, {"$lte", priceMaxNum}}}}
-			GetFilteredProducts(filter, w, resultsPerPage, skips)
+			filter = bson.D{{"name", primitive.Regex{Pattern: name, Options: ""}}, {"category", category}, {"price", bson.D{{"$gte", priceMinNum}, {"$lte", priceMaxNum}}}}
 		} else if priceMaxPresent || len(priceMaxRange) > 0 {
 			name := keyword[0]
 			category := categoryType[0]
 			priceMax := priceMaxRange[0]
 			priceMaxNum, _ := strconv.Atoi(priceMax)
 
-			filter := bson.D{{"name", primitive.Regex{Pattern: name, Options: ""}}, {"category", category}, {"price", bson.D{{"$gte", 1}, {"$lte", priceMaxNum}}}}
-			GetFilteredProducts(filter, w, resultsPerPage, skips)
+			filter = bson.D{{"name", primitive.Regex{Pattern: name, Options: ""}}, {"category", category}, {"price", bson.D{{"$gte", 1}, {"$lte", priceMaxNum}}}}
 		} else if priceMinPresent || len(priceMinRange) > 0 {
 			name := keyword[0]
 			category := categoryType[0]
 			priceMin := priceMinRange[0]
 			priceMinNum, _ := strconv.Atoi(priceMin)
 
-			filter := bson.D{{"name", primitive.Regex{Pattern: name, Options: ""}}, {"category", category}, {"price", bson.D{{"$gte", priceMinNum}, {"$lte", 99999999}}}}
-			GetFilteredProducts(filter, w, resultsPerPage, skips)
+			filter = bson.D{{"name", primitive.Regex{Pattern: name, Options: ""}}, {"category", category}, {"price", bson.D{{"$gte", priceMinNum}, {"$lte", 99999999}}}}
 		} else {
 			name := keyword[0]
 			category := categoryType[0]
-			filter := bson.D{{"name", primitive.Regex{Pattern: name, Options: ""}}, {"category", category}}
-			GetFilteredProducts(filter, w, resultsPerPage, skips)
+			filter = bson.D{{"name", primitive.Regex{Pattern: name, Options: ""}}, {"category", category}}
 		}
 
 	} else if keywordPresent || len(keyword) > 0 {
@@ -142,64 +140,51 @@ func SearchProducts(w http.ResponseWriter, query url.Values) {
 			name := keyword[0]
 			priceMin := priceMinRange[0]
 			priceMinNum, _ := strconv.Atoi(priceMin)
-
 			priceMax := priceMaxRange[0]
 			priceMaxNum, _ := strconv.Atoi(priceMax)
 
-			filter := bson.D{{"name", primitive.Regex{Pattern: name, Options: ""}}, {"price", bson.D{{"$gte", priceMinNum}, {"$lte", priceMaxNum}}}}
-			GetFilteredProducts(filter, w, resultsPerPage, skips)
+			filter = bson.D{{"name", primitive.Regex{Pattern: name, Options: ""}}, {"price", bson.D{{"$gte", priceMinNum}, {"$lte", priceMaxNum}}}}
 		} else if priceMaxPresent || len(priceMaxRange) > 0 {
 			name := keyword[0]
 			priceMax := priceMaxRange[0]
 			priceMaxNum, _ := strconv.Atoi(priceMax)
 
-			filter := bson.D{{"name", primitive.Regex{Pattern: name, Options: ""}}, {"price", bson.D{{"$gte", 1}, {"$lte", priceMaxNum}}}}
-			GetFilteredProducts(filter, w, resultsPerPage, skips)
+			filter = bson.D{{"name", primitive.Regex{Pattern: name, Options: ""}}, {"price", bson.D{{"$gte", 1}, {"$lte", priceMaxNum}}}}
 		} else if priceMinPresent || len(priceMinRange) > 0 {
 			name := keyword[0]
 			priceMin := priceMinRange[0]
 			priceMinNum, _ := strconv.Atoi(priceMin)
 
-			filter := bson.D{{"name", primitive.Regex{Pattern: name, Options: ""}}, {"price", bson.D{{"$gte", priceMinNum}, {"$lte", 99999999}}}}
-			GetFilteredProducts(filter, w, resultsPerPage, skips)
+			filter = bson.D{{"name", primitive.Regex{Pattern: name, Options: ""}}, {"price", bson.D{{"$gte", priceMinNum}, {"$lte", 99999999}}}}
 		} else {
 			name := keyword[0]
-			filter := bson.D{{"name", primitive.Regex{Pattern: name, Options: ""}}}
-			GetFilteredProducts(filter, w, resultsPerPage, skips)
+			filter = bson.D{{"name", primitive.Regex{Pattern: name, Options: ""}}}
 		}
 	} else if categoryPresent || len(categoryType) > 0 {
 		category := categoryType[0]
-		filter := bson.D{{"category", category}}
-		GetFilteredProducts(filter, w, resultsPerPage, skips)
+		filter = bson.D{{"category", category}}
 	} else if (priceMinPresent || len(priceMinRange) > 0) && (priceMaxPresent || len(priceMaxRange) > 0) {
 		priceMin := priceMinRange[0]
 		priceMinNum, _ := strconv.Atoi(priceMin)
-
 		priceMax := priceMaxRange[0]
 		priceMaxNum, _ := strconv.Atoi(priceMax)
 
-		filter := bson.D{{"price", bson.D{{"$gte", priceMinNum}, {"$lte", priceMaxNum}}}}
-		GetFilteredProducts(filter, w, resultsPerPage, skips)
+		filter = bson.D{{"price", bson.D{{"$gte", priceMinNum}, {"$lte", priceMaxNum}}}}
 	} else if priceMaxPresent || len(priceMaxRange) > 0 {
 		priceMax := priceMaxRange[0]
 		priceMaxNum, _ := strconv.Atoi(priceMax)
 
-		filter := bson.D{{"price", bson.D{{"$gte", 1}, {"$lte", priceMaxNum}}}}
-		GetFilteredProducts(filter, w, resultsPerPage, skips)
+		filter = bson.D{{"price", bson.D{{"$gte", 1}, {"$lte", priceMaxNum}}}}
 	} else if priceMinPresent || len(priceMinRange) > 0 {
 		priceMin := priceMinRange[0]
 		priceMinNum, _ := strconv.Atoi(priceMin)
 
-		filter := bson.D{{"price", bson.D{{"$gte", priceMinNum}, {"$lte", 99999999}}}}
-		GetFilteredProducts(filter, w, resultsPerPage, skips)
-	} else {
-		filter := bson.D{{}}
-		GetFilteredProducts(filter, w, resultsPerPage, skips)
+		filter = bson.D{{"price", bson.D{{"$gte", priceMinNum}, {"$lte", 99999999}}}}
 	}
+	return GetFilteredProducts(filter, resultsPerPage, skips)
 }
 
-func GetFilteredProducts(filter bson.D, w http.ResponseWriter, resultsPerPage int64, skips int64) {
-
+func GetFilteredProducts(filter bson.D, resultsPerPage int64, skips int64) (SearchResponse, error) {
 	opts := options.FindOptions{
 		Skip:  &skips,
 		Limit: &resultsPerPage,
@@ -212,8 +197,7 @@ func GetFilteredProducts(filter bson.D, w http.ResponseWriter, resultsPerPage in
 	}
 	totalProducts, err := database.Coll_product.CountDocuments(context.TODO(), filter)
 	if err != nil {
-		utils.GetError(err, w)
-		return
+		return SearchResponse{}, err
 	}
 
 	var results []primitive.M
@@ -221,24 +205,24 @@ func GetFilteredProducts(filter bson.D, w http.ResponseWriter, resultsPerPage in
 		var result bson.M
 		e := cur.Decode(&result)
 		if e != nil {
-			utils.GetError(err, w)
-			return
+			return SearchResponse{}, err
 		}
 		results = append(results, result)
 	}
 
 	if err := cur.Err(); err != nil {
-		utils.GetError(err, w)
-		return
+		return SearchResponse{}, err
 	} else if len(results) == 0 {
-		utils.GetError(errors.New("product list is empty"), w)
-		return
+		return SearchResponse{}, errors.New("product list is empty")
 	}
 
 	cur.Close(context.Background())
-	//payload := results
-	payload := map[string]interface{}{"payload": results, "totalProducts": totalProducts}
-	json.NewEncoder(w).Encode(payload)
+	var response = SearchResponse{
+		Results:       results,
+		TotalProducts: totalProducts,
+	}
+
+	return response, nil
 }
 
 func (pm *productManager) UpdateProduct(id primitive.ObjectID, product models.Product, role string, email string) (*models.Product, error) {

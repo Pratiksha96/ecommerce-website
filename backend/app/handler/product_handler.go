@@ -28,12 +28,17 @@ func GetAllProducts(productManager manager.ProductManager) http.HandlerFunc {
 	}
 }
 
-func SearchProducts() http.HandlerFunc {
+func SearchProducts(productManager manager.ProductManager) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		w.Header().Set("Context-Type", "application/x-www-form-urlencoded")
 		w.Header().Set("Access-Control-Allow-Origin", "*")
 		query := r.URL.Query()
-		manager.SearchProducts(w, query)
+		payload, err := productManager.SearchProducts(query)
+		if err != nil {
+			utils.GetError(err, w)
+			return
+		}
+		json.NewEncoder(w).Encode(payload)
 	}
 }
 
