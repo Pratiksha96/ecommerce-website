@@ -78,3 +78,16 @@ func LogoutUser() http.HandlerFunc {
 		manager.LogoutUser(tokenStr, w)
 	}
 }
+
+func UserDetails() http.HandlerFunc {
+	return func(w http.ResponseWriter, r *http.Request) {
+		w.Header().Set("Context-Type", "application/x-www-form-urlencoded")
+		w.Header().Set("Access-Control-Allow-Origin", "*")
+		w.Header().Set("Access-Control-Allow-Methods", "POST")
+		w.Header().Set("Access-Control-Allow-Headers", "Content-Type")
+
+		ctx := r.Context()
+		email := ctx.Value("email").(string)
+		manager.GetUserDetails(email, w)
+	}
+}

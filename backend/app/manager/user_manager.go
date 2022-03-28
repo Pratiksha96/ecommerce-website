@@ -76,3 +76,15 @@ func LoginUser(user models.User, w http.ResponseWriter) {
 func LogoutUser(token string, w http.ResponseWriter) {
 	utils.DeleteUserToken(token, w)
 }
+
+func GetUserDetails(email string, w http.ResponseWriter) {
+	var storedUser models.User
+	filter := bson.M{"email": email}
+	err := database.Coll_user.FindOne(context.TODO(), filter).Decode(&storedUser)
+	if err != nil {
+		utils.GetError(errors.New("no such user present"), w)
+		return
+	}
+	json.NewEncoder(w).Encode(storedUser)
+
+}
