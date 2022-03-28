@@ -28,6 +28,7 @@ func StartServer() {
 	r.HandleFunc("/register", handler.RegisterUser()).Methods("POST", "OPTIONS")
 	r.HandleFunc("/login", handler.LoginUser()).Methods("POST", "OPTIONS")
 	r.HandleFunc("/logout", handler.LogoutUser()).Methods("POST", "OPTIONS")
+	r.HandleFunc("/me", middleware.AuthenticateUser(handler.UserDetails())).Methods("GET", "OPTIONS")
 
 	srv := &http.Server{
 		Handler:      r,
