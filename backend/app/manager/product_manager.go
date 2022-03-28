@@ -205,7 +205,12 @@ func GetFilteredProducts(filter bson.D, w http.ResponseWriter, resultsPerPage in
 		Limit: &resultsPerPage,
 	}
 	cur, err := database.Coll_product.Find(context.TODO(), filter, &opts)
-	totalProducts, err := database.Coll_product.CountDocuments(context.TODO(), &opts)
+
+	if err != nil {
+		utils.GetError(err, w)
+		return
+	}
+	totalProducts, err := database.Coll_product.CountDocuments(context.TODO(), filter)
 	if err != nil {
 		utils.GetError(err, w)
 		return
