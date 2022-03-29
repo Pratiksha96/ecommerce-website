@@ -115,3 +115,26 @@ func UpdatePassword() http.HandlerFunc {
 		manager.UpdatePassword(email, body, w)
 	}
 }
+
+func UpdateProfile() http.HandlerFunc {
+	return func(w http.ResponseWriter, r *http.Request) {
+		w.Header().Set("Context-Type", "application/x-www-form-urlencoded")
+		w.Header().Set("Access-Control-Allow-Origin", "*")
+		w.Header().Set("Access-Control-Allow-Methods", "POST")
+		w.Header().Set("Access-Control-Allow-Headers", "Content-Type")
+
+		var requestbody interface{}
+		buffer, err := ioutil.ReadAll(r.Body)
+
+		if err != nil {
+			log.Panic(err)
+		}
+		r.Body.Close()
+		json.Unmarshal(buffer, &requestbody)
+		body := requestbody.(map[string]interface{})
+
+		ctx := r.Context()
+		email := ctx.Value("email").(string)
+		manager.UpdateProfile(email, body, w)
+	}
+}
