@@ -88,3 +88,48 @@ func GetUserDetails(email string, w http.ResponseWriter) {
 	json.NewEncoder(w).Encode(storedUser)
 
 }
+
+func UpdatePassword(email string, body map[string]interface{}, w http.ResponseWriter) {
+
+	var storedUser models.User
+	filter := bson.M{"email": email}
+	err := database.Coll_user.FindOne(context.TODO(), filter).Decode(&storedUser)
+	if err != nil {
+		utils.GetError(errors.New("no such user present"), w)
+		return
+	}
+
+	oldPassword := body["oldPassword"].(string)
+	newPassword := body["newPassword"].(string)
+	confirmPassword := body["confirmPassword"].(string)
+	passwordErr := bcrypt.CompareHashAndPassword([]byte(storedUser.Password), []byte(oldPassword))
+	if passwordErr != nil {
+		utils.GetError(errors.New("password mismatched"), w)
+		return
+	}
+	if confirmPassword != newPassword {
+		utils.GetError(errors.New("new password do not match with confirm password"), w)
+		return
+	}
+	hashedPassword, err := bcrypt.GenerateFromPassword([]byte(newPassword), bcrypt.DefaultCost)
+	if err != nil {
+		panic(err)
+	}
+
+	result, err := database.Coll_user.UpdateOne(
+		context.TODO(),
+		bson.M{"email": email},
+		bson.D{
+			{"$set", bson.D{{"password", string(hashedPassword)}}},
+		},
+	)
+	if err != nil {
+		utils.GetError(errors.New("Failed to update password"), w)
+		return
+	}
+	storedUser.Password = string(hashedPassword)
+	log.Println("Following number of users updated ", result.ModifiedCount)
+	response := map[string]interface{}{"success": true, "user": storedUser}
+	json.NewEncoder(w).Encode(response)
+
+}
