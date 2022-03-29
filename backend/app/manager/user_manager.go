@@ -133,3 +133,50 @@ func UpdatePassword(email string, body map[string]interface{}, w http.ResponseWr
 	json.NewEncoder(w).Encode(response)
 
 }
+
+func UpdateProfile(email string, body map[string]interface{}, w http.ResponseWriter) {
+
+	var storedUser models.User
+	filter := bson.M{"email": email}
+	err := database.Coll_user.FindOne(context.TODO(), filter).Decode(&storedUser)
+	if err != nil {
+		utils.GetError(errors.New("no such user present"), w)
+		return
+	}
+
+	newName := body["name"].(string)
+	newEmail := body["email"].(string)
+	if newEmail != storedUser.Email {
+		result, err := database.Coll_user.UpdateOne(
+			context.TODO(),
+			bson.M{"email": email},
+			bson.D{
+				{"$set", bson.D{{"name", newName}, {"email", newEmail}}},
+			},
+		)
+		if err != nil {
+			utils.GetError(errors.New("Failed to update profile information"), w)
+			return
+		}
+		log.Println("Following number of users updated ", result.ModifiedCount)
+	} else {
+		result, err := database.Coll_user.UpdateOne(
+			context.TODO(),
+			bson.M{"email": email},
+			bson.D{
+				{"$set", bson.D{{"name", newName}}},
+			},
+		)
+		if err != nil {
+			utils.GetError(errors.New("Failed to update profile information"), w)
+			return
+		}
+		log.Println("Following number of users updated ", result.ModifiedCount)
+	}
+	storedUser.Name = newName
+	storedUser.Email = newEmail
+
+	response := map[string]interface{}{"success": true, "user": storedUser}
+	json.NewEncoder(w).Encode(response)
+
+}
