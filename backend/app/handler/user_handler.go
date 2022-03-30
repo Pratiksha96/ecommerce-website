@@ -9,6 +9,9 @@ import (
 	"io/ioutil"
 	"log"
 	"net/http"
+
+	"github.com/gorilla/mux"
+	"go.mongodb.org/mongo-driver/bson/primitive"
 )
 
 func RegisterUser() http.HandlerFunc {
@@ -147,6 +150,24 @@ func GetAllUsers() http.HandlerFunc {
 		email := ctx.Value("email").(string)
 
 		manager.GetAllUsers("admin", email, w)
+
+	}
+}
+
+func GetSingleUser() http.HandlerFunc {
+	return func(w http.ResponseWriter, r *http.Request) {
+		w.Header().Set("Context-Type", "application/x-www-form-urlencoded")
+		w.Header().Set("Access-Control-Allow-Origin", "*")
+		var params = mux.Vars(r)
+		id, err := primitive.ObjectIDFromHex(params["id"])
+		if err != nil {
+			utils.GetErrorWithStatus(errors.New("invalid object id"), w, http.StatusUnprocessableEntity)
+			return
+		}
+		ctx := r.Context()
+		email := ctx.Value("email").(string)
+
+		manager.GetSingleUser("admin", email, id, w)
 
 	}
 }

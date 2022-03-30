@@ -220,3 +220,23 @@ func GetAllUsers(role string, email string, w http.ResponseWriter) {
 	json.NewEncoder(w).Encode(payload)
 
 }
+
+func GetSingleUser(role string, email string, id primitive.ObjectID, w http.ResponseWriter) {
+
+	err := utils.AuthorizeUser(role, email)
+	if err != nil {
+		utils.GetError(err, w)
+		return
+	}
+
+	user := &models.User{}
+	filter := bson.M{"_id": id}
+	err = database.Coll_user.FindOne(context.TODO(), filter).Decode(user)
+	if err != nil {
+		utils.GetError(err, w)
+		return
+	}
+
+	json.NewEncoder(w).Encode(user)
+
+}
