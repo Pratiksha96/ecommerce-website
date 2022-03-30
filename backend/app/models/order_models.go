@@ -6,9 +6,9 @@ import (
 
 type Order struct {
 	ShippingInfo  AddressInfo `json:"shippingInfo" bson:"shippingInfo"`
-	OrderItems    []*Items    `json:"description" bson:"description"`
+	OrderItems    []*Items    `json:"orderItems" bson:"orderItems"`
 	User          User        `json:"user" bson:"user"`
-	PaymentInfo   Payment     `json:"payment" bson:"payment"`
+	PaymentInfo   Payment     `json:"paymentInfo" bson:"paymentInfo"`
 	PaidAt        time.Time   `json:"paidAt" bson:"paidAt"`
 	ItemsPrice    int         `json:"itemsPrice" bson:"itemsPrice"`
 	TaxPrice      int         `json:"taxPrice" bson:"taxPrice"`
