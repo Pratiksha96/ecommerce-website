@@ -192,8 +192,7 @@ func GetFilteredProducts(filter bson.D, resultsPerPage int64, skips int64) (Sear
 	cur, err := database.Coll_product.Find(context.TODO(), filter, &opts)
 
 	if err != nil {
-		utils.GetError(err, w)
-		return
+		return SearchResponse{}, err
 	}
 	totalProducts, err := database.Coll_product.CountDocuments(context.TODO(), filter)
 	if err != nil {
