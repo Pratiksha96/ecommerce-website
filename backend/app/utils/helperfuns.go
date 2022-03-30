@@ -144,3 +144,31 @@ func AuthorizeUser(role string, email string) error {
 	}
 	return nil
 }
+
+//initial validations, might alter later
+func OrderValidation(order models.Order) url.Values {
+
+	errors := url.Values{}
+
+	if (models.AddressInfo{}) == order.ShippingInfo {
+		errors.Add("shippingInfo", "Please enter shipping address!")
+	}
+
+	if len(order.OrderItems) == 0 {
+		errors.Add("orderItems", "Order items are empty!")
+	}
+
+	if order.ItemsPrice == 0 {
+		errors.Add("itemsPrice", "Item price is missing!")
+	}
+
+	if order.TaxPrice == 0 {
+		errors.Add("taxPrice", "Tax price is missing!")
+	}
+
+	if order.ShippingPrice == 0 {
+		errors.Add("shippingPrice", "Shipping price is missing!")
+	}
+
+	return errors
+}
