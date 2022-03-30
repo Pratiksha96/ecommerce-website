@@ -1,12 +1,17 @@
 package utils
 
 import (
+	"context"
 	models "ecommerce-website/app/models"
+	"ecommerce-website/internal/database"
 	"encoding/json"
+	"errors"
 	"log"
 	"net/http"
 	"net/mail"
 	"net/url"
+
+	"go.mongodb.org/mongo-driver/bson"
 )
 
 type ErrorResponse struct {
@@ -123,4 +128,19 @@ func UserLoginValidation(user models.User) url.Values {
 	}
 
 	return errors
+}
+
+func AuthorizeUser(role string, email string) error {
+	var user models.User
+	userFilter := bson.M{"email": email}
+	userErr := database.Coll_user.FindOne(context.TODO(), userFilter).Decode(&user)
+
+	if userErr != nil {
+		return userErr
+	}
+
+	if role == "admin" && (role != user.Role) {
+		return errors.New("sorry, you don't have access to this resource")
+	}
+	return nil
 }
