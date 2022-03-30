@@ -5,12 +5,9 @@ import (
 	models "ecommerce-website/app/models"
 	"ecommerce-website/app/utils"
 	"ecommerce-website/internal/database"
-	"encoding/json"
 	"log"
 
 	"golang.org/x/crypto/bcrypt"
-
-	"net/http"
 
 	"errors"
 
@@ -18,86 +15,102 @@ import (
 	"go.mongodb.org/mongo-driver/bson/primitive"
 )
 
-func RegisterUser(user models.User, w http.ResponseWriter) {
+type UserManager interface {
+	RegisterUser(user models.User) (TokenResponse, error)
+	LoginUser(user models.User) (TokenResponse, error)
+	GetUserDetails(email string) (*models.User, error)
+	UpdatePassword(email string, body map[string]interface{}) (UserResponse, error)
+	UpdateProfile(email string, body map[string]interface{}) (UserResponse, error)
+	GetAllUsers(role string, email string) ([]primitive.M, error)
+	GetUser(role string, email string, id primitive.ObjectID) (*models.User, error)
+}
+
+type TokenResponse struct {
+	Success bool
+	Token   string
+}
+
+type UserResponse struct {
+	Success bool
+	User    models.User
+}
+
+type userManager struct{}
+
+func NewUserManager() UserManager {
+	return &userManager{}
+}
+
+func (um *userManager) RegisterUser(user models.User) (TokenResponse, error) {
 
 	user.GetBSON()
 	hashedPassword, err := bcrypt.GenerateFromPassword([]byte(user.Password), bcrypt.DefaultCost)
 	if err != nil {
-		panic(err)
+		return TokenResponse{}, err
 	}
 	user.Password = string(hashedPassword)
 
 	registeredUser, err := database.Coll_user.InsertOne(context.TODO(), user)
 	if err != nil {
-		utils.GetError(err, w)
-		return
+		return TokenResponse{}, err
 	}
 
 	token, err := user.GetJwtToken()
 	if err != nil {
-		utils.GetError(err, w)
-		return
+		return TokenResponse{}, err
 	}
 	log.Println("User registered successfully with id: ", user.Email, registeredUser.InsertedID)
-	utils.StoreUserToken(token, w)
-	tokenResponse := map[string]interface{}{"success": true, "token": token}
-	json.NewEncoder(w).Encode(tokenResponse)
+
+	var tokenResponse = TokenResponse{
+		Success: true,
+		Token:   token,
+	}
+	return tokenResponse, nil
 }
 
-func LoginUser(user models.User, w http.ResponseWriter) {
-
+func (um *userManager) LoginUser(user models.User) (TokenResponse, error) {
 	var storedUser models.User
 	filter := bson.M{"email": user.Email}
 	err := database.Coll_user.FindOne(context.TODO(), filter).Decode(&storedUser)
 
 	if err != nil {
-		utils.GetError(errors.New("no such user present"), w)
-		return
+		return TokenResponse{}, errors.New("No such user present")
 	}
 
 	passwordErr := bcrypt.CompareHashAndPassword([]byte(storedUser.Password), []byte(user.Password))
 	if passwordErr != nil {
-		utils.GetError(errors.New("password mismatched"), w)
-		return
+		return TokenResponse{}, errors.New("Password mismatched")
 	}
 
 	token, err := user.GetJwtToken()
 	if err != nil {
-		utils.GetError(err, w)
-		return
+		return TokenResponse{}, err
 	}
 
 	log.Println("User logged in successfully!")
-	utils.StoreUserToken(token, w)
-
-	tokenResponse := map[string]interface{}{"success": true, "token": token}
-	json.NewEncoder(w).Encode(tokenResponse)
-}
-
-func LogoutUser(token string, w http.ResponseWriter) {
-	utils.DeleteUserToken(token, w)
-}
-
-func GetUserDetails(email string, w http.ResponseWriter) {
-	var storedUser models.User
-	filter := bson.M{"email": email}
-	err := database.Coll_user.FindOne(context.TODO(), filter).Decode(&storedUser)
-	if err != nil {
-		utils.GetError(errors.New("no such user present"), w)
-		return
+	var tokenResponse = TokenResponse{
+		Success: true,
+		Token:   token,
 	}
-	json.NewEncoder(w).Encode(storedUser)
-
+	return tokenResponse, nil
 }
 
-func UpdatePassword(email string, body map[string]interface{}, w http.ResponseWriter) {
-
+func (um *userManager) GetUserDetails(email string) (*models.User, error) {
 	var storedUser models.User
 	filter := bson.M{"email": email}
 	err := database.Coll_user.FindOne(context.TODO(), filter).Decode(&storedUser)
 	if err != nil {
-		utils.GetError(errors.New("no such user present"), w)
-		return
+		return nil, errors.New("no such user present")
+	}
+	return &storedUser, nil
+}
+
+func (um *userManager) UpdatePassword(email string, body map[string]interface{}) (UserResponse, error) {
+	var storedUser models.User
+	filter := bson.M{"email": email}
+	err := database.Coll_user.FindOne(context.TODO(), filter).Decode(&storedUser)
+	if err != nil {
+		return UserResponse{}, errors.New("No such user present")
 	}
 
 	oldPassword := body["oldPassword"].(string)
@@ -105,16 +118,14 @@ func UpdatePassword(email string, body map[string]interface{}, w http.ResponseWr
 	confirmPassword := body["confirmPassword"].(string)
 	passwordErr := bcrypt.CompareHashAndPassword([]byte(storedUser.Password), []byte(oldPassword))
 	if passwordErr != nil {
-		utils.GetError(errors.New("password mismatched"), w)
-		return
+		return UserResponse{}, errors.New("password mismatched")
 	}
 	if confirmPassword != newPassword {
-		utils.GetError(errors.New("new password do not match with confirm password"), w)
-		return
+		return UserResponse{}, errors.New("new password do not match with confirm password")
 	}
 	hashedPassword, err := bcrypt.GenerateFromPassword([]byte(newPassword), bcrypt.DefaultCost)
 	if err != nil {
-		panic(err)
+		return UserResponse{}, err
 	}
 
 	result, err := database.Coll_user.UpdateOne(
@@ -125,24 +136,23 @@ func UpdatePassword(email string, body map[string]interface{}, w http.ResponseWr
 		},
 	)
 	if err != nil {
-		utils.GetError(errors.New("Failed to update password"), w)
-		return
+		return UserResponse{}, errors.New("Failed to update password")
 	}
 	storedUser.Password = string(hashedPassword)
 	log.Println("Following number of users updated ", result.ModifiedCount)
-	response := map[string]interface{}{"success": true, "user": storedUser}
-	json.NewEncoder(w).Encode(response)
-
+	var response = UserResponse{
+		Success: true,
+		User:    storedUser,
+	}
+	return response, nil
 }
 
-func UpdateProfile(email string, body map[string]interface{}, w http.ResponseWriter) {
-
+func (um *userManager) UpdateProfile(email string, body map[string]interface{}) (UserResponse, error) {
 	var storedUser models.User
 	filter := bson.M{"email": email}
 	err := database.Coll_user.FindOne(context.TODO(), filter).Decode(&storedUser)
 	if err != nil {
-		utils.GetError(errors.New("no such user present"), w)
-		return
+		return UserResponse{}, errors.New("no such user present")
 	}
 
 	newName := body["name"].(string)
@@ -156,8 +166,7 @@ func UpdateProfile(email string, body map[string]interface{}, w http.ResponseWri
 			},
 		)
 		if err != nil {
-			utils.GetError(errors.New("Failed to update profile information"), w)
-			return
+			return UserResponse{}, errors.New("Failed to update profile information")
 		}
 		log.Println("Following number of users updated ", result.ModifiedCount)
 	} else {
@@ -169,31 +178,25 @@ func UpdateProfile(email string, body map[string]interface{}, w http.ResponseWri
 			},
 		)
 		if err != nil {
-			utils.GetError(errors.New("Failed to update profile information"), w)
-			return
+			return UserResponse{}, errors.New("Failed to update profile information")
 		}
 		log.Println("Following number of users updated ", result.ModifiedCount)
 	}
 	storedUser.Name = newName
 	storedUser.Email = newEmail
 
-	response := map[string]interface{}{"success": true, "user": storedUser}
-	json.NewEncoder(w).Encode(response)
-
+	var response = UserResponse{
+		Success: true,
+		User:    storedUser,
+	}
+	return response, nil
 }
 
-func GetAllUsers(role string, email string, w http.ResponseWriter) {
-
-	err := utils.AuthorizeUser(role, email)
-	if err != nil {
-		utils.GetError(err, w)
-		return
-	}
+func (um *userManager) GetAllUsers(role string, email string) ([]primitive.M, error) {
 
 	cur, err := database.Coll_user.Find(context.Background(), bson.D{{}})
 	if err != nil {
-		utils.GetError(err, w)
-		return
+		return nil, err
 	}
 
 	var results []primitive.M
@@ -201,42 +204,33 @@ func GetAllUsers(role string, email string, w http.ResponseWriter) {
 		var result bson.M
 		e := cur.Decode(&result)
 		if e != nil {
-			utils.GetError(err, w)
-			return
+			return nil, e
 		}
 		results = append(results, result)
 	}
 
 	if err := cur.Err(); err != nil {
-		utils.GetError(err, w)
-		return
+		return nil, err
 	} else if len(results) == 0 {
-		utils.GetError(errors.New("User list is empty"), w)
-		return
+		return nil, errors.New("User list is empty")
 	}
 
 	cur.Close(context.Background())
 	payload := results
-	json.NewEncoder(w).Encode(payload)
-
+	return payload, nil
 }
 
-func GetSingleUser(role string, email string, id primitive.ObjectID, w http.ResponseWriter) {
-
+func (um *userManager) GetUser(role string, email string, id primitive.ObjectID) (*models.User, error) {
 	err := utils.AuthorizeUser(role, email)
 	if err != nil {
-		utils.GetError(err, w)
-		return
+		return nil, err
 	}
 
 	user := &models.User{}
 	filter := bson.M{"_id": id}
 	err = database.Coll_user.FindOne(context.TODO(), filter).Decode(user)
 	if err != nil {
-		utils.GetError(err, w)
-		return
+		return nil, err
 	}
-
-	json.NewEncoder(w).Encode(user)
-
+	return user, nil
 }

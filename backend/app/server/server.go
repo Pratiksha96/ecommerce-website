@@ -17,6 +17,7 @@ func StartServer() {
 
 	productManager := manager.NewProductManager()
 	orderManager := manager.NewOrderManager()
+	userManager := manager.NewUserManager()
 
 	r.HandleFunc("/ping", handler.PingHandler())
 	r.HandleFunc("/product/get", handler.GetAllProducts(productManager)).Methods("GET", "OPTIONS")
@@ -26,14 +27,14 @@ func StartServer() {
 	r.HandleFunc("/product/delete/{id}", middleware.AuthenticateUser(handler.DeleteProduct(productManager))).Methods("DELETE", "OPTIONS")
 	r.HandleFunc("/product/get/{id}", middleware.AuthenticateUser(handler.GetProduct(productManager))).Methods("GET", "OPTIONS")
 
-	r.HandleFunc("/register", handler.RegisterUser()).Methods("POST", "OPTIONS")
-	r.HandleFunc("/login", handler.LoginUser()).Methods("POST", "OPTIONS")
+	r.HandleFunc("/register", handler.RegisterUser(userManager)).Methods("POST", "OPTIONS")
+	r.HandleFunc("/login", handler.LoginUser(userManager)).Methods("POST", "OPTIONS")
 	r.HandleFunc("/logout", handler.LogoutUser()).Methods("POST", "OPTIONS")
-	r.HandleFunc("/me", middleware.AuthenticateUser(handler.UserDetails())).Methods("GET", "OPTIONS")
-	r.HandleFunc("/password/update", middleware.AuthenticateUser(handler.UpdatePassword())).Methods("PUT", "OPTIONS")
-	r.HandleFunc("/me/update", middleware.AuthenticateUser(handler.UpdateProfile())).Methods("PUT", "OPTIONS")
-	r.HandleFunc("/getAllUsers", middleware.AuthenticateUser(handler.GetAllUsers())).Methods("GET", "OPTIONS")
-	r.HandleFunc("/getUser/{id}", middleware.AuthenticateUser(handler.GetSingleUser())).Methods("GET", "OPTIONS")
+	r.HandleFunc("/me", middleware.AuthenticateUser(handler.GetUserDetails(userManager))).Methods("GET", "OPTIONS")
+	r.HandleFunc("/password/update", middleware.AuthenticateUser(handler.UpdatePassword(userManager))).Methods("PUT", "OPTIONS")
+	r.HandleFunc("/me/update", middleware.AuthenticateUser(handler.UpdateProfile(userManager))).Methods("PUT", "OPTIONS")
+	r.HandleFunc("/getAllUsers", middleware.AuthenticateUser(handler.GetAllUsers(userManager))).Methods("GET", "OPTIONS")
+	r.HandleFunc("/getUser/{id}", middleware.AuthenticateUser(handler.GetUser(userManager))).Methods("GET", "OPTIONS")
 
 	r.HandleFunc("/order/create", middleware.AuthenticateUser(handler.CreateOrder(orderManager))).Methods("POST", "OPTIONS")
 	r.HandleFunc("/order/getAll", middleware.AuthenticateUser(handler.GetUserOrders(orderManager))).Methods("GET", "OPTIONS")
