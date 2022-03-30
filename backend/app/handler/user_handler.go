@@ -138,3 +138,15 @@ func UpdateProfile() http.HandlerFunc {
 		manager.UpdateProfile(email, body, w)
 	}
 }
+
+func GetAllUsers() http.HandlerFunc {
+	return func(w http.ResponseWriter, r *http.Request) {
+		w.Header().Set("Context-Type", "application/x-www-form-urlencoded")
+		w.Header().Set("Access-Control-Allow-Origin", "*")
+		ctx := r.Context()
+		email := ctx.Value("email").(string)
+
+		manager.GetAllUsers("admin", email, w)
+
+	}
+}

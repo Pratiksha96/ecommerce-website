@@ -15,6 +15,7 @@ import (
 	"errors"
 
 	"go.mongodb.org/mongo-driver/bson"
+	"go.mongodb.org/mongo-driver/bson/primitive"
 )
 
 func RegisterUser(user models.User, w http.ResponseWriter) {
@@ -178,5 +179,44 @@ func UpdateProfile(email string, body map[string]interface{}, w http.ResponseWri
 
 	response := map[string]interface{}{"success": true, "user": storedUser}
 	json.NewEncoder(w).Encode(response)
+
+}
+
+func GetAllUsers(role string, email string, w http.ResponseWriter) {
+
+	err := utils.AuthorizeUser(role, email)
+	if err != nil {
+		utils.GetError(err, w)
+		return
+	}
+
+	cur, err := database.Coll_user.Find(context.Background(), bson.D{{}})
+	if err != nil {
+		utils.GetError(err, w)
+		return
+	}
+
+	var results []primitive.M
+	for cur.Next(context.Background()) {
+		var result bson.M
+		e := cur.Decode(&result)
+		if e != nil {
+			utils.GetError(err, w)
+			return
+		}
+		results = append(results, result)
+	}
+
+	if err := cur.Err(); err != nil {
+		utils.GetError(err, w)
+		return
+	} else if len(results) == 0 {
+		utils.GetError(errors.New("User list is empty"), w)
+		return
+	}
+
+	cur.Close(context.Background())
+	payload := results
+	json.NewEncoder(w).Encode(payload)
 
 }
