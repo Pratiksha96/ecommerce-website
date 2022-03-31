@@ -39,3 +39,18 @@ func CreateOrder(orderManager manager.OrderManager) http.HandlerFunc {
 		json.NewEncoder(w).Encode(response)
 	}
 }
+
+func GetUserOrders(orderManager manager.OrderManager) http.HandlerFunc {
+	return func(w http.ResponseWriter, r *http.Request) {
+		w.Header().Set("Content-Type", "application/json")
+
+		ctx := r.Context()
+		email := ctx.Value("email").(string)
+		orders, err := orderManager.GetUserOrders("user", email)
+		if err != nil {
+			utils.GetError(err, w)
+			return
+		}
+		json.NewEncoder(w).Encode(orders)
+	}
+}
