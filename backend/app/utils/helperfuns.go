@@ -153,7 +153,12 @@ func OrderValidation(order models.Order) url.Values {
 	if (models.AddressInfo{}) == order.ShippingInfo {
 		errors.Add("shippingInfo", "Please enter shipping address!")
 	}
-
+	if (models.Payment{}) == order.PaymentInfo {
+		errors.Add("paymentInfo", "Please enter payment info!")
+	}
+	if order.TotalPrice == 0 {
+		errors.Add("totalPrice", "Total price is missing!")
+	}
 	if len(order.OrderItems) == 0 {
 		errors.Add("orderItems", "Order items are empty!")
 	}

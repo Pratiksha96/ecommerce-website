@@ -15,6 +15,7 @@ var (
 	db           *mongo.Database
 	Coll_product *mongo.Collection
 	Coll_user    *mongo.Collection
+	Coll_order   *mongo.Collection
 )
 
 func InitDB() {
@@ -32,6 +33,8 @@ func InitDB() {
 	Coll_product = db.Collection("product")
 
 	Coll_user = db.Collection("user")
+
+	Coll_order = db.Collection("order")
 
 	indexName, err := Coll_user.Indexes().CreateOne(
 		context.Background(),

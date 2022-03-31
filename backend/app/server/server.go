@@ -16,6 +16,7 @@ func StartServer() {
 	r := mux.NewRouter()
 
 	productManager := manager.NewProductManager()
+	orderManager := manager.NewOrderManager()
 
 	r.HandleFunc("/ping", handler.PingHandler())
 	r.HandleFunc("/product/get", handler.GetAllProducts(productManager)).Methods("GET", "OPTIONS")
@@ -33,6 +34,8 @@ func StartServer() {
 	r.HandleFunc("/me/update", middleware.AuthenticateUser(handler.UpdateProfile())).Methods("PUT", "OPTIONS")
 	r.HandleFunc("/getAllUsers", middleware.AuthenticateUser(handler.GetAllUsers())).Methods("GET", "OPTIONS")
 	r.HandleFunc("/getUser/{id}", middleware.AuthenticateUser(handler.GetSingleUser())).Methods("GET", "OPTIONS")
+
+	r.HandleFunc("/order/create", middleware.AuthenticateUser(handler.CreateOrder(orderManager))).Methods("POST", "OPTIONS")
 
 	srv := &http.Server{
 		Handler:      r,

@@ -7,7 +7,7 @@ import (
 type Order struct {
 	ShippingInfo  AddressInfo `json:"shippingInfo" bson:"shippingInfo"`
 	OrderItems    []*Items    `json:"orderItems" bson:"orderItems"`
-	User          User        `json:"user" bson:"user"`
+	User          string      `json:"user" bson:"user"`
 	PaymentInfo   Payment     `json:"paymentInfo" bson:"paymentInfo"`
 	PaidAt        time.Time   `json:"paidAt" bson:"paidAt"`
 	ItemsPrice    int         `json:"itemsPrice" bson:"itemsPrice"`
