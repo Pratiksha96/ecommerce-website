@@ -13,12 +13,18 @@ import (
 
 type OrderManager interface {
 	CreateOrder(order models.Order, role string, email string) (*models.Order, error)
-	GetUserOrders(role string, email string) (GetOrdersResponse, error)
+	GetUserOrders(role string, email string) (GetUserOrdersResponse, error)
 	GetSingleOrder(id primitive.ObjectID, email string) (*models.Order, error)
+	GetAllOrders(role string, email string) (GetAllOrdersResponse, error)
 }
 
-type GetOrdersResponse struct {
+type GetUserOrdersResponse struct {
 	Results []primitive.M `json:"results" bson:"results"`
+}
+
+type GetAllOrdersResponse struct {
+	Results     []primitive.M `json:"results" bson:"results"`
+	TotalAmount int64         `json:"totalamount"`
 }
 
 type orderManager struct{}
@@ -41,10 +47,10 @@ func (om *orderManager) CreateOrder(order models.Order, role string, email strin
 	return &order, nil
 }
 
-func (om *orderManager) GetUserOrders(role string, email string) (GetOrdersResponse, error) {
+func (om *orderManager) GetUserOrders(role string, email string) (GetUserOrdersResponse, error) {
 	err := authorizeUser(role, email)
 	if err != nil {
-		return GetOrdersResponse{}, err
+		return GetUserOrdersResponse{}, err
 	}
 	filter := bson.M{"user": email}
 
@@ -55,19 +61,19 @@ func (om *orderManager) GetUserOrders(role string, email string) (GetOrdersRespo
 		var result bson.M
 		e := order_list.Decode(&result)
 		if e != nil {
-			return GetOrdersResponse{}, err
+			return GetUserOrdersResponse{}, err
 		}
 		results = append(results, result)
 	}
 
 	if err := order_list.Err(); err != nil {
-		return GetOrdersResponse{}, err
+		return GetUserOrdersResponse{}, err
 	} else if len(results) == 0 {
-		return GetOrdersResponse{}, errors.New("orders list is empty")
+		return GetUserOrdersResponse{}, errors.New("orders list is empty")
 	}
 
 	order_list.Close(context.Background())
-	var response = GetOrdersResponse{Results: results}
+	var response = GetUserOrdersResponse{Results: results}
 
 	return response, nil
 }
@@ -81,4 +87,37 @@ func (om *orderManager) GetSingleOrder(id primitive.ObjectID, email string) (*mo
 	}
 
 	return order, nil
+}
+
+func (om *orderManager) GetAllOrders(role string, email string) (GetAllOrdersResponse, error) {
+	err := authorizeUser(role, email)
+	if err != nil {
+		return GetAllOrdersResponse{}, err
+	}
+
+	order_list, err := database.Coll_order.Find(context.Background(), bson.D{{}})
+
+	var results []primitive.M
+	for order_list.Next(context.Background()) {
+		var result bson.M
+		e := order_list.Decode(&result)
+		if e != nil {
+			return GetAllOrdersResponse{}, err
+		}
+		results = append(results, result)
+	}
+
+	if err := order_list.Err(); err != nil {
+		return GetAllOrdersResponse{}, err
+	} else if len(results) == 0 {
+		return GetAllOrdersResponse{}, errors.New("orders list is empty")
+	}
+
+	order_list.Close(context.Background())
+	var response = GetAllOrdersResponse{
+		Results: results,
+		//TODO to change this
+		TotalAmount: 0,
+	}
+	return response, nil
 }

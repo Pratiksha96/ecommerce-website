@@ -79,3 +79,21 @@ func GetSingleOrder(orderManager manager.OrderManager) http.HandlerFunc {
 		json.NewEncoder(w).Encode(order)
 	}
 }
+
+//for admin use only
+func GetAllOrders(orderManager manager.OrderManager) http.HandlerFunc {
+	return func(w http.ResponseWriter, r *http.Request) {
+		w.Header().Set("Content-Type", "application/json")
+
+		ctx := r.Context()
+		email := ctx.Value("email").(string)
+		//role := ctx.Value("role").(string)
+		//fmt.Println(role)
+		orders, err := orderManager.GetAllOrders("admin", email)
+		if err != nil {
+			utils.GetError(err, w)
+			return
+		}
+		json.NewEncoder(w).Encode(orders)
+	}
+}
