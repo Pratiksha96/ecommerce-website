@@ -14,6 +14,7 @@ import (
 type OrderManager interface {
 	CreateOrder(order models.Order, role string, email string) (*models.Order, error)
 	GetUserOrders(role string, email string) (GetOrdersResponse, error)
+	GetSingleOrder(id primitive.ObjectID, email string) (*models.Order, error)
 }
 
 type GetOrdersResponse struct {
@@ -69,4 +70,15 @@ func (om *orderManager) GetUserOrders(role string, email string) (GetOrdersRespo
 	var response = GetOrdersResponse{Results: results}
 
 	return response, nil
+}
+
+func (om *orderManager) GetSingleOrder(id primitive.ObjectID, email string) (*models.Order, error) {
+	order := &models.Order{}
+	filter := bson.M{"_id": id}
+	err := database.Coll_order.FindOne(context.TODO(), filter).Decode(order)
+	if err != nil {
+		return order, err
+	}
+
+	return order, nil
 }

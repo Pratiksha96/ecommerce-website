@@ -5,8 +5,12 @@ import (
 	models "ecommerce-website/app/models"
 	"ecommerce-website/app/utils"
 	"encoding/json"
+	"errors"
 	"log"
 	"net/http"
+
+	"github.com/gorilla/mux"
+	"go.mongodb.org/mongo-driver/bson/primitive"
 )
 
 func CreateOrder(orderManager manager.OrderManager) http.HandlerFunc {
@@ -52,5 +56,26 @@ func GetUserOrders(orderManager manager.OrderManager) http.HandlerFunc {
 			return
 		}
 		json.NewEncoder(w).Encode(orders)
+	}
+}
+
+func GetSingleOrder(orderManager manager.OrderManager) http.HandlerFunc {
+	return func(w http.ResponseWriter, r *http.Request) {
+		w.Header().Set("Content-Type", "application/json")
+
+		var params = mux.Vars(r)
+		id, err := primitive.ObjectIDFromHex(params["id"])
+		if err != nil {
+			utils.GetErrorWithStatus(errors.New("invalid object id"), w, http.StatusUnprocessableEntity)
+			return
+		}
+		ctx := r.Context()
+		email := ctx.Value("email").(string)
+		order, err := orderManager.GetSingleOrder(id, email)
+		if err != nil {
+			utils.GetError(err, w)
+			return
+		}
+		json.NewEncoder(w).Encode(order)
 	}
 }
