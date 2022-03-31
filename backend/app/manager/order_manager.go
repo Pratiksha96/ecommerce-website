@@ -16,6 +16,7 @@ type OrderManager interface {
 	GetUserOrders(role string, email string) (GetUserOrdersResponse, error)
 	GetSingleOrder(id primitive.ObjectID, email string) (*models.Order, error)
 	GetAllOrders(role string, email string) (GetAllOrdersResponse, error)
+	DeleteOrder(id primitive.ObjectID, role string, email string) (map[string]interface{}, error)
 }
 
 type GetUserOrdersResponse struct {
@@ -120,4 +121,23 @@ func (om *orderManager) GetAllOrders(role string, email string) (GetAllOrdersRes
 		TotalAmount: 0,
 	}
 	return response, nil
+}
+
+func (om *orderManager) DeleteOrder(id primitive.ObjectID, role string, email string) (map[string]interface{}, error) {
+	err := authorizeUser(role, email)
+	if err != nil {
+		return nil, err
+	}
+
+	filter := bson.M{"_id": id}
+	deleteResult, err := database.Coll_order.DeleteOne(context.TODO(), filter)
+
+	if err != nil {
+		return nil, err
+	} else if deleteResult.DeletedCount == 0 {
+		return nil, errors.New("no such document present")
+	}
+
+	deleteResponse := map[string]interface{}{"success": true, "message": "order has been successfully deleted"}
+	return deleteResponse, nil
 }

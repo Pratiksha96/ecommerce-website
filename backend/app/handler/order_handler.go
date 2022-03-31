@@ -97,3 +97,25 @@ func GetAllOrders(orderManager manager.OrderManager) http.HandlerFunc {
 		json.NewEncoder(w).Encode(orders)
 	}
 }
+
+//for admin use only
+func DeleteOrder(orderManager manager.OrderManager) http.HandlerFunc {
+	return func(w http.ResponseWriter, r *http.Request) {
+		w.Header().Set("Content-Type", "application/json")
+
+		var params = mux.Vars(r)
+		id, err := primitive.ObjectIDFromHex(params["id"])
+		if err != nil || params["id"] == "" {
+			utils.GetErrorWithStatus(errors.New("invalid object id"), w, http.StatusUnprocessableEntity)
+			return
+		}
+		ctx := r.Context()
+		email := ctx.Value("email").(string)
+		deleteResponse, err := orderManager.DeleteOrder(id, "admin", email)
+		if err != nil {
+			utils.GetError(err, w)
+			return
+		}
+		json.NewEncoder(w).Encode(deleteResponse)
+	}
+}
