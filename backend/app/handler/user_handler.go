@@ -29,6 +29,7 @@ func RegisterUser(userManager manager.UserManager) http.HandlerFunc {
 			err := map[string]interface{}{"success": false, "message": errors}
 			w.WriteHeader(http.StatusBadRequest)
 			json.NewEncoder(w).Encode(err)
+			return
 		}
 		tokenResponse, err := userManager.RegisterUser(user)
 		if err != nil {
@@ -55,6 +56,7 @@ func LoginUser(userManager manager.UserManager) http.HandlerFunc {
 			err := map[string]interface{}{"success": false, "message": errors}
 			w.WriteHeader(http.StatusBadRequest)
 			json.NewEncoder(w).Encode(err)
+			return
 		}
 		tokenResponse, err := userManager.LoginUser(user)
 		if err != nil {
