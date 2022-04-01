@@ -1,5 +1,5 @@
 build-server:
-	cd ./backend && go mod download && CGO_ENABLED=0 GOOS=linux go build -o main.go
+	cd ./backend && go mod download && CGO_ENABLED=0 GOOS=linux go build main.go
 
 build-client: 
 	cd ./frontend && npm install
