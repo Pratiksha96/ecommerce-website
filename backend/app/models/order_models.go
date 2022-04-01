@@ -2,6 +2,8 @@ package models
 
 import (
 	"time"
+
+	"go.mongodb.org/mongo-driver/bson/primitive"
 )
 
 type Order struct {
@@ -29,11 +31,11 @@ type AddressInfo struct {
 }
 
 type Items struct {
-	Name     string  `json:"name" bson:"name"`
-	Price    int     `json:"price" bson:"price"`
-	Quantity int     `json:"quantity" bson:"quantity"`
-	Image    string  `json:"image" bson:"image"`
-	Product  Product `json:"product" bson:"product"`
+	Name     string             `json:"name" bson:"name"`
+	Price    int                `json:"price" bson:"price"`
+	Quantity int                `json:"quantity" bson:"quantity"`
+	Image    string             `json:"image" bson:"image"`
+	Product  primitive.ObjectID `json:"product" bson:"product"`
 }
 
 type Payment struct {

@@ -243,7 +243,7 @@ func (pm *productManager) UpdateProduct(id primitive.ObjectID, product models.Pr
 			{"ratings", product.Ratings},
 			{"images", product.Images},
 			{"category", product.Category},
-			{"Stock", product.Stock},
+			{"stock", product.Stock},
 			{"reviews", product.Reviews},
 		}},
 	}
