@@ -16,7 +16,7 @@ import LoginSignUp from './component/User/LoginSignUp.js'
 import Profile from './component/User/Profile.js'
 import UpdateProfile from './component/User/UpdateProfile.js'
 import UpdatePassword from './component/User/UpdatePassword.js'
-
+import Cart from './component/Cart/Cart.js'
 
 
 import {loadUser} from './actions/userAction.js'
@@ -56,6 +56,8 @@ const App = () => {
 
 
         <Route exact path="/about" component={About}/>
+        <Route exact path="/cart" component={Cart}/>
+
         <Route exact path="/productId" component={SingleProduct}/>
         <Route exact path="/product/:id" component={ProductDetails}/>
 
