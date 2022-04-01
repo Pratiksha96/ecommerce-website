@@ -14,6 +14,9 @@ import Products from './component/Product/Products.js'
 import Search from './component/Product/Search.js'
 import LoginSignUp from './component/User/LoginSignUp.js'
 import Profile from './component/User/Profile.js'
+import UpdateProfile from './component/User/UpdateProfile.js'
+
+
 
 import {loadUser} from './actions/userAction.js'
 import store from './store'
@@ -36,6 +39,8 @@ const App = () => {
         {/* {isAuthenticated && <UserOptions user={user} />} */}
         <UserOptions user={user} />
         <Route exact path="/" component={Home}/>
+        <Route exact path="/me/update" component={UpdateProfile}/>
+
         <Route exact path="/contact" component={Contact}/>
         <Route exact path="/products" component={Products}/>
         <Route  path="/products/:keyword" component={Products}/>
