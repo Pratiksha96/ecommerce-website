@@ -13,6 +13,8 @@ import WebFont from 'webfontloader';
 import Products from './component/Product/Products.js'
 import Search from './component/Product/Search.js'
 import LoginSignUp from './component/User/LoginSignUp.js'
+import Profile from './component/User/Profile.js'
+
 import {loadUser} from './actions/userAction.js'
 import store from './store'
 import UserOptions from "./component/layout/Header/UserOptions";
@@ -41,6 +43,8 @@ const App = () => {
 
 
         <Route exact path="/search" component={Search}/>
+        <Route exact path="/account" component={Profile}/>
+
 
 
         <Route exact path="/about" component={About}/>
