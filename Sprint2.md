@@ -328,37 +328,37 @@ Removes token from the cookies for the respective user
 ## Test results
 ### Testing product/search/keyword={name} api
 
-![alt text](https://github.com/Pratiksha96/ecommerce-website/blob/main/resources/SearchProductByName.png)
+![alt text](https://github.com/Pratiksha96/ecommerce-website/blob/main/resources/testImages/SearchProductByName.png)
 
 ### Testing product/search/keyword={name}&category={category} api
 
-![alt text](https://github.com/Pratiksha96/ecommerce-website/blob/main/resources/SearchProductByNameAndCategory.png)
+![alt text](https://github.com/Pratiksha96/ecommerce-website/blob/main/resources/testImages/SearchProductByNameAndCategory.png)
 
 ### Testing product/search/keyword={name}&priceMin={priceMin} api
 
-![alt text](https://github.com/Pratiksha96/ecommerce-website/blob/main/resources/SearchProductByNameAndPriceMin.png)
+![alt text](https://github.com/Pratiksha96/ecommerce-website/blob/main/resources/testImages/SearchProductByNameAndPriceMin.png)
 
 ### Testing product/search/keyword={name}&priceMax={priceMax} api
 
-![alt text](https://github.com/Pratiksha96/ecommerce-website/blob/main/resources/SearchProductByNameAndPriceMax.png)
+![alt text](https://github.com/Pratiksha96/ecommerce-website/blob/main/resources/testImages/SearchProductByNameAndPriceMax.png)
 
 ### Testing product/search/page={page} api
 
-![alt text](https://github.com/Pratiksha96/ecommerce-website/blob/main/resources/Pagination.png)
+![alt text](https://github.com/Pratiksha96/ecommerce-website/blob/main/resources/testImages/Pagination.png)
 
 
 ### Testing /register api
 
-![alt text](https://github.com/Pratiksha96/ecommerce-website/blob/main/resources/RegisterUser.png)
+![alt text](https://github.com/Pratiksha96/ecommerce-website/blob/main/resources/testImages/RegisterUser.png)
 
 ### Testing /login api
 
-![alt text](https://github.com/Pratiksha96/ecommerce-website/blob/main/resources/LoginUser.png)
+![alt text](https://github.com/Pratiksha96/ecommerce-website/blob/main/resources/testImages/LoginUser.png)
 
 
 ### Testing /logout api
 
-![alt text](https://github.com/Pratiksha96/ecommerce-website/blob/main/resources/LogoutUser.png)
+![alt text](https://github.com/Pratiksha96/ecommerce-website/blob/main/resources/testImages/LogoutUser.png)
 
 
 # Frontend 
@@ -391,19 +391,19 @@ A layout is created where a user can login and logout from the website. The page
 
 ## Test results 
 ### HomePage Register User
-![alt text](https://github.com/Pratiksha96/ecommerce-website/blob/main/resources/HomepageRegister.png)
+![alt text](https://github.com/Pratiksha96/ecommerce-website/blob/main/resources/testImages/HomepageRegister.png)
 
 ### HomePage Login User
-![alt text](https://github.com/Pratiksha96/ecommerce-website/blob/main/resources/HomepageLogin.png)
+![alt text](https://github.com/Pratiksha96/ecommerce-website/blob/main/resources/testImages/HomepageLogin.png)
 
 ### HomePage Search by name
-![alt text](https://github.com/Pratiksha96/ecommerce-website/blob/main/resources/HomepageSearchByName.png)
+![alt text](https://github.com/Pratiksha96/ecommerce-website/blob/main/resources/testImages/HomepageSearchByName.png)
 
 ### HomePage Search by category
-![alt text](https://github.com/Pratiksha96/ecommerce-website/blob/main/resources/HomepageSearchByCategory.png)
+![alt text](https://github.com/Pratiksha96/ecommerce-website/blob/main/resources/testImages/HomepageSearchByCategory.png)
 
 ### Front end Cypress
-![alt text](https://github.com/Pratiksha96/ecommerce-website/blob/main/resources/FrontendCypress.png)
+![alt text](https://github.com/Pratiksha96/ecommerce-website/blob/main/resources/testImages/FrontendCypress.png)
 
 
 ## How to run

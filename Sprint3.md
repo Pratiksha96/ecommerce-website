@@ -3,9 +3,17 @@
 ## Stories
 Developer:
 - [Implementation of User manager should be wrapped under an interface](https://github.com/Pratiksha96/ecommerce-website/issues/99)
+- [As a developer, I want to add validations for order related details](https://github.com/Pratiksha96/ecommerce-website/issues/131)
+- [As a developer, I want to add Order model to start storing customer orders](https://github.com/Pratiksha96/ecommerce-website/issues/130)
+
 Admin:
+- [As an admin, I want to update an order placed by a user](https://github.com/Pratiksha96/ecommerce-website/issues/141)
+- [As an admin, I want to be able to delete an order](https://github.com/Pratiksha96/ecommerce-website/issues/140)
+- [As an admin, I want to see all orders placed by others users](https://github.com/Pratiksha96/ecommerce-website/issues/139)
+- [As a user, I want to be able to change my profile password](https://github.com/Pratiksha96/ecommerce-website/issues/108)
 
 User:
+- [As a user, I want to see all my orders placed](https://github.com/Pratiksha96/ecommerce-website/issues/136)
 
 Unit Tests:
 - [Unit test for Get All Products Handler function](https://github.com/Pratiksha96/ecommerce-website/issues/45)
@@ -19,6 +27,7 @@ Unit Tests:
 - [Unit test for Update Profile Handler function](https://github.com/Pratiksha96/ecommerce-website/issues/124)
 - [Unit tests for Get User Handler function](https://github.com/Pratiksha96/ecommerce-website/issues/45)
 - [Unit tests for Get All Users Handler function](https://github.com/Pratiksha96/ecommerce-website/issues/147)
+- [Unit test for Create Order handler function](https://github.com/Pratiksha96/ecommerce-website/issues/153)
 
 Bug:
 
