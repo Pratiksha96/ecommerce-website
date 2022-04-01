@@ -420,4 +420,3 @@ A layout is created where a user can login and logout from the website. The page
 - run npm install to install all the dependencies 
 - run npm start to start the server
 - Verify server is running by running this - localhost:3000 - it should display the home pages 
-q

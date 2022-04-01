@@ -1,4 +1,4 @@
-# Sprint 2
+# Sprint 3
 
 ## Stories
 Developer:
@@ -14,6 +14,10 @@ Admin:
 
 User:
 - [As a user, I want to see all my orders placed](https://github.com/Pratiksha96/ecommerce-website/issues/136)
+- [As a user, I want to change my password](https://github.com/Pratiksha96/ecommerce-website/issues/109)
+- [As a user, I want to see my profile ](https://github.com/Pratiksha96/ecommerce-website/issues/102)
+- [As a user, I want to update my profile ](https://github.com/Pratiksha96/ecommerce-website/issues/105)
+- [As a user, I want to add products to a cart](https://github.com/Pratiksha96/ecommerce-website/issues/151)
 
 Unit Tests:
 - [Unit test for Get All Products Handler function](https://github.com/Pratiksha96/ecommerce-website/issues/45)
@@ -889,4 +893,54 @@ Content:
 
 # Frontend 
 
+## FrontEnd Technologies: React JS, CSS
+## User Profile
+A layout is created where a user can see his profile on the website. The page is mobile responsive. Here are the screenshots to  see the profile of the user for different screen sizes.
+## UpdateProfile
+A layout is created where a user can update his profile on the website. The page is mobile responsive. Here are the screenshots to  see the update profile of the user for different screen sizes.
+
+## UpdatePassword
+A layout is created where a user can update his password on the website. The page is mobile responsive. Here are the screenshots to  see the update password of the user for different screen sizes.
+## Cart
+A layout is created where a user can add products in a cart on the website. The page is mobile responsive. Here are the screenshots to  see the checkout page for different screen sizes.
+
+##  User Menu
+A layout is created where a user can see the user menu on the website. Here are the screenshots to  see the user menu.
+
 ## Test results 
+###  User Menu
+![alt text](https://github.com/Pratiksha96/ecommerce-website/blob/main/resources/testImages/UserMenu.png)
+
+### User Profile
+![alt text](https://github.com/Pratiksha96/ecommerce-website/blob/main/resources/testImages/UserProfile.png)
+### User Profile-mobile
+![alt text](https://github.com/Pratiksha96/ecommerce-website/blob/main/resources/testImages/UserProfile-mobile.png)
+### UpdateProfile
+![alt text](https://github.com/Pratiksha96/ecommerce-website/blob/main/resources/testImages/UpdateProfile.png)
+### UpdateProfile-mobile
+![alt text](https://github.com/Pratiksha96/ecommerce-website/blob/main/resources/testImages/UpdateProfile-mobile.png)
+### UpdatePassword
+![alt text](https://github.com/Pratiksha96/ecommerce-website/blob/main/resources/testImages/UpdatePassword.png)
+### UpdatePassword-mobile
+![alt text](https://github.com/Pratiksha96/ecommerce-website/blob/main/resources/testImages/UpdatePassword-mobile.png)
+
+### Cart
+![alt text](https://github.com/Pratiksha96/ecommerce-website/blob/main/resources/testImages/Cart.png)
+
+### Cart-mobile
+![alt text](https://github.com/Pratiksha96/ecommerce-website/blob/main/resources/testImages/Cart-mobile.png)
+
+## How to run
+### Backend
+- download mongo db - make sure it is running by running command - `mongo`
+- checkout main branch and use 'make run' for running the server
+- use 'make build'
+- It should show in your terminal that Db is connected.
+- Verify server is running by running this - localhost:8081/ping - it should result in pong on your screen
+
+### Frontend
+ - download node - make sure it is running by running command - `node -v`
+- checkout main branch and cd into frontend
+- run npm install to install all the dependencies 
+- run npm start to start the server
+- Verify server is running by running this - localhost:3000 - it should display the home pages 
