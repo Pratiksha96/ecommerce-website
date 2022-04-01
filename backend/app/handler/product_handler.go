@@ -1,15 +1,23 @@
 package handler
 
 import (
+	"context"
 	"encoding/json"
 	"errors"
+	"fmt"
+	"io/ioutil"
 	"net/http"
+	"strconv"
 
 	"ecommerce-website/app/manager"
 	models "ecommerce-website/app/models"
 	"ecommerce-website/app/utils"
 
+	"ecommerce-website/internal/database"
+	"log"
+
 	"github.com/gorilla/mux"
+	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/bson/primitive"
 )
 
@@ -131,5 +139,78 @@ func GetProduct(productManager manager.ProductManager) http.HandlerFunc {
 			return
 		}
 		json.NewEncoder(w).Encode(product)
+	}
+}
+
+func CreateReview(productManager manager.ProductManager) http.HandlerFunc {
+	return func(w http.ResponseWriter, r *http.Request) {
+		w.Header().Set("Context-Type", "application/x-www-form-urlencoded")
+		w.Header().Set("Access-Control-Allow-Origin", "*")
+		w.Header().Set("Access-Control-Allow-Methods", "POST")
+		w.Header().Set("Access-Control-Allow-Headers", "Content-Type")
+
+		var product models.Product
+
+		var requestbody interface{}
+		buffer, err := ioutil.ReadAll(r.Body)
+
+		if err != nil {
+			log.Panic(err)
+		}
+		r.Body.Close()
+		json.Unmarshal(buffer, &requestbody)
+		body := requestbody.(map[string]interface{})
+
+		ctx := r.Context()
+		email := ctx.Value("email").(string)
+
+		var storedUser models.User
+		filter := bson.M{"email": email}
+		err = database.Coll_user.FindOne(context.TODO(), filter).Decode(&storedUser)
+		if err != nil {
+			fmt.Print("Caught error on line 175")
+			utils.GetError(err, w)
+			return
+		}
+		ratingString := body["rating"].(string)
+		ratingInt, err := strconv.Atoi(ratingString)
+		proudctIdString := body["productId"].(string)
+		productId, err := primitive.ObjectIDFromHex(proudctIdString)
+		if err != nil {
+			fmt.Print("Caught error on line 184")
+			utils.GetError(err, w)
+			return
+		}
+
+		filterProduct := bson.M{"_id": productId}
+		err = database.Coll_product.FindOne(context.TODO(), filterProduct).Decode(&product)
+		if err != nil {
+			fmt.Print("Caught error on line 192")
+			utils.GetError(err, w)
+			return
+		}
+
+		var review models.Review
+
+		review.User = storedUser
+		review.Name = storedUser.Name
+		review.Rating = ratingInt
+		review.Comment = body["comment"].(string)
+
+		// if errors := utils.Validate(product); len(errors) > 0 {
+		// 	log.Println("Received invalid json request!")
+		// 	err := map[string]interface{}{"success": false, "message": errors}
+		// 	w.WriteHeader(http.StatusBadRequest)
+		// 	json.NewEncoder(w).Encode(err)
+		// 	return
+		// }
+
+		response, err := productManager.CreateReview(review, product, filterProduct)
+		if err != nil {
+			fmt.Print("Caught error on line 214")
+			utils.GetError(err, w)
+			return
+		}
+		json.NewEncoder(w).Encode(response)
 	}
 }
