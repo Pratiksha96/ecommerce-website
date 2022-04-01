@@ -7,7 +7,6 @@ import (
 	"encoding/json"
 	"errors"
 	"net/http"
-	"time"
 
 	"github.com/gorilla/mux"
 	"go.mongodb.org/mongo-driver/bson/primitive"
@@ -34,8 +33,8 @@ func CreateOrder(orderManager manager.OrderManager) http.HandlerFunc {
 		ctx := r.Context()
 		email := ctx.Value("email").(string)
 		order.OrderStatus = "Processing"
-		order.PaidAt = time.Now()
-		order.CreatedAt = time.Now()
+		// order.PaidAt = time.Now()
+		// order.CreatedAt = time.Now()
 		//adding user id for now
 		order.User = email
 		response, err := orderManager.CreateOrder(order, "user", email)

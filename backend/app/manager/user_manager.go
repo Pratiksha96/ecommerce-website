@@ -41,8 +41,11 @@ func NewUserManager() UserManager {
 }
 
 func (um *userManager) RegisterUser(user models.User) (TokenResponse, error) {
+	_, err := user.GetBSON()
+	if err != nil {
+		return TokenResponse{}, err
+	}
 
-	user.GetBSON()
 	hashedPassword, err := bcrypt.GenerateFromPassword([]byte(user.Password), bcrypt.DefaultCost)
 	if err != nil {
 		return TokenResponse{}, err
