@@ -3,7 +3,6 @@ package manager
 import (
 	"context"
 	models "ecommerce-website/app/models"
-	"ecommerce-website/app/utils"
 	"ecommerce-website/internal/database"
 
 	"errors"
@@ -22,6 +21,7 @@ type UserManager interface {
 	UpdateProfile(email string, body map[string]interface{}) (UserResponse, error)
 	GetAllUsers(role string, email string) ([]primitive.M, error)
 	GetUser(role string, email string, id primitive.ObjectID) (*models.User, error)
+	AuthorizeUser(role string, email string) error
 }
 
 type TokenResponse struct {
@@ -65,6 +65,21 @@ func (um *userManager) RegisterUser(user models.User) (TokenResponse, error) {
 		Token:   token,
 	}
 	return tokenResponse, nil
+}
+
+func (um *userManager) AuthorizeUser(role string, email string) error {
+	var user models.User
+	userFilter := bson.M{"email": email}
+	userErr := database.Coll_user.FindOne(context.TODO(), userFilter).Decode(&user)
+
+	if userErr != nil {
+		return userErr
+	}
+
+	if role == "admin" && (role != user.Role) {
+		return errors.New("sorry, you don't have access to this resource")
+	}
+	return nil
 }
 
 func (um *userManager) LoginUser(user models.User) (TokenResponse, error) {
@@ -220,14 +235,9 @@ func (um *userManager) GetAllUsers(role string, email string) ([]primitive.M, er
 }
 
 func (um *userManager) GetUser(role string, email string, id primitive.ObjectID) (*models.User, error) {
-	err := utils.AuthorizeUser(role, email)
-	if err != nil {
-		return nil, err
-	}
-
 	user := &models.User{}
 	filter := bson.M{"_id": id}
-	err = database.Coll_user.FindOne(context.TODO(), filter).Decode(user)
+	err := database.Coll_user.FindOne(context.TODO(), filter).Decode(user)
 	if err != nil {
 		return nil, err
 	}

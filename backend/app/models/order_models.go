@@ -41,4 +41,4 @@ type Items struct {
 type Payment struct {
 	Id     string `json:"id" bson:"id"`
 	Status string `json:"status" bson:"status"`
-}
+} 

@@ -1,17 +1,12 @@
 package utils
 
 import (
-	"context"
 	models "ecommerce-website/app/models"
-	"ecommerce-website/internal/database"
 	"encoding/json"
-	"errors"
 	"log"
 	"net/http"
 	"net/mail"
 	"net/url"
-
-	"go.mongodb.org/mongo-driver/bson"
 )
 
 type ErrorResponse struct {
@@ -19,16 +14,12 @@ type ErrorResponse struct {
 	ErrorMessage string `json:"message"`
 }
 
-// GetError : This is helper function to prepare error model.
-// If you want to export your function. You must to start upper case function name. Otherwise you won't see your function when you import that on other class.
 func GetError(err error, w http.ResponseWriter) {
-
 	log.Printf(err.Error())
 	var response = ErrorResponse{
 		ErrorMessage: err.Error(),
 		Success:      false,
 	}
-
 	message, _ := json.Marshal(response)
 
 	w.WriteHeader(http.StatusInternalServerError)
@@ -36,13 +27,11 @@ func GetError(err error, w http.ResponseWriter) {
 }
 
 func GetErrorWithStatus(err error, w http.ResponseWriter, statusCode int) {
-
 	log.Printf(err.Error())
 	var response = ErrorResponse{
 		ErrorMessage: err.Error(),
 		Success:      false,
 	}
-
 	message, _ := json.Marshal(response)
 
 	w.WriteHeader(statusCode)
@@ -128,21 +117,6 @@ func UserLoginValidation(user models.User) url.Values {
 	}
 
 	return errors
-}
-
-func AuthorizeUser(role string, email string) error {
-	var user models.User
-	userFilter := bson.M{"email": email}
-	userErr := database.Coll_user.FindOne(context.TODO(), userFilter).Decode(&user)
-
-	if userErr != nil {
-		return userErr
-	}
-
-	if role == "admin" && (role != user.Role) {
-		return errors.New("sorry, you don't have access to this resource")
-	}
-	return nil
 }
 
 //initial validations, might alter later
