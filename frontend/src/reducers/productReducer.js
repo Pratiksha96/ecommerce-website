@@ -35,6 +35,7 @@ import {
 } from "../constants/productConstants";
 
 export const productsReducer = (state = { products: [] }, action) => {
+  debugger
   switch (action.type) {
     case ALL_PRODUCT_REQUEST:
     case ADMIN_PRODUCT_REQUEST:
@@ -45,10 +46,10 @@ export const productsReducer = (state = { products: [] }, action) => {
     case ALL_PRODUCT_SUCCESS:
       return {
         loading: false,
-        products: action.payload.payload,
-        productsCount: action.payload.totalProducts,
+        products: action.payload.results,
+        productsCount: action.payload.totalproducts,
         resultPerPage: 8,
-        filteredProductsCount: action.payload.payload.length,
+        filteredProductsCount: action.payload.results.length,
       };
 
     case ADMIN_PRODUCT_SUCCESS:
