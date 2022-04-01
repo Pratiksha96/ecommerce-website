@@ -15,6 +15,7 @@ import Search from './component/Product/Search.js'
 import LoginSignUp from './component/User/LoginSignUp.js'
 import Profile from './component/User/Profile.js'
 import UpdateProfile from './component/User/UpdateProfile.js'
+import UpdatePassword from './component/User/UpdatePassword.js'
 
 
 
@@ -40,6 +41,8 @@ const App = () => {
         <UserOptions user={user} />
         <Route exact path="/" component={Home}/>
         <Route exact path="/me/update" component={UpdateProfile}/>
+        <Route exact path="/password/update" component={UpdatePassword}/>
+
 
         <Route exact path="/contact" component={Contact}/>
         <Route exact path="/products" component={Products}/>
