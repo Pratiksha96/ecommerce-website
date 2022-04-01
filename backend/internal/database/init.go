@@ -12,7 +12,6 @@ import (
 )
 
 var (
-	db           *mongo.Database
 	Coll_product *mongo.Collection
 	Coll_user    *mongo.Collection
 	Coll_order   *mongo.Collection
@@ -24,7 +23,8 @@ func InitDB() {
 	if err != nil {
 		panic(err)
 	}
-	ctx, _ := context.WithTimeout(context.Background(), time.Second*20)
+	ctx, cancel := context.WithTimeout(context.Background(), time.Second*20)
+	defer cancel()
 	err = client.Connect(ctx)
 	if err != nil {
 		panic(err)

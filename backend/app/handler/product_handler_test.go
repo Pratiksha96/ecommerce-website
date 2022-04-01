@@ -1,7 +1,8 @@
-package handler
+package handler_test
 
 import (
 	"context"
+	"ecommerce-website/app/handler"
 	"ecommerce-website/app/handler/mock"
 	"ecommerce-website/app/manager"
 	"ecommerce-website/app/models"
@@ -25,7 +26,7 @@ func Test_GetProduct(t *testing.T) {
 		recorder := httptest.NewRecorder()
 		req := &http.Request{}
 		productManager := mock.NewMockProductManager(t)
-		handler := GetProduct(productManager)
+		handler := handler.GetProduct(productManager)
 		handler.ServeHTTP(recorder, req)
 		assert.Equal(t, http.StatusUnprocessableEntity, recorder.Code)
 	})
@@ -46,7 +47,7 @@ func Test_GetProduct(t *testing.T) {
 		productManager := mock.NewMockProductManager(t)
 		sampleErr := errors.New("some error")
 		productManager.On("GetProduct", sampleId, sampleEmail).Return(nil, sampleErr)
-		handler := GetProduct(productManager)
+		handler := handler.GetProduct(productManager)
 		handler.ServeHTTP(recorder, req)
 		expectedResponse := utils.ErrorResponse{
 			ErrorMessage: sampleErr.Error(),
@@ -81,7 +82,7 @@ func Test_GetProduct(t *testing.T) {
 		productManager := mock.NewMockProductManager(t)
 		productManager.On("GetProduct", sampleId, sampleEmail).Return(sampleProduct, nil)
 
-		handler := GetProduct(productManager)
+		handler := handler.GetProduct(productManager)
 		handler.ServeHTTP(recorder, req)
 		assert.Equal(t, string(expectedResponse), string(recorder.Body.Bytes()))
 		assert.Equal(t, http.StatusOK, recorder.Code)
@@ -95,7 +96,7 @@ func Test_CreateProduct(t *testing.T) {
 		require.NoError(t, err)
 
 		productManager := mock.NewMockProductManager(t)
-		handler := CreateProduct(productManager)
+		handler := handler.CreateProduct(productManager)
 		handler.ServeHTTP(recorder, req)
 		assert.Equal(t, http.StatusBadRequest, recorder.Code)
 	})
@@ -122,7 +123,7 @@ func Test_CreateProduct(t *testing.T) {
 
 		productManager := mock.NewMockProductManager(t)
 		productManager.On("CreateProduct", *sampleProduct, "admin", sampleEmail).Return(nil, sampleErr)
-		handler := CreateProduct(productManager)
+		handler := handler.CreateProduct(productManager)
 		handler.ServeHTTP(recorder, req)
 
 		assert.Equal(t, expectedResponseBody, recorder.Body.Bytes())
@@ -145,9 +146,9 @@ func Test_CreateProduct(t *testing.T) {
 		productManager := mock.NewMockProductManager(t)
 		productManager.On("CreateProduct", *sampleProduct, "admin", sampleEmail).Return(sampleProduct, nil)
 
-		handler := CreateProduct(productManager)
+		handler := handler.CreateProduct(productManager)
 		handler.ServeHTTP(recorder, req)
-		assert.Equal(t, string(expectedResponse), string(recorder.Body.Bytes()))
+		assert.Equal(t, string(expectedResponse), recorder.Body.String())
 		assert.Equal(t, http.StatusOK, recorder.Code)
 	})
 }
@@ -165,7 +166,7 @@ func Test_GetAllProducts(t *testing.T) {
 
 		sampleErr := errors.New("invalid object id")
 		productManager.On("GetAllProducts").Return(nil, sampleErr)
-		handler := GetAllProducts(productManager)
+		handler := handler.GetAllProducts(productManager)
 		handler.ServeHTTP(recorder, req)
 		expectedResponse := utils.ErrorResponse{
 			ErrorMessage: sampleErr.Error(),
@@ -201,7 +202,7 @@ func Test_GetAllProducts(t *testing.T) {
 		productManager := mock.NewMockProductManager(t)
 		productManager.On("GetAllProducts").Return(reqBody, nil)
 
-		handler := GetAllProducts(productManager)
+		handler := handler.GetAllProducts(productManager)
 		handler.ServeHTTP(recorder, req)
 		assert.Equal(t, string(expectedResponse), string(recorder.Body.Bytes()))
 		assert.Equal(t, http.StatusOK, recorder.Code)
@@ -224,7 +225,7 @@ func Test_UpdateProduct(t *testing.T) {
 		req = req.WithContext(context.WithValue(req.Context(), "email", sampleEmail))
 
 		productManager := mock.NewMockProductManager(t)
-		handler := UpdateProduct(productManager)
+		handler := handler.UpdateProduct(productManager)
 		handler.ServeHTTP(recorder, req)
 		assert.Equal(t, http.StatusBadRequest, recorder.Code)
 	})
@@ -257,7 +258,7 @@ func Test_UpdateProduct(t *testing.T) {
 
 		productManager := mock.NewMockProductManager(t)
 		productManager.On("UpdateProduct", sampleId, *sampleProduct, "admin", sampleEmail).Return(nil, sampleErr)
-		handler := UpdateProduct(productManager)
+		handler := handler.UpdateProduct(productManager)
 		handler.ServeHTTP(recorder, req)
 
 		assert.Equal(t, expectedResponseBody, recorder.Body.Bytes())
@@ -285,7 +286,7 @@ func Test_UpdateProduct(t *testing.T) {
 
 		productManager := mock.NewMockProductManager(t)
 		productManager.On("UpdateProduct", sampleId, *sampleProduct, "admin", sampleEmail).Return(sampleProduct, nil)
-		handler := UpdateProduct(productManager)
+		handler := handler.UpdateProduct(productManager)
 		handler.ServeHTTP(recorder, req)
 		assert.Equal(t, string(expectedResponse), string(recorder.Body.Bytes()))
 		assert.Equal(t, http.StatusOK, recorder.Code)
@@ -303,7 +304,7 @@ func Test_DeleteProduct(t *testing.T) {
 		req = req.WithContext(context.WithValue(req.Context(), "email", sampleEmail))
 
 		productManager := mock.NewMockProductManager(t)
-		handler := DeleteProduct(productManager)
+		handler := handler.DeleteProduct(productManager)
 		handler.ServeHTTP(recorder, req)
 		assert.Equal(t, http.StatusUnprocessableEntity, recorder.Code)
 	})
@@ -336,7 +337,7 @@ func Test_DeleteProduct(t *testing.T) {
 
 		productManager := mock.NewMockProductManager(t)
 		productManager.On("DeleteProduct", sampleId, "admin", sampleEmail).Return(nil, sampleErr)
-		handler := DeleteProduct(productManager)
+		handler := handler.DeleteProduct(productManager)
 		handler.ServeHTTP(recorder, req)
 
 		assert.Equal(t, expectedResponseBody, recorder.Body.Bytes())
@@ -366,7 +367,7 @@ func Test_DeleteProduct(t *testing.T) {
 
 		productManager := mock.NewMockProductManager(t)
 		productManager.On("DeleteProduct", sampleId, "admin", sampleEmail).Return(reqBody, nil)
-		handler := DeleteProduct(productManager)
+		handler := handler.DeleteProduct(productManager)
 		handler.ServeHTTP(recorder, req)
 		assert.Equal(t, string(expectedResponse), string(recorder.Body.Bytes()))
 		assert.Equal(t, http.StatusOK, recorder.Code)
@@ -392,7 +393,7 @@ func Test_SearchProducts(t *testing.T) {
 
 		sampleErr := errors.New("invalid object id")
 		productManager.On("SearchProducts", q).Return(manager.SearchResponse{}, sampleErr)
-		handler := SearchProducts(productManager)
+		handler := handler.SearchProducts(productManager)
 		handler.ServeHTTP(recorder, req)
 		expectedResponse := utils.ErrorResponse{
 			ErrorMessage: sampleErr.Error(),
@@ -438,7 +439,7 @@ func Test_SearchProducts(t *testing.T) {
 		productManager := mock.NewMockProductManager(t)
 		productManager.On("SearchProducts", q).Return(response, nil)
 
-		handler := SearchProducts(productManager)
+		handler := handler.SearchProducts(productManager)
 		handler.ServeHTTP(recorder, req)
 		assert.Equal(t, string(expectedResponse), string(recorder.Body.Bytes()))
 		assert.Equal(t, http.StatusOK, recorder.Code)

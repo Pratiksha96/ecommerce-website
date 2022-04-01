@@ -24,11 +24,8 @@ func RegisterUser(userManager manager.UserManager) http.HandlerFunc {
 		var user models.User
 		_ = json.NewDecoder(r.Body).Decode(&user)
 
-		if errors := utils.UserRegisterValidation(user); len(errors) > 0 {
-			log.Println("Received invalid json request!")
-			err := map[string]interface{}{"success": false, "message": errors}
-			w.WriteHeader(http.StatusBadRequest)
-			json.NewEncoder(w).Encode(err)
+		if errs := utils.UserRegisterValidation(user); len(errs) > 0 {
+			utils.GetErrorWithStatus(errors.New("Received invalid json request!"), w, http.StatusBadRequest)
 			return
 		}
 		tokenResponse, err := userManager.RegisterUser(user)
@@ -51,11 +48,8 @@ func LoginUser(userManager manager.UserManager) http.HandlerFunc {
 		var user models.User
 		_ = json.NewDecoder(r.Body).Decode(&user)
 
-		if errors := utils.UserLoginValidation(user); len(errors) > 0 {
-			log.Println("Received invalid json request!")
-			err := map[string]interface{}{"success": false, "message": errors}
-			w.WriteHeader(http.StatusBadRequest)
-			json.NewEncoder(w).Encode(err)
+		if errs := utils.UserLoginValidation(user); len(errs) > 0 {
+			utils.GetErrorWithStatus(errors.New("Received invalid json request!"), w, http.StatusBadRequest)
 			return
 		}
 		tokenResponse, err := userManager.LoginUser(user)
@@ -123,7 +117,8 @@ func UpdatePassword(userManager manager.UserManager) http.HandlerFunc {
 		var requestbody interface{}
 		buffer, err := ioutil.ReadAll(r.Body)
 		if err != nil {
-			log.Panic(err)
+			utils.GetError(err, w)
+			return
 		}
 		r.Body.Close()
 		json.Unmarshal(buffer, &requestbody)

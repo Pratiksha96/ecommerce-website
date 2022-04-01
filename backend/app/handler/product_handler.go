@@ -8,7 +8,6 @@ import (
 	"ecommerce-website/app/manager"
 	models "ecommerce-website/app/models"
 	"ecommerce-website/app/utils"
-	"log"
 
 	"github.com/gorilla/mux"
 	"go.mongodb.org/mongo-driver/bson/primitive"
@@ -52,11 +51,8 @@ func CreateProduct(productManager manager.ProductManager) http.HandlerFunc {
 		var product models.Product
 		_ = json.NewDecoder(r.Body).Decode(&product)
 
-		if errors := utils.Validate(product); len(errors) > 0 {
-			log.Println("Received invalid json request!")
-			err := map[string]interface{}{"success": false, "message": errors}
-			w.WriteHeader(http.StatusBadRequest)
-			json.NewEncoder(w).Encode(err)
+		if err := utils.Validate(product); len(err) > 0 {
+			utils.GetErrorWithStatus(errors.New("Received invalid json request!"), w, http.StatusBadRequest)
 			return
 		}
 		ctx := r.Context()
@@ -80,11 +76,9 @@ func UpdateProduct(productManager manager.ProductManager) http.HandlerFunc {
 		var product models.Product
 		_ = json.NewDecoder(r.Body).Decode(&product)
 
-		if errors := utils.Validate(product); len(errors) > 0 {
-			log.Println("Received invalid json request!")
-			err := map[string]interface{}{"success": false, "message": errors}
-			w.WriteHeader(http.StatusBadRequest)
-			json.NewEncoder(w).Encode(err)
+		if err := utils.Validate(product); len(err) > 0 {
+			utils.GetErrorWithStatus(errors.New("Received invalid json request!"), w, http.StatusBadRequest)
+			return
 		} else {
 			ctx := r.Context()
 			email := ctx.Value("email").(string)

@@ -55,6 +55,5 @@ func AuthenticateUser(next http.HandlerFunc) http.HandlerFunc {
 		ctx := r.Context()
 		r = r.WithContext(context.WithValue(ctx, "email", email))
 		next.ServeHTTP(w, r)
-		return
 	}
 }
