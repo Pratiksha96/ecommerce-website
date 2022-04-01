@@ -5,14 +5,13 @@ import (
 	models "ecommerce-website/app/models"
 	"ecommerce-website/app/utils"
 	"ecommerce-website/internal/database"
-	"log"
-
-	"golang.org/x/crypto/bcrypt"
 
 	"errors"
+	"log"
 
 	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/bson/primitive"
+	"golang.org/x/crypto/bcrypt"
 )
 
 type UserManager interface {

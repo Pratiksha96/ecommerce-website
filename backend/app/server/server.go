@@ -41,6 +41,7 @@ func StartServer() {
 	r.HandleFunc("/order/get/{id}", middleware.AuthenticateUser(handler.GetSingleOrder(orderManager))).Methods("GET", "OPTIONS")
 	r.HandleFunc("/order/get", middleware.AuthenticateUser(handler.GetAllOrders(orderManager))).Methods("GET", "OPTIONS")
 	r.HandleFunc("/order/delete/{id}", middleware.AuthenticateUser(handler.DeleteOrder(orderManager))).Methods("DELETE", "OPTIONS")
+	r.HandleFunc("/order/update/{id}", middleware.AuthenticateUser(handler.UpdateOrder(orderManager))).Methods("PUT", "OPTIONS")
 
 	srv := &http.Server{
 		Handler:      r,
