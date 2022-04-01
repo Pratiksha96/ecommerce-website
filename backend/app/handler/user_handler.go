@@ -14,7 +14,7 @@ import (
 	"go.mongodb.org/mongo-driver/bson/primitive"
 )
 
-func RegisterUser() http.HandlerFunc {
+func RegisterUser(userManager manager.UserManager) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		w.Header().Set("Context-Type", "application/x-www-form-urlencoded")
 		w.Header().Set("Access-Control-Allow-Origin", "*")
@@ -29,13 +29,19 @@ func RegisterUser() http.HandlerFunc {
 			err := map[string]interface{}{"success": false, "message": errors}
 			w.WriteHeader(http.StatusBadRequest)
 			json.NewEncoder(w).Encode(err)
-		} else {
-			manager.RegisterUser(user, w)
+			return
 		}
+		tokenResponse, err := userManager.RegisterUser(user)
+		if err != nil {
+			utils.GetError(err, w)
+			return
+		}
+		utils.StoreUserToken(tokenResponse.Token, w)
+		json.NewEncoder(w).Encode(tokenResponse)
 	}
 }
 
-func LoginUser() http.HandlerFunc {
+func LoginUser(userManager manager.UserManager) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		w.Header().Set("Context-Type", "application/x-www-form-urlencoded")
 		w.Header().Set("Access-Control-Allow-Origin", "*")
@@ -50,13 +56,19 @@ func LoginUser() http.HandlerFunc {
 			err := map[string]interface{}{"success": false, "message": errors}
 			w.WriteHeader(http.StatusBadRequest)
 			json.NewEncoder(w).Encode(err)
-		} else {
-			manager.LoginUser(user, w)
+			return
 		}
+		tokenResponse, err := userManager.LoginUser(user)
+		if err != nil {
+			utils.GetError(err, w)
+			return
+		}
+		utils.StoreUserToken(tokenResponse.Token, w)
+		json.NewEncoder(w).Encode(tokenResponse)
 	}
 }
 
-func LogoutUser() http.HandlerFunc {
+func LogoutUser(userManager manager.UserManager) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		w.Header().Set("Context-Type", "application/x-www-form-urlencoded")
 		w.Header().Set("Access-Control-Allow-Origin", "*")
@@ -69,21 +81,21 @@ func LogoutUser() http.HandlerFunc {
 			if err == http.ErrNoCookie {
 				// If the cookie is not set, return an unauthorized status
 				w.WriteHeader(http.StatusUnauthorized)
-				utils.GetError(errors.New("received ErrNoCookie, you are already logged out"), w)
+				utils.GetError(errors.New("Received ErrNoCookie, you are already logged out"), w)
 				return
 			}
 			// For any other type of error, return a bad request status
 			w.WriteHeader(http.StatusBadRequest)
-			utils.GetError(errors.New("please login to access this resource"), w)
+			utils.GetError(errors.New("Please login to access this resource"), w)
 			return
 		}
 
 		tokenStr := cookieToken.Value
-		manager.LogoutUser(tokenStr, w)
+		utils.DeleteUserToken(tokenStr, w)
 	}
 }
 
-func UserDetails() http.HandlerFunc {
+func GetUserDetails(userManager manager.UserManager) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		w.Header().Set("Context-Type", "application/x-www-form-urlencoded")
 		w.Header().Set("Access-Control-Allow-Origin", "*")
@@ -92,11 +104,16 @@ func UserDetails() http.HandlerFunc {
 
 		ctx := r.Context()
 		email := ctx.Value("email").(string)
-		manager.GetUserDetails(email, w)
+		response, err := userManager.GetUserDetails(email)
+		if err != nil {
+			utils.GetError(err, w)
+			return
+		}
+		json.NewEncoder(w).Encode(response)
 	}
 }
 
-func UpdatePassword() http.HandlerFunc {
+func UpdatePassword(userManager manager.UserManager) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		w.Header().Set("Context-Type", "application/x-www-form-urlencoded")
 		w.Header().Set("Access-Control-Allow-Origin", "*")
@@ -115,11 +132,16 @@ func UpdatePassword() http.HandlerFunc {
 
 		ctx := r.Context()
 		email := ctx.Value("email").(string)
-		manager.UpdatePassword(email, body, w)
+		response, err := userManager.UpdatePassword(email, body)
+		if err != nil {
+			utils.GetError(err, w)
+			return
+		}
+		json.NewEncoder(w).Encode(response)
 	}
 }
 
-func UpdateProfile() http.HandlerFunc {
+func UpdateProfile(userManager manager.UserManager) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		w.Header().Set("Context-Type", "application/x-www-form-urlencoded")
 		w.Header().Set("Access-Control-Allow-Origin", "*")
@@ -138,23 +160,39 @@ func UpdateProfile() http.HandlerFunc {
 
 		ctx := r.Context()
 		email := ctx.Value("email").(string)
-		manager.UpdateProfile(email, body, w)
+		response, err := userManager.UpdateProfile(email, body)
+		if err != nil {
+			utils.GetError(err, w)
+			return
+		}
+		json.NewEncoder(w).Encode(response)
 	}
 }
 
-func GetAllUsers() http.HandlerFunc {
+func GetAllUsers(userManager manager.UserManager) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		w.Header().Set("Context-Type", "application/x-www-form-urlencoded")
 		w.Header().Set("Access-Control-Allow-Origin", "*")
 		ctx := r.Context()
 		email := ctx.Value("email").(string)
+		role := "admin"
 
-		manager.GetAllUsers("admin", email, w)
+		err := utils.AuthorizeUser(role, email)
+		if err != nil {
+			utils.GetError(err, w)
+			return
+		}
 
+		users, err := userManager.GetAllUsers(role, email)
+		if err != nil {
+			utils.GetError(err, w)
+			return
+		}
+		json.NewEncoder(w).Encode(users)
 	}
 }
 
-func GetSingleUser() http.HandlerFunc {
+func GetUser(userManager manager.UserManager) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		w.Header().Set("Context-Type", "application/x-www-form-urlencoded")
 		w.Header().Set("Access-Control-Allow-Origin", "*")
@@ -167,7 +205,11 @@ func GetSingleUser() http.HandlerFunc {
 		ctx := r.Context()
 		email := ctx.Value("email").(string)
 
-		manager.GetSingleUser("admin", email, id, w)
-
+		user, err := userManager.GetUser("admin", email, id)
+		if err != nil {
+			utils.GetError(err, w)
+			return
+		}
+		json.NewEncoder(w).Encode(user)
 	}
 }
