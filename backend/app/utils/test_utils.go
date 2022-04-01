@@ -61,9 +61,9 @@ func GetSampleOrder(sampleEmail string) *models.Order {
 		ItemsPrice:    12,
 		TaxPrice:      5,
 		ShippingPrice: 17,
-		PaidAt:        time.Now().Round(0).In(loc),
-		DeliveredAt:   time.Now().Round(0).In(loc),
-		CreatedAt:     time.Now().Round(0).In(loc),
+		PaidAt:        time.Now().In(loc),
+		DeliveredAt:   time.Now().In(loc),
+		CreatedAt:     time.Now().In(loc),
 		OrderStatus:   "Processing",
 	}
 	return sampleOrder

@@ -1,8 +1,9 @@
-package handler
+package handler_test
 
 import (
 	"bytes"
 	"context"
+	"ecommerce-website/app/handler"
 	"ecommerce-website/app/handler/mock"
 	"ecommerce-website/app/manager"
 	models "ecommerce-website/app/models"
@@ -28,7 +29,7 @@ func Test_RegisterUser(t *testing.T) {
 		require.NoError(t, err)
 
 		userManager := mock.NewMockUserManager(t)
-		handler := RegisterUser(userManager)
+		handler := handler.RegisterUser(userManager)
 		handler.ServeHTTP(recorder, req)
 		assert.Equal(t, http.StatusBadRequest, recorder.Code)
 	})
@@ -52,7 +53,7 @@ func Test_RegisterUser(t *testing.T) {
 
 		userManager := mock.NewMockUserManager(t)
 		userManager.On("RegisterUser", *sampleUser).Return(manager.TokenResponse{}, sampleErr)
-		handler := RegisterUser(userManager)
+		handler := handler.RegisterUser(userManager)
 		handler.ServeHTTP(recorder, req)
 
 		assert.Equal(t, expectedResponseBody, recorder.Body.Bytes())
@@ -78,7 +79,7 @@ func Test_RegisterUser(t *testing.T) {
 
 		userManager := mock.NewMockUserManager(t)
 		userManager.On("RegisterUser", *sampleUser).Return(expectedResponse, nil)
-		handler := RegisterUser(userManager)
+		handler := handler.RegisterUser(userManager)
 		handler.ServeHTTP(recorder, req)
 
 		assert.Equal(t, expectedResponseBody, recorder.Body.Bytes())
@@ -93,7 +94,7 @@ func Test_LoginUser(t *testing.T) {
 		require.NoError(t, err)
 
 		userManager := mock.NewMockUserManager(t)
-		handler := RegisterUser(userManager)
+		handler := handler.RegisterUser(userManager)
 		handler.ServeHTTP(recorder, req)
 		assert.Equal(t, http.StatusBadRequest, recorder.Code)
 	})
@@ -117,7 +118,7 @@ func Test_LoginUser(t *testing.T) {
 
 		userManager := mock.NewMockUserManager(t)
 		userManager.On("LoginUser", *sampleUser).Return(manager.TokenResponse{}, sampleErr)
-		handler := LoginUser(userManager)
+		handler := handler.LoginUser(userManager)
 		handler.ServeHTTP(recorder, req)
 
 		assert.Equal(t, expectedResponseBody, recorder.Body.Bytes())
@@ -143,7 +144,7 @@ func Test_LoginUser(t *testing.T) {
 
 		userManager := mock.NewMockUserManager(t)
 		userManager.On("LoginUser", *sampleUser).Return(expectedResponse, nil)
-		handler := LoginUser(userManager)
+		handler := handler.LoginUser(userManager)
 		handler.ServeHTTP(recorder, req)
 
 		assert.Equal(t, expectedResponseBody, recorder.Body.Bytes())
@@ -157,7 +158,7 @@ func Test_LogoutUser(t *testing.T) {
 		req, err := http.NewRequest("POST", "/logout", strings.NewReader("{}"))
 		require.NoError(t, err)
 		userManager := mock.NewMockUserManager(t)
-		handler := LogoutUser(userManager)
+		handler := handler.LogoutUser(userManager)
 		handler.ServeHTTP(recorder, req)
 		assert.Equal(t, http.StatusUnauthorized, recorder.Code)
 	})
@@ -170,7 +171,7 @@ func Test_LogoutUser(t *testing.T) {
 		req.AddCookie(&http.Cookie{Name: "token", Value: "sample cookie"})
 
 		userManager := mock.NewMockUserManager(t)
-		handler := LogoutUser(userManager)
+		handler := handler.LogoutUser(userManager)
 		handler.ServeHTTP(recorder, req)
 		assert.Equal(t, http.StatusOK, recorder.Code)
 	})
@@ -189,7 +190,7 @@ func Test_GetUserDetails(t *testing.T) {
 		userManager := mock.NewMockUserManager(t)
 		sampleErr := errors.New("some error")
 		userManager.On("GetUserDetails", sampleEmail).Return(nil, sampleErr)
-		handler := GetUserDetails(userManager)
+		handler := handler.GetUserDetails(userManager)
 		handler.ServeHTTP(recorder, req)
 		expectedResponse := utils.ErrorResponse{
 			ErrorMessage: sampleErr.Error(),
@@ -219,9 +220,9 @@ func Test_GetUserDetails(t *testing.T) {
 		userManager := mock.NewMockUserManager(t)
 		userManager.On("GetUserDetails", sampleEmail).Return(sampleUser, nil)
 
-		handler := GetUserDetails(userManager)
+		handler := handler.GetUserDetails(userManager)
 		handler.ServeHTTP(recorder, req)
-		assert.Equal(t, string(expectedResponse), string(recorder.Body.Bytes()))
+		assert.Equal(t, string(expectedResponse), recorder.Body.String())
 		assert.Equal(t, http.StatusOK, recorder.Code)
 	})
 }
@@ -245,7 +246,7 @@ func Test_UpdatePassword(t *testing.T) {
 		req = req.WithContext(context.WithValue(req.Context(), "email", sampleEmail))
 		userManager := mock.NewMockUserManager(t)
 		userManager.On("UpdatePassword", sampleEmail, reqBody).Return(nil, sampleErr)
-		handler := UpdatePassword(userManager)
+		handler := handler.UpdatePassword(userManager)
 		handler.ServeHTTP(recorder, req)
 
 		assert.Equal(t, expectedResponseBody, recorder.Body.Bytes())
@@ -273,7 +274,7 @@ func Test_UpdatePassword(t *testing.T) {
 		req = req.WithContext(context.WithValue(req.Context(), "email", sampleEmail))
 		userManager := mock.NewMockUserManager(t)
 		userManager.On("UpdatePassword", sampleEmail, reqBody).Return(expectedResponse, nil)
-		handler := UpdatePassword(userManager)
+		handler := handler.UpdatePassword(userManager)
 		handler.ServeHTTP(recorder, req)
 
 		assert.Equal(t, expectedResponseBody, recorder.Body.Bytes())
@@ -300,7 +301,7 @@ func Test_UpdateProfile(t *testing.T) {
 		req = req.WithContext(context.WithValue(req.Context(), "email", sampleEmail))
 		userManager := mock.NewMockUserManager(t)
 		userManager.On("UpdateProfile", sampleEmail, reqBody).Return(nil, sampleErr)
-		handler := UpdateProfile(userManager)
+		handler := handler.UpdateProfile(userManager)
 		handler.ServeHTTP(recorder, req)
 
 		assert.Equal(t, expectedResponseBody, recorder.Body.Bytes())
@@ -327,7 +328,7 @@ func Test_UpdateProfile(t *testing.T) {
 		req = req.WithContext(context.WithValue(req.Context(), "email", sampleEmail))
 		userManager := mock.NewMockUserManager(t)
 		userManager.On("UpdateProfile", sampleEmail, reqBody).Return(expectedResponse, nil)
-		handler := UpdateProfile(userManager)
+		handler := handler.UpdateProfile(userManager)
 		handler.ServeHTTP(recorder, req)
 
 		assert.Equal(t, expectedResponseBody, recorder.Body.Bytes())
@@ -341,7 +342,7 @@ func Test_GetAllUsers(t *testing.T) {
 		sampleEmail := "sample@email.com"
 		sampleRole := "some role"
 
-		req, err := http.NewRequest("GET", "/getAllUsers", nil)
+		req, err := http.NewRequest("GET", "/user/get", nil)
 		require.NoError(t, err)
 
 		req = req.WithContext(context.WithValue(req.Context(), "email", sampleEmail))
@@ -350,7 +351,7 @@ func Test_GetAllUsers(t *testing.T) {
 
 		sampleErr := errors.New("some error")
 		userManager.On("AuthorizeUser", sampleRole, sampleEmail).Return(nil, sampleErr)
-		handler := GetAllUsers(userManager)
+		handler := handler.GetAllUsers(userManager)
 		handler.ServeHTTP(recorder, req)
 		expectedResponse := utils.ErrorResponse{
 			ErrorMessage: sampleErr.Error(),
@@ -358,7 +359,7 @@ func Test_GetAllUsers(t *testing.T) {
 		}
 		expectedResponseBody, err := json.Marshal(expectedResponse)
 		require.NoError(t, err)
-		assert.Equal(t, string(expectedResponseBody), string(recorder.Body.Bytes()))
+		assert.Equal(t, string(expectedResponseBody), recorder.Body.String())
 		assert.Equal(t, http.StatusInternalServerError, recorder.Code)
 	})
 
@@ -372,7 +373,7 @@ func Test_GetAllUsers(t *testing.T) {
 			Success:      false,
 		}
 		expectedResponseBody, err := json.Marshal(expectedResponse)
-		req, err := http.NewRequest("GET", "/getAllUsers", nil)
+		req, err := http.NewRequest("GET", "/user/get", nil)
 		require.NoError(t, err)
 
 		req = req.WithContext(context.WithValue(req.Context(), "email", sampleEmail))
@@ -381,10 +382,10 @@ func Test_GetAllUsers(t *testing.T) {
 
 		userManager.On("AuthorizeUser", sampleRole, sampleEmail).Return(nil, sampleErr)
 		userManager.On("GetAllUsers").Return(nil, sampleErr)
-		handler := GetAllUsers(userManager)
+		handler := handler.GetAllUsers(userManager)
 		handler.ServeHTTP(recorder, req)
 		require.NoError(t, err)
-		assert.Equal(t, string(expectedResponseBody), string(recorder.Body.Bytes()))
+		assert.Equal(t, string(expectedResponseBody), recorder.Body.String())
 		assert.Equal(t, http.StatusInternalServerError, recorder.Code)
 	})
 
@@ -404,7 +405,7 @@ func Test_GetAllUsers(t *testing.T) {
 		require.NoError(t, err)
 		expectedResponse = append(expectedResponse, byte('\n'))
 
-		req, err := http.NewRequest("POST", "/getAllUsers", strings.NewReader(string(bsonReq)))
+		req, err := http.NewRequest("POST", "/user/get", strings.NewReader(string(bsonReq)))
 		require.NoError(t, err)
 
 		req = req.WithContext(context.WithValue(req.Context(), "email", sampleEmail))
@@ -414,9 +415,9 @@ func Test_GetAllUsers(t *testing.T) {
 		userManager.On("AuthorizeUser", sampleRole, sampleEmail).Return(nil, nil)
 		userManager.On("GetAllUsers", sampleRole, sampleEmail).Return(reqBody, nil)
 
-		handler := GetAllUsers(userManager)
+		handler := handler.GetAllUsers(userManager)
 		handler.ServeHTTP(recorder, req)
-		assert.Equal(t, string(expectedResponse), string(recorder.Body.Bytes()))
+		assert.Equal(t, string(expectedResponse), recorder.Body.String())
 		assert.Equal(t, http.StatusOK, recorder.Code)
 	})
 }
@@ -426,7 +427,7 @@ func Test_GetUser(t *testing.T) {
 		recorder := httptest.NewRecorder()
 		req := &http.Request{}
 		userManager := mock.NewMockUserManager(t)
-		handler := GetUser(userManager)
+		handler := handler.GetUser(userManager)
 		handler.ServeHTTP(recorder, req)
 		assert.Equal(t, http.StatusUnprocessableEntity, recorder.Code)
 	})
@@ -437,7 +438,7 @@ func Test_GetUser(t *testing.T) {
 		sampleRole := "some role"
 		sampleId := primitive.NewObjectID()
 
-		req, err := http.NewRequest("GET", "/getAllUsers", nil)
+		req, err := http.NewRequest("GET", "/user/get", nil)
 		require.NoError(t, err)
 
 		vars := map[string]string{
@@ -450,7 +451,7 @@ func Test_GetUser(t *testing.T) {
 
 		sampleErr := errors.New("some error")
 		userManager.On("AuthorizeUser", sampleRole, sampleEmail).Return(nil, sampleErr)
-		handler := GetUser(userManager)
+		handler := handler.GetUser(userManager)
 		handler.ServeHTTP(recorder, req)
 		expectedResponse := utils.ErrorResponse{
 			ErrorMessage: sampleErr.Error(),
@@ -458,7 +459,7 @@ func Test_GetUser(t *testing.T) {
 		}
 		expectedResponseBody, err := json.Marshal(expectedResponse)
 		require.NoError(t, err)
-		assert.Equal(t, string(expectedResponseBody), string(recorder.Body.Bytes()))
+		assert.Equal(t, string(expectedResponseBody), recorder.Body.String())
 		assert.Equal(t, http.StatusInternalServerError, recorder.Code)
 	})
 
@@ -473,7 +474,7 @@ func Test_GetUser(t *testing.T) {
 			Success:      false,
 		}
 		expectedResponseBody, err := json.Marshal(expectedResponse)
-		req, err := http.NewRequest("GET", "/getAllUsers", nil)
+		req, err := http.NewRequest("GET", "/user/get", nil)
 		require.NoError(t, err)
 
 		vars := map[string]string{
@@ -486,10 +487,10 @@ func Test_GetUser(t *testing.T) {
 
 		userManager.On("AuthorizeUser", sampleRole, sampleEmail).Return(nil, sampleErr)
 		userManager.On("GetUser").Return(nil, sampleErr)
-		handler := GetUser(userManager)
+		handler := handler.GetUser(userManager)
 		handler.ServeHTTP(recorder, req)
 		require.NoError(t, err)
-		assert.Equal(t, string(expectedResponseBody), string(recorder.Body.Bytes()))
+		assert.Equal(t, string(expectedResponseBody), recorder.Body.String())
 		assert.Equal(t, http.StatusInternalServerError, recorder.Code)
 	})
 
@@ -499,12 +500,11 @@ func Test_GetUser(t *testing.T) {
 		sampleRole := "admin"
 		sampleId := primitive.NewObjectID()
 		sampleUser := utils.GetSampleUser()
-		
 		expectedResponse, err := json.Marshal(sampleUser)
 		require.NoError(t, err)
 		expectedResponse = append(expectedResponse, byte('\n'))
 
-		req, err := http.NewRequest("GET", "/getUser", nil)
+		req, err := http.NewRequest("GET", "/user/get", nil)
 		require.NoError(t, err)
 
 		vars := map[string]string{
@@ -518,9 +518,9 @@ func Test_GetUser(t *testing.T) {
 		userManager.On("AuthorizeUser", sampleRole, sampleEmail).Return(nil, nil)
 		userManager.On("GetUser", sampleRole, sampleEmail, sampleId).Return(sampleUser, nil)
 
-		handler := GetUser(userManager)
+		handler := handler.GetUser(userManager)
 		handler.ServeHTTP(recorder, req)
-		assert.Equal(t, string(expectedResponse), string(recorder.Body.Bytes()))
+		assert.Equal(t, string(expectedResponse), recorder.Body.String())
 		assert.Equal(t, http.StatusOK, recorder.Code)
 	})
 }
