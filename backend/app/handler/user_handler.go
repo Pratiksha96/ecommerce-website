@@ -68,7 +68,7 @@ func LoginUser(userManager manager.UserManager) http.HandlerFunc {
 	}
 }
 
-func LogoutUser() http.HandlerFunc {
+func LogoutUser(userManager manager.UserManager) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		w.Header().Set("Context-Type", "application/x-www-form-urlencoded")
 		w.Header().Set("Access-Control-Allow-Origin", "*")
@@ -81,12 +81,12 @@ func LogoutUser() http.HandlerFunc {
 			if err == http.ErrNoCookie {
 				// If the cookie is not set, return an unauthorized status
 				w.WriteHeader(http.StatusUnauthorized)
-				utils.GetError(errors.New("received ErrNoCookie, you are already logged out"), w)
+				utils.GetError(errors.New("Received ErrNoCookie, you are already logged out"), w)
 				return
 			}
 			// For any other type of error, return a bad request status
 			w.WriteHeader(http.StatusBadRequest)
-			utils.GetError(errors.New("please login to access this resource"), w)
+			utils.GetError(errors.New("Please login to access this resource"), w)
 			return
 		}
 

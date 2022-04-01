@@ -29,7 +29,7 @@ func StartServer() {
 
 	r.HandleFunc("/register", handler.RegisterUser(userManager)).Methods("POST", "OPTIONS")
 	r.HandleFunc("/login", handler.LoginUser(userManager)).Methods("POST", "OPTIONS")
-	r.HandleFunc("/logout", handler.LogoutUser()).Methods("POST", "OPTIONS")
+	r.HandleFunc("/logout", handler.LogoutUser(userManager)).Methods("POST", "OPTIONS")
 	r.HandleFunc("/me", middleware.AuthenticateUser(handler.GetUserDetails(userManager))).Methods("GET", "OPTIONS")
 	r.HandleFunc("/password/update", middleware.AuthenticateUser(handler.UpdatePassword(userManager))).Methods("PUT", "OPTIONS")
 	r.HandleFunc("/me/update", middleware.AuthenticateUser(handler.UpdateProfile(userManager))).Methods("PUT", "OPTIONS")
