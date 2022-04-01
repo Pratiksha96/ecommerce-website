@@ -5,4 +5,4 @@ run: build
 	cd ./backend && brew services start mongodb-community && go run main.go start-server
 
 test: test
-	go test ./backend/app/handler
+	cd ./backend && go test ./...
