@@ -10,9 +10,10 @@ const Profile = ({ history }) => {
   const {  loading, isAuthenticated } = useSelector((state) => state.user);
 
 const user={ 
-    name:'aashish',
-    createdAt:'1231232123',
-    email:'test@gmail.com'
+    name:'Aashish Dhalla',
+    createdAt:'2022-04-01',
+    email:'aashish@gmail.com',
+    url:'/img.jpg'
 }
 //   useEffect(() => {
 //     if (isAuthenticated === false) {
@@ -29,7 +30,7 @@ const user={
           <div className="profileContainer">
             <div>
               <h1>My Profile</h1>
-              {/* <img src={user.avatar.url} alt={user.name} /> */}
+              <img src="/Profile.png"/>
               <Link to="/me/update">Edit Profile</Link>
             </div>
             <div>
