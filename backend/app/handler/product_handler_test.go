@@ -111,27 +111,7 @@ func Test_CreateProduct(t *testing.T) {
 		expectedResponseBody, err := json.Marshal(expectedResponse)
 		require.NoError(t, err)
 
-		sampleProduct := &models.Product{
-			Name:        "sample",
-			Description: "sample",
-			Price:       700,
-			Ratings:     8,
-			Images: []*models.Image{
-				{
-					Public_id: "sampleid",
-					Url:       "sampleurl",
-				},
-			},
-			Category: "sample",
-			Stock:    10,
-			Reviews: []*models.Review{
-				{
-					Name:    "sample",
-					Rating:  6,
-					Comment: "sample",
-				},
-			},
-		}
+		sampleProduct := utils.GetSampleProduct()
 		requestBody, err := json.Marshal(sampleProduct)
 		require.NoError(t, err)
 
@@ -152,27 +132,7 @@ func Test_CreateProduct(t *testing.T) {
 	t.Run("When product is created, it should return product successfully", func(t *testing.T) {
 		recorder := httptest.NewRecorder()
 		sampleEmail := "sample@email.com"
-		sampleProduct := &models.Product{
-			Name:        "sample",
-			Description: "sample",
-			Price:       700,
-			Ratings:     8,
-			Images: []*models.Image{
-				{
-					Public_id: "sampleid",
-					Url:       "sampleurl",
-				},
-			},
-			Category: "sample",
-			Stock:    10,
-			Reviews: []*models.Review{
-				{
-					Name:    "sample",
-					Rating:  6,
-					Comment: "sample",
-				},
-			},
-		}
+		sampleProduct := utils.GetSampleProduct()
 		requestBody, err := json.Marshal(sampleProduct)
 		require.NoError(t, err)
 		expectedResponse := append(requestBody, byte('\n'))
@@ -213,6 +173,7 @@ func Test_GetAllProducts(t *testing.T) {
 		}
 		expectedResponseBody, err := json.Marshal(expectedResponse)
 		require.NoError(t, err)
+
 		assert.Equal(t, string(expectedResponseBody), string(recorder.Body.Bytes()))
 		assert.Equal(t, http.StatusUnprocessableEntity, recorder.Code)
 	})
@@ -220,28 +181,7 @@ func Test_GetAllProducts(t *testing.T) {
 	t.Run("When products exists, it should return all products successfully", func(t *testing.T) {
 		recorder := httptest.NewRecorder()
 		sampleEmail := "sample@email.com"
-		sampleProduct := &models.Product{
-			Name:        "sample",
-			Description: "sample",
-			Price:       700,
-			Ratings:     8,
-			Images: []*models.Image{
-				{
-					Public_id: "sampleid",
-					Url:       "sampleurl",
-				},
-			},
-			Category: "sample",
-			Stock:    10,
-			Reviews: []*models.Review{
-				{
-					Name:    "sample",
-					Rating:  6,
-					Comment: "sample",
-				},
-			},
-		}
-
+		sampleProduct := utils.GetSampleProduct()
 		var doc *bson.D
 		bsonReq, err := bson.Marshal(sampleProduct)
 		require.NoError(t, err)
@@ -301,27 +241,7 @@ func Test_UpdateProduct(t *testing.T) {
 		expectedResponseBody, err := json.Marshal(expectedResponse)
 		require.NoError(t, err)
 
-		sampleProduct := &models.Product{
-			Name:        "sample",
-			Description: "sample",
-			Price:       700,
-			Ratings:     8,
-			Images: []*models.Image{
-				{
-					Public_id: "sampleid",
-					Url:       "sampleurl",
-				},
-			},
-			Category: "sample",
-			Stock:    10,
-			Reviews: []*models.Review{
-				{
-					Name:    "sample",
-					Rating:  6,
-					Comment: "sample",
-				},
-			},
-		}
+		sampleProduct := utils.GetSampleProduct()
 		requestBody, err := json.Marshal(sampleProduct)
 		require.NoError(t, err)
 
@@ -348,27 +268,7 @@ func Test_UpdateProduct(t *testing.T) {
 		recorder := httptest.NewRecorder()
 		sampleId := primitive.NewObjectID()
 		sampleEmail := "sample@email.com"
-		sampleProduct := &models.Product{
-			Name:        "sample",
-			Description: "sample",
-			Price:       700,
-			Ratings:     8,
-			Images: []*models.Image{
-				{
-					Public_id: "sampleid",
-					Url:       "sampleurl",
-				},
-			},
-			Category: "sample",
-			Stock:    10,
-			Reviews: []*models.Review{
-				{
-					Name:    "sample",
-					Rating:  6,
-					Comment: "sample",
-				},
-			},
-		}
+		sampleProduct := utils.GetSampleProduct()
 		requestBody, err := json.Marshal(sampleProduct)
 		require.NoError(t, err)
 		expectedResponse := append(requestBody, byte('\n'))
@@ -420,27 +320,7 @@ func Test_DeleteProduct(t *testing.T) {
 		expectedResponseBody, err := json.Marshal(expectedResponse)
 		require.NoError(t, err)
 
-		sampleProduct := &models.Product{
-			Name:        "sample",
-			Description: "sample",
-			Price:       700,
-			Ratings:     8,
-			Images: []*models.Image{
-				{
-					Public_id: "sampleid",
-					Url:       "sampleurl",
-				},
-			},
-			Category: "sample",
-			Stock:    10,
-			Reviews: []*models.Review{
-				{
-					Name:    "sample",
-					Rating:  6,
-					Comment: "sample",
-				},
-			},
-		}
+		sampleProduct := utils.GetSampleProduct()
 		requestBody, err := json.Marshal(sampleProduct)
 		require.NoError(t, err)
 
@@ -467,27 +347,7 @@ func Test_DeleteProduct(t *testing.T) {
 		recorder := httptest.NewRecorder()
 		sampleId := primitive.NewObjectID()
 		sampleEmail := "sample@email.com"
-		sampleProduct := &models.Product{
-			Name:        "sample",
-			Description: "sample",
-			Price:       700,
-			Ratings:     8,
-			Images: []*models.Image{
-				{
-					Public_id: "sampleid",
-					Url:       "sampleurl",
-				},
-			},
-			Category: "sample",
-			Stock:    10,
-			Reviews: []*models.Review{
-				{
-					Name:    "sample",
-					Rating:  6,
-					Comment: "sample",
-				},
-			},
-		}
+		sampleProduct := utils.GetSampleProduct()
 		requestBody, err := json.Marshal(sampleProduct)
 		require.NoError(t, err)
 		reqBody := map[string]interface{}{"success": true, "message": "document has been successfully deleted"}
@@ -547,28 +407,7 @@ func Test_SearchProducts(t *testing.T) {
 	t.Run("When search results exists, it should return searched products successfully", func(t *testing.T) {
 
 		recorder := httptest.NewRecorder()
-		sampleProduct := &models.Product{
-			Name:        "sample",
-			Description: "sample",
-			Price:       700,
-			Ratings:     8,
-			Images: []*models.Image{
-				{
-					Public_id: "sampleid",
-					Url:       "sampleurl",
-				},
-			},
-			Category: "sample",
-			Stock:    10,
-			Reviews: []*models.Review{
-				{
-					Name:    "sample",
-					Rating:  6,
-					Comment: "sample",
-				},
-			},
-		}
-
+		sampleProduct := utils.GetSampleProduct()
 		var doc *bson.D
 		bsonReq, err := bson.Marshal(sampleProduct)
 		require.NoError(t, err)

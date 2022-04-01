@@ -6,7 +6,6 @@ import (
 	"ecommerce-website/app/utils"
 	"encoding/json"
 	"errors"
-	"log"
 	"net/http"
 	"time"
 
@@ -28,11 +27,8 @@ func CreateOrder(orderManager manager.OrderManager) http.HandlerFunc {
 		var order models.Order
 		_ = json.NewDecoder(r.Body).Decode(&order)
 
-		if errors := utils.OrderValidation(order); len(errors) > 0 {
-			log.Println("Received invalid json request!")
-			err := map[string]interface{}{"success": false, "message": errors}
-			w.WriteHeader(http.StatusBadRequest)
-			json.NewEncoder(w).Encode(err)
+		if err := utils.OrderValidation(order); len(err) > 0 {
+			utils.GetErrorWithStatus(errors.New("Received invalid json request!"), w, http.StatusBadRequest)
 			return
 		}
 		ctx := r.Context()
@@ -94,8 +90,7 @@ func GetAllOrders(orderManager manager.OrderManager) http.HandlerFunc {
 
 		ctx := r.Context()
 		email := ctx.Value("email").(string)
-		//role := ctx.Value("role").(string)
-		//fmt.Println(role)
+
 		orders, err := orderManager.GetAllOrders("admin", email)
 		if err != nil {
 			utils.GetError(err, w)

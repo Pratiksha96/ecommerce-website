@@ -122,7 +122,6 @@ func UpdatePassword(userManager manager.UserManager) http.HandlerFunc {
 
 		var requestbody interface{}
 		buffer, err := ioutil.ReadAll(r.Body)
-
 		if err != nil {
 			log.Panic(err)
 		}
@@ -175,9 +174,9 @@ func GetAllUsers(userManager manager.UserManager) http.HandlerFunc {
 		w.Header().Set("Access-Control-Allow-Origin", "*")
 		ctx := r.Context()
 		email := ctx.Value("email").(string)
-		role := "admin"
+		role := ctx.Value("role").(string)
 
-		err := utils.AuthorizeUser(role, email)
+		err := userManager.AuthorizeUser(role, email)
 		if err != nil {
 			utils.GetError(err, w)
 			return
@@ -204,8 +203,15 @@ func GetUser(userManager manager.UserManager) http.HandlerFunc {
 		}
 		ctx := r.Context()
 		email := ctx.Value("email").(string)
+		role := ctx.Value("role").(string)
 
-		user, err := userManager.GetUser("admin", email, id)
+		err = userManager.AuthorizeUser(role, email)
+		if err != nil {
+			utils.GetError(err, w)
+			return
+		}
+
+		user, err := userManager.GetUser(role, email, id)
 		if err != nil {
 			utils.GetError(err, w)
 			return
