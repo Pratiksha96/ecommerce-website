@@ -73,3 +73,12 @@ func (m *MockProductManager) SearchProducts(query url.Values) (manager.SearchRes
 	}
 	return args.Get(0).(manager.SearchResponse), nil
 }
+
+// CreateReview mocks base method.
+func (m *MockProductManager) CreateReview(review models.Review, product models.Product, filterProduct primitive.M) (map[string]interface{}, error) {
+	args := m.Called(review, product, filterProduct)
+	if args.Error(1) != nil {
+		return nil, args.Error(1)
+	}
+	return args.Get(0).(map[string]interface{}), nil
+}
