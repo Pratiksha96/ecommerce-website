@@ -81,3 +81,12 @@ func (m *MockUserManager) GetUser(role string, email string, id primitive.Object
 	}
 	return args.Get(0).(*models.User), nil
 }
+
+// AuthorizeUser mocks base method
+func (m *MockUserManager) AuthorizeUser(role string, email string) error {
+	args := m.Called(role, email)
+	if args.Error(1) != nil {
+		return args.Error(1)
+	}
+	return nil
+}
