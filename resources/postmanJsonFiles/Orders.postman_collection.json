@@ -1,0 +1,81 @@
+{
+	"info": {
+		"_postman_id": "29bfa26a-8624-4351-84be-7502d9c872f1",
+		"name": "Orders",
+		"schema": "https://schema.getpostman.com/json/collection/v2.0.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "Create Order",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"shippingInfo\" : {\n        \"address\" : \"4000 SW\",\n        \"city\" : \"Gainesville\",\n        \"state\" : \"Florida\",\n        \"country\" : \"Us\",\n        \"pinCode\" : 32608,\n        \"phoneNo\" : 9898989898\n    },\n    \"orderItems\" : [{\n        \"product\" : \"62227595235a5df8404aac47\",\n        \"name\" : \"Men's Red T-shirt\",\n        \"price\" : 10,\n        \"image\" : \"sample image\",\n        \"quantity\" : 4\n    }],\n\t\"itemsPrice\" : 200,\n\t\"taxPrice\"  : 36,\n\t\"shippingPrice\" : 100,\n    \"totalPrice\" : 336,\n    \"paymentInfo\":{\n        \"id\" : \"sample info\",\n        \"status\" : \"succeeded\"\n    }\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": "http://localhost:8081/order/create"
+			},
+			"response": []
+		},
+		{
+			"name": "Get All User Orders",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": "http://localhost:8081/order/getAll"
+			},
+			"response": []
+		},
+		{
+			"name": "Get Single Order",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": "http://localhost:8081/order/get/62454ef8ae51f7bfde45f799"
+			},
+			"response": []
+		},
+		{
+			"name": "Get All Orders",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": "http://localhost:8081/order/get"
+			},
+			"response": []
+		},
+		{
+			"name": "Delete Order",
+			"request": {
+				"method": "DELETE",
+				"header": [],
+				"url": "http://localhost:8081/order/delete/62454ee3ae51f7bfde45f798"
+			},
+			"response": []
+		},
+		{
+			"name": "Update Order",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"status\" : \"Shipped\"\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": "http://localhost:8081/order/update/624693d866527ec1a1f9e00a"
+			},
+			"response": []
+		}
+	]
+}

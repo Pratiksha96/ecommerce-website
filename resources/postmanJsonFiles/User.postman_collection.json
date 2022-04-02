@@ -1,0 +1,81 @@
+{
+	"info": {
+		"_postman_id": "30137d10-d4ac-4ca5-8236-4dfbd232644f",
+		"name": "User",
+		"schema": "https://schema.getpostman.com/json/collection/v2.0.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "RegisterUser",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"name\" : \"admin2\",\n\t\"email\" : \"admin2@gmail.com\",\n\t\"password\"  : \"admin2222\",\n    \"avatar\" :{\n        \"public_id\" : \"id2\",\n        \"url\" : \"url2\"\n    }\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": "http://localhost:8081/register"
+			},
+			"response": []
+		},
+		{
+			"name": "LoginUser",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n\t\n    \"email\" : \"admin@gmail.com\",\n    \"password\" : \"admin123\"\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": "http://localhost:8081/login"
+			},
+			"response": []
+		},
+		{
+			"name": "Logout",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n\t\"email\" : \"test2@gmail.com\",\n    \"password\"  : \"testUser1\"\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": "http://localhost:8081/logout"
+			},
+			"response": []
+		},
+		{
+			"name": "Password Update",
+			"request": {
+				"method": "PUT",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n\t\"oldPassword\" : \"test12346\",\n    \"newPassword\"  : \"testNP\",\n    \"confirmPassword\" : \"testNPS\"\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": "http://localhost:8081/password/update"
+			},
+			"response": []
+		}
+	]
+}

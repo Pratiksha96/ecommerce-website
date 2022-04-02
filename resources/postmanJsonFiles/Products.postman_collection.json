@@ -1,0 +1,117 @@
+{
+	"info": {
+		"_postman_id": "6d13fdae-112d-4077-a419-bd5ce5e67501",
+		"name": "Products",
+		"schema": "https://schema.getpostman.com/json/collection/v2.0.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "GetSearch",
+			"protocolProfileBehavior": {
+				"disableBodyPruning": true
+			},
+			"request": {
+				"method": "GET",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json",
+						"type": "default"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:8081/product/search?keyword=Green&priceMax=4",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8081",
+					"path": [
+						"product",
+						"search"
+					],
+					"query": [
+						{
+							"key": "keyword",
+							"value": "Green"
+						},
+						{
+							"key": "priceMax",
+							"value": "4"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "UpdateProducts",
+			"request": {
+				"method": "PUT",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json",
+						"type": "default"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n\"name\" : \"stringteststr\",\n\t\"description\" : \"Description77\",\n\t\"price\"  : 700,\n\t\"ratings\" : 4,\n        \"stock\":10,\n    \"images\" :[ {\n        \"public_id\" : \"id8\",\n        \"url\" : \"url8\"\n    }],\n    \"riviews\" : [\n        {\n            \"name\" : \"name8\",\n            \"rating\" : 3,\n            \"comment\" : \"comment4\"\n        },\n        {\n            \"name\" : \"name\",\n            \"rating\" : 4,\n            \"comment\" : \"comment8\"\n        }\n    ]\n    \n\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": "http://localhost:8081/product/update/6219c9171f03258fec6d2194"
+			},
+			"response": []
+		},
+		{
+			"name": "DeleteProducts",
+			"request": {
+				"method": "DELETE",
+				"header": [],
+				"url": "http://localhost:8081/product/delete/62227d39df258bf93111062d"
+			},
+			"response": []
+		},
+		{
+			"name": "AddProducts",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"name\" : \"Product11\",\n\t\"description\" : \"Description11\",\n\t\"price\"  : 100000,\n\t\"category\" : \"Category8\",\n    \"stock\":10,\n    \"ratings\" : 5,\n    \"images\" :[ {\n        \"public_id\" : \"id8\",\n        \"url\" : \"url8\"\n    }],\n    \"riviews\" : [\n        {\n            \"name\" : \"name8\",\n            \"rating\" : 3,\n            \"comment\" : \"comment4\"\n        },\n        {\n            \"name\" : \"name\",\n            \"rating\" : 4,\n            \"comment\" : \"comment8\"\n        }\n    ]\n    \n\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": "http://localhost:8081/product/add"
+			},
+			"response": []
+		},
+		{
+			"name": "GetAll",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": "http://localhost:8081/product/get"
+			},
+			"response": []
+		}
+	]
+}
