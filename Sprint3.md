@@ -11,6 +11,8 @@ Admin:
 - [As an admin, I want to be able to delete an order](https://github.com/Pratiksha96/ecommerce-website/issues/140)
 - [As an admin, I want to see all orders placed by others users](https://github.com/Pratiksha96/ecommerce-website/issues/139)
 - [As a user, I want to be able to change my profile password](https://github.com/Pratiksha96/ecommerce-website/issues/108)
+- [As an admin, I want to fetch details of all existing users](https://github.com/Pratiksha96/ecommerce-website/issues/103)
+- [As an admin, I want to fetch details of a specific user](https://github.com/Pratiksha96/ecommerce-website/issues/104)
 
 User:
 - [As a user, I want to see all my orders placed](https://github.com/Pratiksha96/ecommerce-website/issues/136)
@@ -18,6 +20,12 @@ User:
 - [As a user, I want to see my profile ](https://github.com/Pratiksha96/ecommerce-website/issues/102)
 - [As a user, I want to update my profile ](https://github.com/Pratiksha96/ecommerce-website/issues/105)
 - [As a user, I want to add products to a cart](https://github.com/Pratiksha96/ecommerce-website/issues/151)
+- [As a User, I want to get all my details after I login](https://github.com/Pratiksha96/ecommerce-website/issues/100)
+- [As a User, I want to be able to update my profile](https://github.com/Pratiksha96/ecommerce-website/issues/101)
+- [As a user, I want to be able to create orders](https://github.com/Pratiksha96/ecommerce-website/issues/133)
+- [As a user, I want to be able to see a specific order](https://github.com/Pratiksha96/ecommerce-website/issues/138)
+- [As a user, I want to add a product review](https://github.com/Pratiksha96/ecommerce-website/issues/110)
+- [As a user, I want to be able to change my profile password](https://github.com/Pratiksha96/ecommerce-website/issues/108)
 
 Unit Tests:
 - [Unit test for Get All Products Handler function](https://github.com/Pratiksha96/ecommerce-website/issues/45)
@@ -34,9 +42,9 @@ Unit Tests:
 - [Unit test for Create Order handler function](https://github.com/Pratiksha96/ecommerce-website/issues/153)
 
 Bug:
+- [Sending incorrect product count on search product query](https://github.com/Pratiksha96/ecommerce-website/issues/114)
 
 # Backend
-
 ## Database Schema
 - A database named "ecommerce_website" exists where we added a collection named Order.
 - Schema of the Order is as -
@@ -84,6 +92,15 @@ Bug:
     Status string
     }
 ```
+- Review in product schema is changed to - 
+```
+    {
+    User    User   
+    Name    string 
+    Rating  int    
+    Comment string 
+    }
+```
 ## API Contracts
 The endpoints developed in this sprint for user are - 
 
@@ -93,6 +110,7 @@ The endpoints developed in this sprint for user are -
 /me/update
 /user/get
 /user/get/{id}
+/product/createReview
 ```
 
 The endpoints developed in this sprint for order are - 
@@ -104,16 +122,6 @@ The endpoints developed in this sprint for order are -
 /order/delete/{id}
 /order/update/{id}
 ```
-
-### GET /me
-
-### PUT /password/update
-
-### PUT /me/update
-
-### GET /user/get
-
-### GET /user/get/{id}
 
 ### POST /order/create
 Returns user created orders
@@ -857,9 +865,214 @@ Content:
 ]
 ``` 
 
+### GET /me
+Returns profile of the logged in user 
+Sample: http://localhost:8081/me
+
+```
+URL Params
+None
+Data Params
+None
+Headers
+Content-Type: application/json
+
+Success Response:
+Code: 200
+Content:
+```
+```
+[
+    {
+    "name": "test22",
+    "email": "test22@gmail.com",
+    "password": "$2a$10$8b0vCuZ4Wn493BTWWlvwgOHnJOB0sTYgsrlJckvt2vfRv.bDZmG2e",
+    "avatar": {
+        "public_id": "test_id1",
+        "url": "test_url1"
+    },
+    "role": "user",
+    "resetPasswordToken": "",
+    "resetPasswordExpire": "0001-01-01T00:00:00Z"
+}
+]
+```
+
+### PUT /passowrd/update
+User can update passoword using this link
+Sample: http://localhost:8081/password/update
+
+```
+URL Params
+None
+Data Params
+{
+    "oldPassword" : "**********",
+    "newPassword"  : "**********",
+    "confirmPassowrd" : "**********"
+}
+Headers
+Content-Type: application/json
+
+Success Response:
+Code: 200
+Content:
+```
+```
+[
+    {
+    "message": "Password updated succesfully",
+    "success": "true"
+}
+]
+```
+
+### PUT /me/update
+User can update his profile details.
+Sample: http://localhost:8081/me/update
+
+```
+URL Params
+None
+Data Params
+{
+    "name" : "test22",
+    "email" : "test22@gmail.com"
+}
+Headers
+Content-Type: application/json
+
+Success Response:
+Code: 200
+Content:
+```
+```
+[
+    {
+    "Success": true,
+    "User": {
+        "name": "test22",
+        "email": "test22@gmail.com",
+        "password": "$2a$10$8b0vCuZ4Wn493BTWWlvwgOHnJOB0sTYgsrlJckvt2vfRv.bDZmG2e",
+        "avatar": {
+            "public_id": "test_id1",
+            "url": "test_url1"
+        },
+        "role": "user",
+        "resetPasswordToken": "",
+        "resetPasswordExpire": "0001-01-01T00:00:00Z"
+    }
+}
+]
+```
+
+### GET /user/get
+Admin can get details of all the users using this link
+Sample: http://localhost:8081/getAllUsers
+
+```
+URL Params
+None
+Data Params
+None
+Headers
+Content-Type: application/json
+
+Success Response:
+Code: 200
+Content:
+```
+```
+[
+    {
+    "Success": true,
+    "User": {
+        "name": "test22",
+        "email": "test22@gmail.com",
+        "password": "$2a$10$8b0vCuZ4Wn493BTWWlvwgOHnJOB0sTYgsrlJckvt2vfRv.bDZmG2e",
+        "avatar": {
+            "public_id": "test_id1",
+            "url": "test_url1"
+        },
+        "role": "user",
+        "resetPasswordToken": "",
+        "resetPasswordExpire": "0001-01-01T00:00:00Z"
+    }
+}
+]
+```
+
+### GET /user/get/{id}
+Admin can get details of all the users using this link
+Sample: http://localhost:8081/user/get/622278a4235a5df8404aac44
+
+```
+URL Params
+{id}
+Data Params
+None
+Headers
+Content-Type: application/json
+
+Success Response:
+Code: 200
+Content:
+```
+```
+[
+    {
+    "Success": true,
+    "User": {
+        "name": "test22",
+        "email": "test22@gmail.com",
+        "password": "$2a$10$8b0vCuZ4Wn493BTWWlvwgOHnJOB0sTYgsrlJckvt2vfRv.bDZmG2e",
+        "avatar": {
+            "public_id": "test_id1",
+            "url": "test_url1"
+        },
+        "role": "user",
+        "resetPasswordToken": "",
+        "resetPasswordExpire": "0001-01-01T00:00:00Z"
+    }
+}
+]
+```
+
+### POST product/createReview
+User can get details of a particular order he placed
+Sample: http://localhost:8081/product/createReview
+
+```
+URL Params
+None
+Data Params
+{
+    "productId" : "62227595235a5df8404aac47",
+    "rating" : "5",
+    "comment" : "Average Quality Product, not so great"
+
+}
+Headers
+Content-Type: application/json
+
+Success Response:
+Code: 200
+Content:
+```
+```
+[
+    {
+    "message": "Review has been created",
+    "success": true
+}
+]
+```
 ## Backend API Development
 - REST apis for placing orders using Go lang added specific to user, admin and developer.
 - Orders have been filtered for users after verifying the user with its email id
+- Admin can fetch details of all users or particular order. Only admin can access this resource.
+- User can Update his password as well as profile details.
+- User can also add product reviews for a particular product. It will change the number of reviews on products as well as avg rating of product.
 - All of the development was done VS code.
 - The server was hosted using mux router and the APIs were configured on this.
 - APIs were also configured with MongoDB database using new order collection, and were tested using POSTMAN tool.
@@ -890,6 +1103,17 @@ Content:
 
 ![alt text](https://github.com/Pratiksha96/ecommerce-website/blob/main/resources/testImages/UpdateOrder.png)
 
+### GET /me
+
+![alt text](https://github.com/Pratiksha96/ecommerce-website/blob/main/resources/testImages/getProfile.png)
+
+### PUT /me/update
+
+![alt text](https://github.com/Pratiksha96/ecommerce-website/blob/main/resources/testImages/updateProfile.png)
+
+### PUT /product/createReview
+
+![alt text](https://github.com/Pratiksha96/ecommerce-website/blob/main/resources/testImages/createReview.png)
 
 # Frontend 
 
