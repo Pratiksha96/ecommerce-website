@@ -194,7 +194,7 @@ func Test_GetAllProducts(t *testing.T) {
 		require.NoError(t, err)
 		expectedResponse = append(expectedResponse, byte('\n'))
 
-		req, err := http.NewRequest("POST", "/product/add", strings.NewReader(string(bsonReq)))
+		req, err := http.NewRequest("GET", "/product/get", nil)
 		require.NoError(t, err)
 
 		req = req.WithContext(context.WithValue(req.Context(), "email", sampleEmail))
@@ -250,7 +250,7 @@ func Test_UpdateProduct(t *testing.T) {
 			"id": sampleId.Hex(),
 		}
 
-		req, err := http.NewRequest("POST", "/product/add", strings.NewReader(string(requestBody)))
+		req, err := http.NewRequest("POST", "/product/update", strings.NewReader(string(requestBody)))
 		require.NoError(t, err)
 
 		req = mux.SetURLVars(req, vars)
@@ -265,7 +265,7 @@ func Test_UpdateProduct(t *testing.T) {
 		assert.Equal(t, http.StatusInternalServerError, recorder.Code)
 	})
 
-	t.Run("When product is created, it should return product successfully", func(t *testing.T) {
+	t.Run("When product is updated, it should return product successfully", func(t *testing.T) {
 		recorder := httptest.NewRecorder()
 		sampleId := primitive.NewObjectID()
 		sampleEmail := "sample@email.com"
@@ -278,7 +278,7 @@ func Test_UpdateProduct(t *testing.T) {
 			"id": sampleId.Hex(),
 		}
 
-		req, err := http.NewRequest("POST", "/product/add", strings.NewReader(string(requestBody)))
+		req, err := http.NewRequest("POST", "/product/update", strings.NewReader(string(requestBody)))
 		require.NoError(t, err)
 
 		req = mux.SetURLVars(req, vars)
@@ -329,7 +329,7 @@ func Test_DeleteProduct(t *testing.T) {
 			"id": sampleId.Hex(),
 		}
 
-		req, err := http.NewRequest("POST", "/product/add", strings.NewReader(string(requestBody)))
+		req, err := http.NewRequest("POST", "/product/delete", strings.NewReader(string(requestBody)))
 		require.NoError(t, err)
 
 		req = mux.SetURLVars(req, vars)
@@ -359,7 +359,7 @@ func Test_DeleteProduct(t *testing.T) {
 			"id": sampleId.Hex(),
 		}
 
-		req, err := http.NewRequest("POST", "/product/add", strings.NewReader(string(requestBody)))
+		req, err := http.NewRequest("POST", "/product/delete", strings.NewReader(string(requestBody)))
 		require.NoError(t, err)
 
 		req = mux.SetURLVars(req, vars)

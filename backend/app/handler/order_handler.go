@@ -68,7 +68,7 @@ func GetSingleOrder(orderManager manager.OrderManager) http.HandlerFunc {
 		var params = mux.Vars(r)
 		id, err := primitive.ObjectIDFromHex(params["id"])
 		if err != nil {
-			utils.GetErrorWithStatus(errors.New("invalid object id"), w, http.StatusUnprocessableEntity)
+			utils.GetErrorWithStatus(errors.New("invalid order id"), w, http.StatusUnprocessableEntity)
 			return
 		}
 		ctx := r.Context()

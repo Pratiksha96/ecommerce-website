@@ -29,12 +29,12 @@ func (m *MockOrderManager) CreateOrder(order models.Order, role string, email st
 }
 
 // GetUserOrders mocks base method.
-func (m *MockOrderManager) GetUserOrders(role string, email string) (manager.GetUserOrdersResponse, error) {
+func (m *MockOrderManager) GetUserOrders(role string, email string) ([]primitive.M, error) {
 	args := m.Called(role, email)
 	if args.Error(1) != nil {
-		return manager.GetUserOrdersResponse{}, args.Error(1)
+		return nil, args.Error(1)
 	}
-	return args.Get(0).(manager.GetUserOrdersResponse), nil
+	return args.Get(0).([]primitive.M), nil
 }
 
 // GetSingleOrder mocks base method.

@@ -14,15 +14,11 @@ import (
 
 type OrderManager interface {
 	CreateOrder(order models.Order, role string, email string) (*models.Order, error)
-	GetUserOrders(role string, email string) (GetUserOrdersResponse, error)
+	GetUserOrders(role string, email string) ([]primitive.M, error)
 	GetSingleOrder(id primitive.ObjectID, email string) (*models.Order, error)
 	GetAllOrders(role string, email string) (GetAllOrdersResponse, error)
 	DeleteOrder(id primitive.ObjectID, role string, email string) (map[string]interface{}, error)
 	UpdateOrder(status string, id primitive.ObjectID, role string, email string) (map[string]interface{}, error)
-}
-
-type GetUserOrdersResponse struct {
-	Results []primitive.M `json:"results" bson:"results"`
 }
 
 type GetAllOrdersResponse struct {
@@ -50,10 +46,10 @@ func (om *orderManager) CreateOrder(order models.Order, role string, email strin
 	return &order, nil
 }
 
-func (om *orderManager) GetUserOrders(role string, email string) (GetUserOrdersResponse, error) {
+func (om *orderManager) GetUserOrders(role string, email string) ([]primitive.M, error) {
 	err := authorizeUser(role, email)
 	if err != nil {
-		return GetUserOrdersResponse{}, err
+		return nil, err
 	}
 	filter := bson.M{"user": email}
 
@@ -64,21 +60,20 @@ func (om *orderManager) GetUserOrders(role string, email string) (GetUserOrdersR
 		var result bson.M
 		e := order_list.Decode(&result)
 		if e != nil {
-			return GetUserOrdersResponse{}, err
+			return nil, err
 		}
 		results = append(results, result)
 	}
 
 	if err := order_list.Err(); err != nil {
-		return GetUserOrdersResponse{}, err
+		return nil, err
 	} else if len(results) == 0 {
-		return GetUserOrdersResponse{}, errors.New("orders list is empty")
+		return nil, errors.New("orders list is empty")
 	}
 
 	order_list.Close(context.Background())
-	var response = GetUserOrdersResponse{Results: results}
 
-	return response, nil
+	return results, nil
 }
 
 func (om *orderManager) GetSingleOrder(id primitive.ObjectID, email string) (*models.Order, error) {
