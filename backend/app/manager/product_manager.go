@@ -24,6 +24,7 @@ type ProductManager interface {
 	DeleteProduct(id primitive.ObjectID, role string, email string) (map[string]interface{}, error)
 	SearchProducts(query url.Values) (SearchResponse, error)
 	CreateReview(review models.Review, product models.Product, filterProduct primitive.M) (map[string]interface{}, error)
+	GetProductReviews(id primitive.ObjectID) ([]*models.Review, error)
 }
 
 type SearchResponse struct {
@@ -329,4 +330,17 @@ func (pm *productManager) CreateReview(review models.Review, product models.Prod
 
 	ratingResponse := map[string]interface{}{"success": true, "message": "Review has been created"}
 	return ratingResponse, nil
+}
+
+func (pm *productManager) GetProductReviews(id primitive.ObjectID) ([]*models.Review, error) {
+	product := &models.Product{}
+	filter := bson.M{"_id": id}
+	err := database.Coll_product.FindOne(context.TODO(), filter).Decode(product)
+	if err != nil {
+		return nil, err
+	}
+	result := product.Reviews
+
+	payload := result
+	return payload, nil
 }

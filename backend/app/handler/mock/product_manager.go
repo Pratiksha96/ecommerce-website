@@ -82,3 +82,12 @@ func (m *MockProductManager) CreateReview(review models.Review, product models.P
 	}
 	return args.Get(0).(map[string]interface{}), nil
 }
+
+// GetProductReviews mocks base method.
+func (m *MockProductManager) GetProductReviews(id primitive.ObjectID) ([]*models.Review, error) {
+	args := m.Called(id)
+	if args.Error(1) != nil {
+		return nil, args.Error(1)
+	}
+	return args.Get(0).([]*models.Review), nil
+}

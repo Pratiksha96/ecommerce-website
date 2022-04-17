@@ -214,3 +214,22 @@ func CreateReview(productManager manager.ProductManager) http.HandlerFunc {
 		json.NewEncoder(w).Encode(response)
 	}
 }
+
+func GetProductReviews(productManager manager.ProductManager) http.HandlerFunc {
+	return func(w http.ResponseWriter, r *http.Request) {
+		w.Header().Set("Context-Type", "application/x-www-form-urlencoded")
+		w.Header().Set("Access-Control-Allow-Origin", "*")
+		var params = mux.Vars(r)
+		id, err := primitive.ObjectIDFromHex(params["id"])
+		if err != nil {
+			utils.GetErrorWithStatus(errors.New("invalid object id"), w, http.StatusUnprocessableEntity)
+			return
+		}
+		payload, err := productManager.GetProductReviews(id)
+		if err != nil {
+			utils.GetErrorWithStatus(errors.New("invalid object id"), w, http.StatusUnprocessableEntity)
+			return
+		}
+		json.NewEncoder(w).Encode(payload)
+	}
+}
