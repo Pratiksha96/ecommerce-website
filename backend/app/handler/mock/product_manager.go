@@ -99,3 +99,11 @@ func (m *MockProductManager) UpdateReview(review models.Review, product models.P
 	}
 	return args.Get(0).(map[string]interface{}), nil
 }
+
+func (m *MockProductManager) DeleteReview(id primitive.ObjectID, email string) (map[string]interface{}, error) {
+	args := m.Called(id, email)
+	if args.Error(1) != nil {
+		return nil, args.Error(1)
+	}
+	return args.Get(0).(map[string]interface{}), nil
+}

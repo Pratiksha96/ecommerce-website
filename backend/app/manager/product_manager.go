@@ -26,6 +26,7 @@ type ProductManager interface {
 	CreateReview(review models.Review, product models.Product, filterProduct primitive.M) (map[string]interface{}, error)
 	GetProductReviews(id primitive.ObjectID) ([]*models.Review, error)
 	UpdateReview(review models.Review, product models.Product, filterProduct primitive.M) (map[string]interface{}, error)
+	DeleteReview(id primitive.ObjectID, email string) (map[string]interface{}, error)
 }
 
 type SearchResponse struct {
@@ -387,4 +388,56 @@ func (pm *productManager) UpdateReview(review models.Review, product models.Prod
 
 	ratingResponse := map[string]interface{}{"success": true, "message": "Review has been updated"}
 	return ratingResponse, nil
+}
+
+func (pm *productManager) DeleteReview(id primitive.ObjectID, email string) (map[string]interface{}, error) {
+
+	product := &models.Product{}
+	filter := bson.M{"_id": id}
+	err := database.Coll_product.FindOne(context.TODO(), filter).Decode(product)
+	if err != nil {
+		return nil, err
+	}
+
+	indexToDelete := 0
+	for x := 0; x < len(product.Reviews); x++ {
+		if product.Reviews[x].User.Email == email {
+			indexToDelete = x
+			break
+		}
+	}
+
+	newLength := 0
+	for index := range product.Reviews {
+		if indexToDelete != index {
+			product.Reviews[newLength] = product.Reviews[index]
+			newLength++
+		}
+	}
+
+	// reslice the array to remove extra index
+	newReview := product.Reviews[:newLength]
+	newNumOfReviews := product.NumOfReviews - 1
+	avgRating := 0
+	for _, reviewInstance := range newReview {
+
+		avgRating += reviewInstance.Rating
+	}
+	avgRating = avgRating / product.NumOfReviews
+	result, err := database.Coll_product.UpdateOne(
+		context.TODO(),
+		bson.M{"_id": id},
+		bson.D{
+			{"$set", bson.D{{"reviews", newReview},
+				{"numOfReviews", newNumOfReviews},
+				{"ratings", avgRating}}},
+		},
+	)
+	if err != nil {
+		return nil, errors.New("Error while deleting product review")
+	}
+	log.Println("Following number of users updated ", result.ModifiedCount)
+
+	deleteResponse := map[string]interface{}{"success": true, "message": "Review has been successfully deleted"}
+	return deleteResponse, nil
 }
