@@ -98,3 +98,11 @@ func (m *MockUserManager) UpdateRole(body map[string]interface{}) (manager.UserR
 	}
 	return args.Get(0).(manager.UserResponse), nil
 }
+
+func (m *MockUserManager) DeleteUser(id primitive.ObjectID, role string, email string) (map[string]interface{}, error) {
+	args := m.Called(id, role, email)
+	if args.Error(1) != nil {
+		return nil, args.Error(1)
+	}
+	return args.Get(0).(map[string]interface{}), nil
+}
