@@ -214,3 +214,37 @@ func GetUser(userManager manager.UserManager) http.HandlerFunc {
 		json.NewEncoder(w).Encode(user)
 	}
 }
+
+func UpdateRole(userManager manager.UserManager) http.HandlerFunc {
+	return func(w http.ResponseWriter, r *http.Request) {
+		w.Header().Set("Context-Type", "application/x-www-form-urlencoded")
+		w.Header().Set("Access-Control-Allow-Origin", "*")
+		w.Header().Set("Access-Control-Allow-Methods", "POST")
+		w.Header().Set("Access-Control-Allow-Headers", "Content-Type")
+
+		var requestbody interface{}
+		buffer, err := ioutil.ReadAll(r.Body)
+
+		if err != nil {
+			log.Panic(err)
+		}
+		r.Body.Close()
+		json.Unmarshal(buffer, &requestbody)
+		body := requestbody.(map[string]interface{})
+
+		ctx := r.Context()
+		email := ctx.Value("email").(string)
+		role := "admin"
+		err = userManager.AuthorizeUser(role, email)
+		if err != nil {
+			utils.GetError(err, w)
+			return
+		}
+		response, err := userManager.UpdateRole(body)
+		if err != nil {
+			utils.GetError(err, w)
+			return
+		}
+		json.NewEncoder(w).Encode(response)
+	}
+}

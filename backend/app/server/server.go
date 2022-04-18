@@ -37,6 +37,7 @@ func StartServer() {
 	r.HandleFunc("/me/update", middleware.AuthenticateUser(handler.UpdateProfile(userManager))).Methods("PUT", "OPTIONS")
 	r.HandleFunc("/user/get", middleware.AuthenticateUser(handler.GetAllUsers(userManager))).Methods("GET", "OPTIONS")
 	r.HandleFunc("/user/get/{id}", middleware.AuthenticateUser(handler.GetUser(userManager))).Methods("GET", "OPTIONS")
+	r.HandleFunc("/user/updaterole", middleware.AuthenticateUser(handler.UpdateRole(userManager))).Methods("PUT", "OPTIONS")
 
 	r.HandleFunc("/order/create", middleware.AuthenticateUser(handler.CreateOrder(orderManager))).Methods("POST", "OPTIONS")
 	r.HandleFunc("/order/user/get", middleware.AuthenticateUser(handler.GetUserOrders(orderManager))).Methods("GET", "OPTIONS")
