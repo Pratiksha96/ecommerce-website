@@ -248,3 +248,24 @@ func UpdateRole(userManager manager.UserManager) http.HandlerFunc {
 		json.NewEncoder(w).Encode(response)
 	}
 }
+
+func DeleteUser(userManager manager.UserManager) http.HandlerFunc {
+	return func(w http.ResponseWriter, r *http.Request) {
+		w.Header().Set("Content-Type", "application/json")
+
+		var params = mux.Vars(r)
+		id, err := primitive.ObjectIDFromHex(params["id"])
+		if err != nil || params["id"] == "" {
+			utils.GetErrorWithStatus(errors.New("invalid object id"), w, http.StatusUnprocessableEntity)
+			return
+		}
+		ctx := r.Context()
+		email := ctx.Value("email").(string)
+		deleteResponse, err := userManager.DeleteUser(id, "admin", email)
+		if err != nil {
+			utils.GetError(err, w)
+			return
+		}
+		json.NewEncoder(w).Encode(deleteResponse)
+	}
+}

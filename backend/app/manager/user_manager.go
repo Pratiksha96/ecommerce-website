@@ -23,6 +23,7 @@ type UserManager interface {
 	GetUser(role string, email string, id primitive.ObjectID) (*models.User, error)
 	AuthorizeUser(role string, email string) error
 	UpdateRole(body map[string]interface{}) (UserResponse, error)
+	DeleteUser(id primitive.ObjectID, role string, email string) (map[string]interface{}, error)
 }
 
 type TokenResponse struct {
@@ -283,4 +284,23 @@ func (um *userManager) UpdateRole(body map[string]interface{}) (UserResponse, er
 		User:    storedUser,
 	}
 	return response, nil
+}
+
+func (um *userManager) DeleteUser(id primitive.ObjectID, role string, email string) (map[string]interface{}, error) {
+	err := authorizeUser(role, email)
+	if err != nil {
+		return nil, err
+	}
+
+	filter := bson.M{"_id": id}
+	deleteResult, err := database.Coll_user.DeleteOne(context.TODO(), filter)
+
+	if err != nil {
+		return nil, err
+	} else if deleteResult.DeletedCount == 0 {
+		return nil, errors.New("no such user present")
+	}
+
+	deleteResponse := map[string]interface{}{"success": true, "message": "user has been successfully deleted"}
+	return deleteResponse, nil
 }
