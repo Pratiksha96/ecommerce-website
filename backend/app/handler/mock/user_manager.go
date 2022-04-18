@@ -90,3 +90,11 @@ func (m *MockUserManager) AuthorizeUser(role string, email string) error {
 	}
 	return nil
 }
+
+func (m *MockUserManager) UpdateRole(body map[string]interface{}) (manager.UserResponse, error) {
+	args := m.Called(body)
+	if args.Error(1) != nil {
+		return manager.UserResponse{}, args.Error(1)
+	}
+	return args.Get(0).(manager.UserResponse), nil
+}

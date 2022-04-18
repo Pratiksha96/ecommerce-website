@@ -22,6 +22,7 @@ type UserManager interface {
 	GetAllUsers(role string, email string) ([]primitive.M, error)
 	GetUser(role string, email string, id primitive.ObjectID) (*models.User, error)
 	AuthorizeUser(role string, email string) error
+	UpdateRole(body map[string]interface{}) (UserResponse, error)
 }
 
 type TokenResponse struct {
@@ -245,4 +246,41 @@ func (um *userManager) GetUser(role string, email string, id primitive.ObjectID)
 		return nil, err
 	}
 	return user, nil
+}
+
+func (um *userManager) UpdateRole(body map[string]interface{}) (UserResponse, error) {
+	var storedUser models.User
+	id, err := primitive.ObjectIDFromHex(body["id"].(string))
+	if err != nil {
+
+		return UserResponse{}, errors.New("invalid object id")
+	}
+
+	filter := bson.M{"_id": id}
+	err = database.Coll_user.FindOne(context.TODO(), filter).Decode(&storedUser)
+	if err != nil {
+		return UserResponse{}, errors.New("no such user present")
+	}
+
+	newRole := body["role"].(string)
+
+	result, err := database.Coll_user.UpdateOne(
+		context.TODO(),
+		bson.M{"_id": id},
+		bson.D{
+			{"$set", bson.D{{"role", newRole}}},
+		},
+	)
+	if err != nil {
+		return UserResponse{}, errors.New("Failed to update user role")
+	}
+	log.Println("Following number of users updated ", result.ModifiedCount)
+
+	storedUser.Role = newRole
+
+	var response = UserResponse{
+		Success: true,
+		User:    storedUser,
+	}
+	return response, nil
 }
