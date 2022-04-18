@@ -25,6 +25,7 @@ type ProductManager interface {
 	SearchProducts(query url.Values) (SearchResponse, error)
 	CreateReview(review models.Review, product models.Product, filterProduct primitive.M) (map[string]interface{}, error)
 	GetProductReviews(id primitive.ObjectID) ([]*models.Review, error)
+	UpdateReview(review models.Review, product models.Product, filterProduct primitive.M) (map[string]interface{}, error)
 }
 
 type SearchResponse struct {
@@ -343,4 +344,47 @@ func (pm *productManager) GetProductReviews(id primitive.ObjectID) ([]*models.Re
 
 	payload := result
 	return payload, nil
+}
+
+func (pm *productManager) UpdateReview(review models.Review, product models.Product, filterProduct primitive.M) (map[string]interface{}, error) {
+
+	var oldProduct models.Product
+
+	for x := 0; x < len(product.Reviews); x++ {
+		if product.Reviews[x].User.Email == review.User.Email {
+			product.Reviews[x] = &review
+			break
+		}
+	}
+	avgRating := 0
+	for _, reviewInstance := range product.Reviews {
+
+		avgRating += reviewInstance.Rating
+	}
+	avgRating = avgRating / product.NumOfReviews
+
+	product.Ratings = avgRating
+
+	update := bson.D{
+		{"$set", bson.D{
+			{"name", product.Name},
+			{"description", product.Description},
+			{"price", product.Price},
+			{"ratings", product.Ratings},
+			{"images", product.Images},
+			{"category", product.Category},
+			{"Stock", product.Stock},
+			{"reviews", product.Reviews},
+			{"numOfReviews", product.NumOfReviews},
+		}},
+	}
+
+	err := database.Coll_product.FindOneAndUpdate(context.TODO(), filterProduct, update).Decode(&oldProduct)
+
+	if err != nil {
+		return nil, err
+	}
+
+	ratingResponse := map[string]interface{}{"success": true, "message": "Review has been updated"}
+	return ratingResponse, nil
 }
