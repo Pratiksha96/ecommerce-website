@@ -91,3 +91,11 @@ func (m *MockProductManager) GetProductReviews(id primitive.ObjectID) ([]*models
 	}
 	return args.Get(0).([]*models.Review), nil
 }
+
+func (m *MockProductManager) UpdateReview(review models.Review, product models.Product, filterProduct primitive.M) (map[string]interface{}, error) {
+	args := m.Called(review, product, filterProduct)
+	if args.Error(1) != nil {
+		return nil, args.Error(1)
+	}
+	return args.Get(0).(map[string]interface{}), nil
+}
