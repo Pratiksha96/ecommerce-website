@@ -18,6 +18,7 @@ func StartServer() {
 	productManager := manager.NewProductManager()
 	orderManager := manager.NewOrderManager()
 	userManager := manager.NewUserManager()
+	reviewManager := manager.NewReviewManager()
 
 	r.HandleFunc("/ping", handler.PingHandler())
 	r.HandleFunc("/product/get", handler.GetAllProducts(productManager)).Methods("GET", "OPTIONS")
@@ -26,10 +27,10 @@ func StartServer() {
 	r.HandleFunc("/product/update/{id}", middleware.AuthenticateUser(handler.UpdateProduct(productManager))).Methods("PUT", "OPTIONS")
 	r.HandleFunc("/product/delete/{id}", middleware.AuthenticateUser(handler.DeleteProduct(productManager))).Methods("DELETE", "OPTIONS")
 	r.HandleFunc("/product/get/{id}", middleware.AuthenticateUser(handler.GetProduct(productManager))).Methods("GET", "OPTIONS")
-	r.HandleFunc("/product/createReview", middleware.AuthenticateUser(handler.CreateReview(productManager))).Methods("PUT", "OPTIONS")
-	r.HandleFunc("/product/getreviews/{id}", handler.GetProductReviews(productManager)).Methods("GET", "OPTIONS")
-	r.HandleFunc("/product/updateReview", middleware.AuthenticateUser(handler.UpdateReview(productManager))).Methods("PUT", "OPTIONS")
-	r.HandleFunc("/product/deleteReview/{id}", middleware.AuthenticateUser(handler.DeleteReview(productManager))).Methods("DELETE", "OPTIONS")
+	r.HandleFunc("/product/createReview", middleware.AuthenticateUser(handler.CreateReview(reviewManager))).Methods("PUT", "OPTIONS")
+	r.HandleFunc("/product/getreviews/{id}", handler.GetProductReviews(reviewManager)).Methods("GET", "OPTIONS")
+	r.HandleFunc("/product/updateReview", middleware.AuthenticateUser(handler.UpdateReview(reviewManager))).Methods("PUT", "OPTIONS")
+	r.HandleFunc("/product/deleteReview/{id}", middleware.AuthenticateUser(handler.DeleteReview(reviewManager))).Methods("DELETE", "OPTIONS")
 
 	r.HandleFunc("/register", handler.RegisterUser(userManager)).Methods("POST", "OPTIONS")
 	r.HandleFunc("/login", handler.LoginUser(userManager)).Methods("POST", "OPTIONS")
