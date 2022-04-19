@@ -46,7 +46,6 @@ func CreateReview(reviewManager manager.ReviewManager) http.HandlerFunc {
 		filter := bson.M{"email": email}
 		err = database.Coll_user.FindOne(context.TODO(), filter).Decode(&storedUser)
 		if err != nil {
-			fmt.Print("Caught error on line 175")
 			utils.GetError(err, w)
 			return
 		}
@@ -55,7 +54,6 @@ func CreateReview(reviewManager manager.ReviewManager) http.HandlerFunc {
 		proudctIdString := body["productId"].(string)
 		productId, err := primitive.ObjectIDFromHex(proudctIdString)
 		if err != nil {
-			fmt.Print("Caught error on line 184")
 			utils.GetError(err, w)
 			return
 		}
@@ -63,7 +61,6 @@ func CreateReview(reviewManager manager.ReviewManager) http.HandlerFunc {
 		filterProduct := bson.M{"_id": productId}
 		err = database.Coll_product.FindOne(context.TODO(), filterProduct).Decode(&product)
 		if err != nil {
-			fmt.Print("Caught error on line 192")
 			utils.GetError(err, w)
 			return
 		}
@@ -74,14 +71,6 @@ func CreateReview(reviewManager manager.ReviewManager) http.HandlerFunc {
 		review.Name = storedUser.Name
 		review.Rating = ratingInt
 		review.Comment = body["comment"].(string)
-
-		// if errors := utils.Validate(product); len(errors) > 0 {
-		// 	log.Println("Received invalid json request!")
-		// 	err := map[string]interface{}{"success": false, "message": errors}
-		// 	w.WriteHeader(http.StatusBadRequest)
-		// 	json.NewEncoder(w).Encode(err)
-		// 	return
-		// }
 
 		response, err := reviewManager.CreateReview(review, product, filterProduct)
 		if err != nil {
@@ -100,12 +89,12 @@ func GetProductReviews(reviewManager manager.ReviewManager) http.HandlerFunc {
 		var params = mux.Vars(r)
 		id, err := primitive.ObjectIDFromHex(params["id"])
 		if err != nil {
-			utils.GetErrorWithStatus(errors.New("invalid object id"), w, http.StatusUnprocessableEntity)
+			utils.GetErrorWithStatus(errors.New("invalid product id"), w, http.StatusUnprocessableEntity)
 			return
 		}
 		payload, err := reviewManager.GetProductReviews(id)
 		if err != nil {
-			utils.GetErrorWithStatus(errors.New("invalid object id"), w, http.StatusUnprocessableEntity)
+			utils.GetErrorWithStatus(errors.New("invalid product id"), w, http.StatusUnprocessableEntity)
 			return
 		}
 		json.NewEncoder(w).Encode(payload)

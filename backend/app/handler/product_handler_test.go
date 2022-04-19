@@ -215,7 +215,7 @@ func Test_UpdateProduct(t *testing.T) {
 		sampleId := primitive.NewObjectID()
 		recorder := httptest.NewRecorder()
 
-		req, err := http.NewRequest("POST", "/product/update", strings.NewReader("{}"))
+		req, err := http.NewRequest("PUT", "/product/update", strings.NewReader("{}"))
 		require.NoError(t, err)
 
 		vars := map[string]string{
@@ -250,7 +250,7 @@ func Test_UpdateProduct(t *testing.T) {
 			"id": sampleId.Hex(),
 		}
 
-		req, err := http.NewRequest("POST", "/product/update", strings.NewReader(string(requestBody)))
+		req, err := http.NewRequest("PUT", "/product/update", strings.NewReader(string(requestBody)))
 		require.NoError(t, err)
 
 		req = mux.SetURLVars(req, vars)
@@ -278,7 +278,7 @@ func Test_UpdateProduct(t *testing.T) {
 			"id": sampleId.Hex(),
 		}
 
-		req, err := http.NewRequest("POST", "/product/update", strings.NewReader(string(requestBody)))
+		req, err := http.NewRequest("PUT", "/product/update", strings.NewReader(string(requestBody)))
 		require.NoError(t, err)
 
 		req = mux.SetURLVars(req, vars)
