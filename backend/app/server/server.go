@@ -27,7 +27,7 @@ func StartServer() {
 	r.HandleFunc("/product/update/{id}", middleware.AuthenticateUser(handler.UpdateProduct(productManager))).Methods("PUT", "OPTIONS")
 	r.HandleFunc("/product/delete/{id}", middleware.AuthenticateUser(handler.DeleteProduct(productManager))).Methods("DELETE", "OPTIONS")
 	r.HandleFunc("/product/get/{id}", middleware.AuthenticateUser(handler.GetProduct(productManager))).Methods("GET", "OPTIONS")
-	
+
 	r.HandleFunc("/product/createReview", middleware.AuthenticateUser(handler.CreateReview(reviewManager))).Methods("PUT", "OPTIONS")
 	r.HandleFunc("/product/getreviews/{id}", handler.GetProductReviews(reviewManager)).Methods("GET", "OPTIONS")
 	r.HandleFunc("/product/updateReview", middleware.AuthenticateUser(handler.UpdateReview(reviewManager))).Methods("PUT", "OPTIONS")
