@@ -38,6 +38,8 @@ type UserResponse struct {
 
 type userManager struct{}
 
+var validUserRoles = []string{"user", "admin"}
+
 func NewUserManager() UserManager {
 	return &userManager{}
 }
@@ -249,6 +251,15 @@ func (um *userManager) GetUser(role string, email string, id primitive.ObjectID)
 	return user, nil
 }
 
+func validRoleContains(validUserRoles []string, requestedRole string) bool {
+	for _, role := range validUserRoles {
+		if role == requestedRole {
+			return true
+		}
+	}
+	return false
+}
+
 func (um *userManager) UpdateRole(body map[string]interface{}) (UserResponse, error) {
 	var storedUser models.User
 	id, err := primitive.ObjectIDFromHex(body["id"].(string))
@@ -264,6 +275,10 @@ func (um *userManager) UpdateRole(body map[string]interface{}) (UserResponse, er
 	}
 
 	newRole := body["role"].(string)
+
+	if !validRoleContains(validUserRoles, newRole) {
+		return UserResponse{}, errors.New("The role in the change request is invalid!")
+	}
 
 	if storedUser.Role == newRole {
 		return UserResponse{}, errors.New("The requested role has already been assigned to this id. Hence, no change")
