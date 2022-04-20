@@ -34,11 +34,18 @@ Developer:
 - [As a developer, I want unit test for Get Product Reviews handler](https://github.com/Pratiksha96/ecommerce-website/issues/176)
 - [As a developer, I don't want to allow similar role update for an existing user](https://github.com/Pratiksha96/ecommerce-website/issues/189)
 - [As a developer, I want to give an option of changing user/admin roles](https://github.com/Pratiksha96/ecommerce-website/issues/106)
+- [As a developer, I want to test frontend.](https://github.com/Pratiksha96/ecommerce-website/issues/185)
 
 Admin:
 - [As an admin, I want to be able to delete an existing user](https://github.com/Pratiksha96/ecommerce-website/issues/107)
+- [As an admin, I want to have different routes for admin and user. ](https://github.com/Pratiksha96/ecommerce-website/issues/186)
 
 User:
+- [As a user, I want to add and delete products in a cart. ](https://github.com/Pratiksha96/ecommerce-website/issues/183)
+- [As a user, I want to review the product. ](https://github.com/Pratiksha96/ecommerce-website/issues/184)
+- [As a user, I want to create an order. ](https://github.com/Pratiksha96/ecommerce-website/issues/187)
+
+
 
 Bug:
 - [As a developer, I want roles other than 'user' or 'admin' to be declined in the role change request](https://github.com/Pratiksha96/ecommerce-website/issues/192)
@@ -174,7 +181,57 @@ or
 
 # Frontend 
 
+
 ## FrontEnd Technologies: React JS, CSS
+## Review Product
+A layout is created where a user can review a product on the website. The page is mobile responsive. Here are the screenshots to  see where a user can review a product for different screen sizes.
+## Order
+A layout is created where a user can order the product on the website. The page is mobile responsive. Here are the screenshots to  see where the user can order the product for different screen sizes.
+
+## Cypress Testing
+Test Cases are written for different screens.
+## Cart
+A layout is created where a user can add/delete products in a cart on the website. The page is mobile responsive. Here are the screenshots to  see the checkout page for different screen sizes.
+
+
 
 ## Test results 
+### Cart
+![alt text](https://github.com/Pratiksha96/ecommerce-website/blob/main/resources/testImages/EmptyCart.png)
+
+### Cart-mobile
+![alt text](https://github.com/Pratiksha96/ecommerce-website/blob/main/resources/testImages/EmptyCart_mobile.png)
+
+### Review
+![alt text](https://github.com/Pratiksha96/ecommerce-website/blob/main/resources/testImages/Review.png)
+
+### Review_Mobile
+![alt text](https://github.com/Pratiksha96/ecommerce-website/blob/main/resources/testImages/Review_Mobile.png)
+
+
+### Order
+![alt text](https://github.com/Pratiksha96/ecommerce-website/blob/main/resources/testImages/OrderPage.png)
+### Order
+![alt text](https://github.com/Pratiksha96/ecommerce-website/blob/main/resources/testImages/OrderPage_Mobile.png)
+
+### Shipping_Details
+![alt text](https://github.com/Pratiksha96/ecommerce-website/blob/main/resources/testImages/Shipping_Details.png)
+
+### CypressTesting
+![alt text](https://github.com/Pratiksha96/ecommerce-website/blob/main/resources/testImages/CypressTesting.png)
+
+## How to run
+### Backend
+- download mongo db - make sure it is running by running command - `mongo`
+- checkout main branch and use 'make run' for running the server
+- use 'make build'
+- It should show in your terminal that Db is connected.
+- Verify server is running by running this - localhost:8081/ping - it should result in pong on your screen
+
+### Frontend
+ - download node - make sure it is running by running command - `node -v`
+- checkout main branch and cd into frontend
+- run npm install to install all the dependencies 
+- run npm start to start the server
+- Verify server is running by running this - localhost:3000 - it should display the home pages 
 
