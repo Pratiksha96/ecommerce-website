@@ -26,6 +26,9 @@ func NewReviewManager() ReviewManager {
 
 func (pm *reviewManager) CreateReview(review models.Review, product models.Product, filterProduct primitive.M) (map[string]interface{}, error) {
 
+	if review.Rating < 0 || review.Rating > 5 {
+		return nil, errors.New("Product Rating cannot be negative or greater than 5")
+	}
 	product.Reviews = append(product.Reviews, &review)
 	product.NumOfReviews = len(product.Reviews)
 	var oldProduct models.Product
@@ -76,7 +79,9 @@ func (pm *reviewManager) GetProductReviews(id primitive.ObjectID) ([]*models.Rev
 }
 
 func (pm *reviewManager) UpdateReview(review models.Review, product models.Product, filterProduct primitive.M) (map[string]interface{}, error) {
-
+	if review.Rating < 0 || review.Rating > 5 {
+		return nil, errors.New("Product Rating cannot be negative or greater than 5")
+	}
 	var oldProduct models.Product
 	oldRating := 0
 	for x := 0; x < len(product.Reviews); x++ {
