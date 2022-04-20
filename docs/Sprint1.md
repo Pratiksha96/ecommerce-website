@@ -117,11 +117,6 @@ Returns product as given -
             "name" : "user1",
             "rating" : 5,
             "comment" : "amazing book"
-        },
-        {
-            "name" : "user2",
-            "rating" : 4,
-            "comment" : "good read"
         }
     ]
 }
@@ -147,11 +142,6 @@ Send a POST request with a json body. Eg.
             "name" : "user1",
             "rating" : 5,
             "comment" : "amazing book"
-        },
-        {
-            "name" : "user2",
-            "rating" : 4,
-            "comment" : "good read"
         }
     ]
 }
@@ -191,11 +181,6 @@ In body Json of object to be updated is passed and update product Json is return
             "name" : "user1",
             "rating" : 5,
             "comment" : "amazing book"
-        },
-        {
-            "name" : "user2",
-            "rating" : 4,
-            "comment" : "good read"
         }
     ]
 }
@@ -306,4 +291,3 @@ Redux store in setup to store the data fetched from the backend at a single plac
 
 ## Note
 - On March 4, we squashed many commits of frontend due to which some of our commits lost their history.
-
