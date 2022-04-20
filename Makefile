@@ -11,4 +11,4 @@ run-client:
 	cd ./frontend && npm start
 
 test-server: test-server
-	cd ./backend && go test ./...
+	cd ./backend && go test ecommerce-website/app/handler -v
