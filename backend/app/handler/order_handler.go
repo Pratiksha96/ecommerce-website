@@ -33,8 +33,6 @@ func CreateOrder(orderManager manager.OrderManager) http.HandlerFunc {
 		ctx := r.Context()
 		email := ctx.Value("email").(string)
 		order.OrderStatus = "Processing"
-		// order.PaidAt = time.Now()
-		// order.CreatedAt = time.Now()
 		//adding user id for now
 		order.User = email
 		response, err := orderManager.CreateOrder(order, "user", email)

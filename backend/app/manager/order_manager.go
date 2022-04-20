@@ -194,13 +194,6 @@ func (om *orderManager) UpdateOrder(status string, id primitive.ObjectID, role s
 	}
 	updateResponse := map[string]interface{}{"success": true, "message": "order has been updated successfully"}
 	return updateResponse, nil
-
-	// if err != nil {
-	// 	return nil, err
-	// }
-
-	// deleteResponse := map[string]interface{}{"success": true, "message": "order has been successfully deleted"}
-	// return deleteResponse, nil
 }
 
 func updateOrderProductItem(productId primitive.ObjectID, quantity int) {
@@ -230,10 +223,4 @@ func updateOrderProductItem(productId primitive.ObjectID, quantity int) {
 	}
 
 	_ = database.Coll_product.FindOneAndUpdate(context.TODO(), filter, update).Decode(&oldProduct)
-
-	// if err != nil {
-	// 	return nil, err
-	// }
-	// return &product, nil
-
 }
