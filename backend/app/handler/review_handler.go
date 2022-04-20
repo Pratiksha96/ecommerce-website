@@ -127,7 +127,6 @@ func UpdateReview(reviewManager manager.ReviewManager) http.HandlerFunc {
 		filter := bson.M{"email": email}
 		err = database.Coll_user.FindOne(context.TODO(), filter).Decode(&storedUser)
 		if err != nil {
-			fmt.Print("Caught error on line 175")
 			utils.GetError(err, w)
 			return
 		}
@@ -136,7 +135,6 @@ func UpdateReview(reviewManager manager.ReviewManager) http.HandlerFunc {
 		proudctIdString := body["productId"].(string)
 		productId, err := primitive.ObjectIDFromHex(proudctIdString)
 		if err != nil {
-			fmt.Print("Caught error on line 184")
 			utils.GetError(err, w)
 			return
 		}
@@ -144,7 +142,6 @@ func UpdateReview(reviewManager manager.ReviewManager) http.HandlerFunc {
 		filterProduct := bson.M{"_id": productId}
 		err = database.Coll_product.FindOne(context.TODO(), filterProduct).Decode(&product)
 		if err != nil {
-			fmt.Print("Caught error on line 192")
 			utils.GetError(err, w)
 			return
 		}
@@ -158,7 +155,6 @@ func UpdateReview(reviewManager manager.ReviewManager) http.HandlerFunc {
 
 		response, err := reviewManager.UpdateReview(review, product, filterProduct)
 		if err != nil {
-			fmt.Print("Caught error on line 214")
 			utils.GetError(err, w)
 			return
 		}
