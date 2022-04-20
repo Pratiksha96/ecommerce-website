@@ -31,36 +31,25 @@ func (pm *reviewManager) CreateReview(review models.Review, product models.Produ
 	}
 	product.Reviews = append(product.Reviews, &review)
 	product.NumOfReviews = len(product.Reviews)
-	var oldProduct models.Product
-	avgRating := 0
-	for _, reviewInstance := range product.Reviews {
-
-		avgRating += reviewInstance.Rating
-	}
-	avgRating = avgRating / product.NumOfReviews
+	avgRating := product.Ratings
+	product.Ratings = ((avgRating * product.NumOfReviews) + review.Rating) / product.NumOfReviews
 
 	product.Ratings = avgRating
 
-	update := bson.D{
-		{"$set", bson.D{
-			{"name", product.Name},
-			{"description", product.Description},
-			{"price", product.Price},
-			{"ratings", product.Ratings},
-			{"images", product.Images},
-			{"category", product.Category},
-			{"Stock", product.Stock},
-			{"reviews", product.Reviews},
-			{"numOfReviews", product.NumOfReviews},
-		}},
-	}
-
-	err := database.Coll_product.FindOneAndUpdate(context.TODO(), filterProduct, update).Decode(&oldProduct)
+	result, err := database.Coll_product.UpdateOne(
+		context.TODO(),
+		filterProduct,
+		bson.D{
+			{"$set", bson.D{{"reviews", product.Reviews},
+				{"numOfReviews", product.NumOfReviews},
+				{"ratings", product.Ratings}}},
+		},
+	)
 
 	if err != nil {
 		return nil, err
 	}
-
+	log.Println("Following number of users updated ", result.ModifiedCount)
 	ratingResponse := map[string]interface{}{"success": true, "message": "Review has been created"}
 	return ratingResponse, nil
 }
@@ -82,38 +71,30 @@ func (pm *reviewManager) UpdateReview(review models.Review, product models.Produ
 	if review.Rating < 0 || review.Rating > 5 {
 		return nil, errors.New("Product Rating cannot be negative or greater than 5")
 	}
-	var oldProduct models.Product
+
 	oldRating := 0
-	for x := 0; x < len(product.Reviews); x++ {
-		if product.Reviews[x].User.Email == review.User.Email {
-			oldRating = product.Reviews[x].Rating
-			product.Reviews[x] = &review
+	for counter := 0; counter < len(product.Reviews); counter++ {
+		if product.Reviews[counter].User.Email == review.User.Email {
+			oldRating = product.Reviews[counter].Rating
+			product.Reviews[counter] = &review
 			break
 		}
 	}
 	avgRating := product.Ratings
 	product.Ratings = ((avgRating * product.NumOfReviews) - oldRating + review.Rating) / product.NumOfReviews
 
-	update := bson.D{
-		{"$set", bson.D{
-			{"name", product.Name},
-			{"description", product.Description},
-			{"price", product.Price},
-			{"ratings", product.Ratings},
-			{"images", product.Images},
-			{"category", product.Category},
-			{"Stock", product.Stock},
-			{"reviews", product.Reviews},
-			{"numOfReviews", product.NumOfReviews},
-		}},
-	}
-
-	err := database.Coll_product.FindOneAndUpdate(context.TODO(), filterProduct, update).Decode(&oldProduct)
-
+	result, err := database.Coll_product.UpdateOne(
+		context.TODO(),
+		filterProduct,
+		bson.D{
+			{"$set", bson.D{{"reviews", product.Reviews},
+				{"ratings", product.Ratings}}},
+		},
+	)
 	if err != nil {
 		return nil, err
 	}
-
+	log.Println("Following number of users updated ", result.ModifiedCount)
 	ratingResponse := map[string]interface{}{"success": true, "message": "Review has been updated"}
 	return ratingResponse, nil
 }
@@ -129,10 +110,10 @@ func (pm *reviewManager) DeleteReview(id primitive.ObjectID, email string) (map[
 
 	indexToDelete := 0
 	oldRating := 0
-	for x := 0; x < len(product.Reviews); x++ {
-		if product.Reviews[x].User.Email == email {
-			oldRating = product.Reviews[x].Rating
-			indexToDelete = x
+	for counter := 0; counter < len(product.Reviews); counter++ {
+		if product.Reviews[counter].User.Email == email {
+			oldRating = product.Reviews[counter].Rating
+			indexToDelete = counter
 			break
 		}
 	}

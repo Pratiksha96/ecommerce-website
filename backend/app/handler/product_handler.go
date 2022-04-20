@@ -13,34 +13,6 @@ import (
 	"go.mongodb.org/mongo-driver/bson/primitive"
 )
 
-func GetAllProducts(productManager manager.ProductManager) http.HandlerFunc {
-	return func(w http.ResponseWriter, r *http.Request) {
-		w.Header().Set("Context-Type", "application/x-www-form-urlencoded")
-		w.Header().Set("Access-Control-Allow-Origin", "*")
-
-		payload, err := productManager.GetAllProducts()
-		if err != nil {
-			utils.GetErrorWithStatus(errors.New("invalid object id"), w, http.StatusUnprocessableEntity)
-			return
-		}
-		json.NewEncoder(w).Encode(payload)
-	}
-}
-
-func SearchProducts(productManager manager.ProductManager) http.HandlerFunc {
-	return func(w http.ResponseWriter, r *http.Request) {
-		w.Header().Set("Context-Type", "application/x-www-form-urlencoded")
-		w.Header().Set("Access-Control-Allow-Origin", "*")
-		query := r.URL.Query()
-		payload, err := productManager.SearchProducts(query)
-		if err != nil {
-			utils.GetError(err, w)
-			return
-		}
-		json.NewEncoder(w).Encode(payload)
-	}
-}
-
 func CreateProduct(productManager manager.ProductManager) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		w.Header().Set("Context-Type", "application/x-www-form-urlencoded")
@@ -63,6 +35,52 @@ func CreateProduct(productManager manager.ProductManager) http.HandlerFunc {
 			return
 		}
 		json.NewEncoder(w).Encode(response)
+	}
+}
+func GetAllProducts(productManager manager.ProductManager) http.HandlerFunc {
+	return func(w http.ResponseWriter, r *http.Request) {
+		w.Header().Set("Context-Type", "application/x-www-form-urlencoded")
+		w.Header().Set("Access-Control-Allow-Origin", "*")
+
+		payload, err := productManager.GetAllProducts()
+		if err != nil {
+			utils.GetErrorWithStatus(errors.New("invalid object id"), w, http.StatusUnprocessableEntity)
+			return
+		}
+		json.NewEncoder(w).Encode(payload)
+	}
+}
+func GetProduct(productManager manager.ProductManager) http.HandlerFunc {
+	return func(w http.ResponseWriter, r *http.Request) {
+		w.Header().Set("Content-Type", "application/json")
+
+		var params = mux.Vars(r)
+		id, err := primitive.ObjectIDFromHex(params["id"])
+		if err != nil {
+			utils.GetErrorWithStatus(errors.New("invalid object id"), w, http.StatusUnprocessableEntity)
+			return
+		}
+		ctx := r.Context()
+		email := ctx.Value("email").(string)
+		product, err := productManager.GetProduct(id, email)
+		if err != nil {
+			utils.GetError(err, w)
+			return
+		}
+		json.NewEncoder(w).Encode(product)
+	}
+}
+func SearchProducts(productManager manager.ProductManager) http.HandlerFunc {
+	return func(w http.ResponseWriter, r *http.Request) {
+		w.Header().Set("Context-Type", "application/x-www-form-urlencoded")
+		w.Header().Set("Access-Control-Allow-Origin", "*")
+		query := r.URL.Query()
+		payload, err := productManager.SearchProducts(query)
+		if err != nil {
+			utils.GetError(err, w)
+			return
+		}
+		json.NewEncoder(w).Encode(payload)
 	}
 }
 
@@ -110,26 +128,5 @@ func DeleteProduct(productManager manager.ProductManager) http.HandlerFunc {
 			return
 		}
 		json.NewEncoder(w).Encode(deleteResponse)
-	}
-}
-
-func GetProduct(productManager manager.ProductManager) http.HandlerFunc {
-	return func(w http.ResponseWriter, r *http.Request) {
-		w.Header().Set("Content-Type", "application/json")
-
-		var params = mux.Vars(r)
-		id, err := primitive.ObjectIDFromHex(params["id"])
-		if err != nil {
-			utils.GetErrorWithStatus(errors.New("invalid object id"), w, http.StatusUnprocessableEntity)
-			return
-		}
-		ctx := r.Context()
-		email := ctx.Value("email").(string)
-		product, err := productManager.GetProduct(id, email)
-		if err != nil {
-			utils.GetError(err, w)
-			return
-		}
-		json.NewEncoder(w).Encode(product)
 	}
 }

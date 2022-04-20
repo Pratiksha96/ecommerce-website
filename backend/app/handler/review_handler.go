@@ -4,7 +4,6 @@ import (
 	"context"
 	"encoding/json"
 	"errors"
-	"fmt"
 	"io/ioutil"
 	"log"
 	"net/http"
@@ -74,7 +73,6 @@ func CreateReview(reviewManager manager.ReviewManager) http.HandlerFunc {
 
 		response, err := reviewManager.CreateReview(review, product, filterProduct)
 		if err != nil {
-			fmt.Print("Caught error on line 214")
 			utils.GetError(err, w)
 			return
 		}
