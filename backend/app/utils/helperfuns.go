@@ -38,7 +38,7 @@ func GetErrorWithStatus(err error, w http.ResponseWriter, statusCode int) {
 	w.Write(message)
 }
 
-func Validate(product models.Product) url.Values {
+func ProductValidation(product models.Product) url.Values {
 	errors := url.Values{}
 
 	if product.Name == "" {
@@ -49,8 +49,8 @@ func Validate(product models.Product) url.Values {
 		errors.Add("Description", "Please enter product description!")
 	}
 
-	if product.Price == 0 {
-		errors.Add("Price", "Please enter product price!")
+	if product.Price <= 0 {
+		errors.Add("Price", "Please enter valid product price!")
 	}
 
 	if product.Price > 99999999 {
@@ -69,7 +69,7 @@ func Validate(product models.Product) url.Values {
 		errors.Add("Category", "Product category can not be empty!")
 	}
 
-	if product.Stock == 0 {
+	if product.Stock <= 0 {
 		errors.Add("Stock", "Please enter product stock!")
 	}
 
@@ -130,22 +130,22 @@ func OrderValidation(order models.Order) url.Values {
 	if (models.Payment{}) == order.PaymentInfo {
 		errors.Add("paymentInfo", "Please enter payment info!")
 	}
-	if order.TotalPrice == 0 {
+	if order.TotalPrice <= 0 {
 		errors.Add("totalPrice", "Total price is missing!")
 	}
 	if len(order.OrderItems) == 0 {
 		errors.Add("orderItems", "Order items are empty!")
 	}
 
-	if order.ItemsPrice == 0 {
+	if order.ItemsPrice <= 0 {
 		errors.Add("itemsPrice", "Item price is missing!")
 	}
 
-	if order.TaxPrice == 0 {
+	if order.TaxPrice <= 0 {
 		errors.Add("taxPrice", "Tax price is missing!")
 	}
 
-	if order.ShippingPrice == 0 {
+	if order.ShippingPrice <= 0 {
 		errors.Add("shippingPrice", "Shipping price is missing!")
 	}
 

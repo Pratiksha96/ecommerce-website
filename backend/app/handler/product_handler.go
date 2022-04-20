@@ -51,7 +51,7 @@ func CreateProduct(productManager manager.ProductManager) http.HandlerFunc {
 		var product models.Product
 		_ = json.NewDecoder(r.Body).Decode(&product)
 
-		if err := utils.Validate(product); len(err) > 0 {
+		if err := utils.ProductValidation(product); len(err) > 0 {
 			utils.GetErrorWithStatus(errors.New("Received invalid json request!"), w, http.StatusBadRequest)
 			return
 		}
@@ -76,7 +76,7 @@ func UpdateProduct(productManager manager.ProductManager) http.HandlerFunc {
 		var product models.Product
 		_ = json.NewDecoder(r.Body).Decode(&product)
 
-		if err := utils.Validate(product); len(err) > 0 {
+		if err := utils.ProductValidation(product); len(err) > 0 {
 			utils.GetErrorWithStatus(errors.New("Received invalid json request!"), w, http.StatusBadRequest)
 			return
 		} else {
