@@ -1,3 +1,58 @@
+<!-- START doctoc generated TOC please keep comment here to allow auto update -->
+<!-- DON'T EDIT THIS SECTION, INSTEAD RE-RUN doctoc TO UPDATE -->
+**Table of Contents**  *generated with [DocToc](https://github.com/thlorenz/doctoc)*
+
+- [Sprint 3](#sprint-3)
+  - [Stories](#stories)
+- [Backend](#backend)
+  - [Database Schema](#database-schema)
+  - [API Contracts](#api-contracts)
+    - [POST /order/create](#post-ordercreate)
+    - [GET /order/user/get](#get-orderuserget)
+    - [GET /order/get/{id}](#get-ordergetid)
+    - [GET /order/get](#get-orderget)
+    - [DELETE /order/delete/{id}](#delete-orderdeleteid)
+    - [PUT /order/update/{id}](#put-orderupdateid)
+    - [GET /me](#get-me)
+    - [PUT /passowrd/update](#put-passowrdupdate)
+    - [PUT /me/update](#put-meupdate)
+    - [GET /user/get](#get-userget)
+    - [GET /user/get/{id}](#get-usergetid)
+    - [POST product/createReview](#post-productcreatereview)
+  - [Backend API Development](#backend-api-development)
+  - [Test results](#test-results)
+    - [Testing /order/create api](#testing-ordercreate-api)
+    - [Testing /order/user/get api](#testing-orderuserget-api)
+    - [Testing /order/get/{order_id} api](#testing-ordergetorder_id-api)
+    - [Testing /order/get api](#testing-orderget-api)
+    - [Testing /order/delete/{order_id} api](#testing-orderdeleteorder_id-api)
+    - [Testing /order/update/{order_id} api](#testing-orderupdateorder_id-api)
+    - [GET /me](#get-me-1)
+    - [PUT /me/update](#put-meupdate-1)
+    - [PUT /product/createReview](#put-productcreatereview)
+- [Frontend](#frontend)
+  - [FrontEnd Technologies: React JS, CSS](#frontend-technologies-react-js-css)
+  - [User Profile](#user-profile)
+  - [UpdateProfile](#updateprofile)
+  - [UpdatePassword](#updatepassword)
+  - [Cart](#cart)
+  - [User Menu](#user-menu)
+  - [Test results](#test-results-1)
+    - [User Menu](#user-menu-1)
+    - [User Profile](#user-profile-1)
+    - [User Profile-mobile](#user-profile-mobile)
+    - [UpdateProfile](#updateprofile-1)
+    - [UpdateProfile-mobile](#updateprofile-mobile)
+    - [UpdatePassword](#updatepassword-1)
+    - [UpdatePassword-mobile](#updatepassword-mobile)
+    - [Cart](#cart-1)
+    - [Cart-mobile](#cart-mobile)
+  - [How to run](#how-to-run)
+    - [Backend](#backend-1)
+    - [Frontend](#frontend-1)
+
+<!-- END doctoc generated TOC please keep comment here to allow auto update -->
+
 # Sprint 3
 
 ## Stories

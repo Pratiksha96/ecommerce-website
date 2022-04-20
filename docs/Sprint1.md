@@ -1,3 +1,46 @@
+<!-- START doctoc generated TOC please keep comment here to allow auto update -->
+<!-- DON'T EDIT THIS SECTION, INSTEAD RE-RUN doctoc TO UPDATE -->
+**Table of Contents**  *generated with [DocToc](https://github.com/thlorenz/doctoc)*
+
+- [Sprint 1](#sprint-1)
+    - [Front end and Back end Video Demo link](#front-end-and-back-end-video-demo-link)
+  - [Stories](#stories)
+- [Backend](#backend)
+  - [Database Schema](#database-schema)
+  - [API Contracts](#api-contracts)
+    - [/ping](#ping)
+    - [GET /product/get](#get-productget)
+    - [GET /product/get/{id}](#get-productgetid)
+    - [POST /product/add](#post-productadd)
+    - [PUT /product/update/{id}](#put-productupdateid)
+    - [DELETE /product/delete/{id}](#delete-productdeleteid)
+  - [API Development](#api-development)
+  - [Test results](#test-results)
+    - [Testing product/get api](#testing-productget-api)
+    - [Testing product/get/{id} api](#testing-productgetid-api)
+    - [Testing product/add api](#testing-productadd-api)
+    - [Testing product/delete/{id} api](#testing-productdeleteid-api)
+    - [Testing product/update/{id} api](#testing-productupdateid-api)
+- [Frontend](#frontend)
+  - [FrontEnd Technologies: React JS, CSS](#frontend-technologies-react-js-css)
+  - [Homepage](#homepage)
+  - [Products Page](#products-page)
+  - [Connectivity with Backend](#connectivity-with-backend)
+  - [Redux Setup](#redux-setup)
+  - [Test results](#test-results-1)
+    - [Home Page](#home-page)
+    - [Product Page](#product-page)
+    - [Mobile Responsive](#mobile-responsive)
+    - [Hamburger](#hamburger)
+    - [Footer](#footer)
+    - [Connectivity between frontend and backend](#connectivity-between-frontend-and-backend)
+  - [How to run](#how-to-run)
+    - [Backend](#backend-1)
+    - [Frontend](#frontend-1)
+  - [Note](#note)
+
+<!-- END doctoc generated TOC please keep comment here to allow auto update -->
+
 # Sprint 1 
 ### [Front end and Back end Video Demo link](https://uflorida-my.sharepoint.com/:v:/g/personal/swati_bansal_ufl_edu/EQGOK8G9d4BHrVVlyQwtdBgBGORDb6nOjtvzZHe-KR7OoA?e=9Me57t)
 

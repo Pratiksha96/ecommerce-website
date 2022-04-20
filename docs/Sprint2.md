@@ -1,3 +1,47 @@
+<!-- START doctoc generated TOC please keep comment here to allow auto update -->
+<!-- DON'T EDIT THIS SECTION, INSTEAD RE-RUN doctoc TO UPDATE -->
+**Table of Contents**  *generated with [DocToc](https://github.com/thlorenz/doctoc)*
+
+- [Sprint 2](#sprint-2)
+  - [Stories](#stories)
+- [Backend](#backend)
+  - [Database Schema](#database-schema)
+  - [API Contracts](#api-contracts)
+    - [GET /product/search?](#get-productsearch)
+    - [POST /register](#post-register)
+    - [POST /login](#post-login)
+    - [POST /logout](#post-logout)
+  - [Backend API Development](#backend-api-development)
+  - [Test results](#test-results)
+    - [Testing product/search/keyword={name} api](#testing-productsearchkeywordname-api)
+    - [Testing product/search/keyword={name}&category={category} api](#testing-productsearchkeywordnamecategorycategory-api)
+    - [Testing product/search/keyword={name}&priceMin={priceMin} api](#testing-productsearchkeywordnamepriceminpricemin-api)
+    - [Testing product/search/keyword={name}&priceMax={priceMax} api](#testing-productsearchkeywordnamepricemaxpricemax-api)
+    - [Testing product/search/page={page} api](#testing-productsearchpagepage-api)
+    - [Testing /register api](#testing-register-api)
+    - [Testing /login api](#testing-login-api)
+    - [Testing /logout api](#testing-logout-api)
+- [Frontend](#frontend)
+  - [FrontEnd Technologies: React JS, CSS](#frontend-technologies-react-js-css)
+  - [Register User](#register-user)
+  - [Login User](#login-user)
+  - [Search Products](#search-products)
+  - [Filter Products on Category](#filter-products-on-category)
+  - [Filter Products on Price](#filter-products-on-price)
+  - [Single Product Page](#single-product-page)
+  - [Cypress testing](#cypress-testing)
+  - [Test results](#test-results-1)
+    - [HomePage Register User](#homepage-register-user)
+    - [HomePage Login User](#homepage-login-user)
+    - [HomePage Search by name](#homepage-search-by-name)
+    - [HomePage Search by category](#homepage-search-by-category)
+    - [Front end Cypress](#front-end-cypress)
+  - [How to run](#how-to-run)
+    - [Backend](#backend-1)
+    - [Frontend](#frontend-1)
+
+<!-- END doctoc generated TOC please keep comment here to allow auto update -->
+
 # Sprint 2
 
 ## Stories
