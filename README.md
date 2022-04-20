@@ -5,7 +5,6 @@ In this project we aim to develop an e-commerce store where general purpose item
 # Demo App Video
 embed video here
 
-# How to Run
 # How to run
 
 To build server - 
@@ -34,6 +33,7 @@ To access your app on localhost click below -
 # Backend Unit Test Video
 
 # API Documentation
+[Api Documentation](./docs/API.md)
 
 # Project Boards 
 - [Sprint 1](https://github.com/Pratiksha96/ecommerce-website/projects/1)
@@ -50,5 +50,7 @@ To access your app on localhost click below -
 
 # Team Members
 Front End Member: Aashish Dhalla
+
 Full-Stack Member: Pratiksha Jain
+
 Back End Members: Pranav Seth, Swati Bansal
