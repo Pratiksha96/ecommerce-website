@@ -5,7 +5,7 @@ run: build
 	brew services start mongodb-community && go run main.go start-server
 
 test: test
-	go test -v ./...
+	go test ecommerce-website/app/handler -v
 
 lint: lint
 	golangci-lint run

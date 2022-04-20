@@ -23,7 +23,7 @@ To run server/backend tests -
 `make test-server`
 
 To run both client and server 
-`make -j run-server run-client`
+`make -j 2 run-server run-client`
 
 To access your app on localhost click below -
 [http://localhost:3000](http://localhost:3000)
