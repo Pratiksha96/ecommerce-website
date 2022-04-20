@@ -265,6 +265,10 @@ func (um *userManager) UpdateRole(body map[string]interface{}) (UserResponse, er
 
 	newRole := body["role"].(string)
 
+	if storedUser.Role == newRole {
+		return UserResponse{}, errors.New("The requested role has already been assigned to this id. Hence, no change")
+	}
+
 	result, err := database.Coll_user.UpdateOne(
 		context.TODO(),
 		bson.M{"_id": id},
