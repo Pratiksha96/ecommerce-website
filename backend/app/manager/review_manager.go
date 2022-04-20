@@ -78,21 +78,16 @@ func (pm *reviewManager) GetProductReviews(id primitive.ObjectID) ([]*models.Rev
 func (pm *reviewManager) UpdateReview(review models.Review, product models.Product, filterProduct primitive.M) (map[string]interface{}, error) {
 
 	var oldProduct models.Product
-
+	oldRating := 0
 	for x := 0; x < len(product.Reviews); x++ {
 		if product.Reviews[x].User.Email == review.User.Email {
+			oldRating = product.Reviews[x].Rating
 			product.Reviews[x] = &review
 			break
 		}
 	}
-	avgRating := 0
-	for _, reviewInstance := range product.Reviews {
-
-		avgRating += reviewInstance.Rating
-	}
-	avgRating = avgRating / product.NumOfReviews
-
-	product.Ratings = avgRating
+	avgRating := product.Ratings
+	product.Ratings = ((avgRating * product.NumOfReviews) - oldRating + review.Rating) / product.NumOfReviews
 
 	update := bson.D{
 		{"$set", bson.D{
@@ -128,16 +123,21 @@ func (pm *reviewManager) DeleteReview(id primitive.ObjectID, email string) (map[
 	}
 
 	indexToDelete := 0
+	oldRating := 0
 	for x := 0; x < len(product.Reviews); x++ {
 		if product.Reviews[x].User.Email == email {
+			oldRating = product.Reviews[x].Rating
 			indexToDelete = x
 			break
 		}
 	}
+	avgRating := product.Ratings
+	avgRating = ((avgRating * product.NumOfReviews) - oldRating) / (product.NumOfReviews - 1)
 
 	newLength := 0
 	for index := range product.Reviews {
 		if indexToDelete != index {
+
 			product.Reviews[newLength] = product.Reviews[index]
 			newLength++
 		}
@@ -146,12 +146,7 @@ func (pm *reviewManager) DeleteReview(id primitive.ObjectID, email string) (map[
 	// reslice the array to remove extra index
 	newReview := product.Reviews[:newLength]
 	newNumOfReviews := product.NumOfReviews - 1
-	avgRating := 0
-	for _, reviewInstance := range newReview {
 
-		avgRating += reviewInstance.Rating
-	}
-	avgRating = avgRating / product.NumOfReviews
 	result, err := database.Coll_product.UpdateOne(
 		context.TODO(),
 		bson.M{"_id": id},
