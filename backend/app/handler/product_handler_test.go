@@ -298,7 +298,7 @@ func Test_DeleteProduct(t *testing.T) {
 		sampleEmail := "sample@email.com"
 		recorder := httptest.NewRecorder()
 
-		req, err := http.NewRequest("POST", "/product/delete", strings.NewReader("{}"))
+		req, err := http.NewRequest("DELETE", "/product/delete", strings.NewReader("{}"))
 		require.NoError(t, err)
 
 		req = req.WithContext(context.WithValue(req.Context(), "email", sampleEmail))
@@ -329,7 +329,7 @@ func Test_DeleteProduct(t *testing.T) {
 			"id": sampleId.Hex(),
 		}
 
-		req, err := http.NewRequest("POST", "/product/delete", strings.NewReader(string(requestBody)))
+		req, err := http.NewRequest("DELETE", "/product/delete", strings.NewReader(string(requestBody)))
 		require.NoError(t, err)
 
 		req = mux.SetURLVars(req, vars)
@@ -359,7 +359,7 @@ func Test_DeleteProduct(t *testing.T) {
 			"id": sampleId.Hex(),
 		}
 
-		req, err := http.NewRequest("POST", "/product/delete", strings.NewReader(string(requestBody)))
+		req, err := http.NewRequest("DELETE", "/product/delete", strings.NewReader(string(requestBody)))
 		require.NoError(t, err)
 
 		req = mux.SetURLVars(req, vars)
