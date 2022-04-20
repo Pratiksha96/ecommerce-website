@@ -2,17 +2,10 @@
 As e-commerce is booming, we will be creating a website where user will be able to select and purchase 'listed' products by adding them into his/her cart with end-to-end user authentication to be maintained by an admin. Therefore, mutiple profiles for user and admin will also be developed.
 In this project we aim to develop an e-commerce store where general purpose items can be sold.
 
-# Team Members
-Front End Members: Aashish Dhalla, Pratiksha Jain
-Back End Memebers: Pranav Seth, Swati Bansal
+# Demo App Video
+embed video here
 
-# Tech stack
-An ecommerce website written in Go and React.
-We have used NoSQL Database MongoDB for this project  
-
-# Documentations
-Sprint1.md, Sprint2.md, Sprint3.md files contains information related to user stories, API details, backend and frontend developments developed in each sprint respectively.
-
+# How to Run
 # How to run
 
 To build server - 
@@ -29,3 +22,33 @@ To run client -
 
 To run server/backend tests - 
 `make test-server`
+
+To run both client and server 
+`make -j run-server run-client`
+
+To access your app on localhost click below -
+[http://localhost:3000](http://localhost:3000)
+
+# Cypress Test Video
+
+# Backend Unit Test Video
+
+# API Documentation
+
+# Project Boards 
+- [Sprint 1](https://github.com/Pratiksha96/ecommerce-website/projects/1)
+- [Sprint 2](https://github.com/Pratiksha96/ecommerce-website/projects/3)
+- [Sprint 3](https://github.com/Pratiksha96/ecommerce-website/projects/4)
+- [Sprint 4](https://github.com/Pratiksha96/ecommerce-website/projects/5)
+- [Bugs](https://github.com/Pratiksha96/ecommerce-website/projects/2)
+
+# Sprint Deliverables
+- [Sprint 1](https://github.com/Pratiksha96/ecommerce-website/blob/main/docs/Sprint1.md)
+- [Sprint 2](https://github.com/Pratiksha96/ecommerce-website/blob/main/docs/Sprint2.md)
+- [Sprint 3](https://github.com/Pratiksha96/ecommerce-website/blob/main/docs/Sprint3.md)
+- [Sprint 4](https://github.com/Pratiksha96/ecommerce-website/blob/main/docs/Sprint4.md)
+
+# Team Members
+Front End Member: Aashish Dhalla
+Full-Stack Member: Pratiksha Jain
+Back End Members: Pranav Seth, Swati Bansal
