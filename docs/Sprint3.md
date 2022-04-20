@@ -14,7 +14,7 @@
     - [DELETE /order/delete/{id}](#delete-orderdeleteid)
     - [PUT /order/update/{id}](#put-orderupdateid)
     - [GET /me](#get-me)
-    - [PUT /passowrd/update](#put-passowrdupdate)
+    - [PUT /password/update](#put-passwordupdate)
     - [PUT /me/update](#put-meupdate)
     - [GET /user/get](#get-userget)
     - [GET /user/get/{id}](#get-usergetid)
@@ -529,8 +529,8 @@ Content:
 ]
 ```
 
-### PUT /passowrd/update
-User can update passoword using this link
+### PUT /password/update
+User can update password using this link
 Sample: http://localhost:8081/password/update
 
 ```
