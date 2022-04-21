@@ -35,6 +35,8 @@ Developer:
 - [As a developer, I don't want to allow similar role update for an existing user](https://github.com/Pratiksha96/ecommerce-website/issues/189)
 - [As a developer, I want to give an option of changing user/admin roles](https://github.com/Pratiksha96/ecommerce-website/issues/106)
 - [As a developer, I want to test frontend.](https://github.com/Pratiksha96/ecommerce-website/issues/185)
+- [As a developer, I want efficient method to calculate average rating of product.](https://github.com/Pratiksha96/ecommerce-website/issues/188)
+- [As a developer, I want to give an option of showing product reviews for a product](https://github.com/Pratiksha96/ecommerce-website/issues/111)
 
 Admin:
 - [As an admin, I want to be able to delete an existing user](https://github.com/Pratiksha96/ecommerce-website/issues/107)
@@ -44,12 +46,15 @@ User:
 - [As a user, I want to add and delete products in a cart. ](https://github.com/Pratiksha96/ecommerce-website/issues/183)
 - [As a user, I want to review the product. ](https://github.com/Pratiksha96/ecommerce-website/issues/184)
 - [As a user, I want to create an order. ](https://github.com/Pratiksha96/ecommerce-website/issues/187)
-
+- [As a user, I want to be able to delete product review](https://github.com/Pratiksha96/ecommerce-website/issues/112)
+- [As a user I want to be able to update my product review](https://github.com/Pratiksha96/ecommerce-website/issues/172)
 
 
 Bug:
 - [As a developer, I want roles other than 'user' or 'admin' to be declined in the role change request](https://github.com/Pratiksha96/ecommerce-website/issues/192)
 - [As a developer, I should not accept negative product stock or product prices or order prices etc](https://github.com/Pratiksha96/ecommerce-website/issues/198)
+- [As a developer I don't want users to submit negative rating or rating greater than 5](https://github.com/Pratiksha96/ecommerce-website/issues/196)
+
 
 
 # Backend
@@ -71,6 +76,13 @@ The endpoints developed in this sprint for user are -
 ```
 /user/updaterole
 /user/delete/{id}
+
+```
+The endpoints developed in this sprint for user are - 
+```
+/product/getreviews/{id}
+/product/updateReview
+/product/deleteReview/{id}
 
 ```
 
@@ -156,10 +168,135 @@ or
 
 ``` 
 
-## Backend API Development
+### GET /product/getreviews/{id}
+Returns list of all reviews for a particular product
+Sample: http://localhost:8081/product/getreviews/62227595235a5df8404aac47
+```
+URL Params
+id of product
+Data Params
+None
+Headers
+Content-Type: application/json
+
+Success Response:
+Code: 200
+Content:
+```
+```
+[
+{
+        "user": {
+            "name": "test22",
+            "email": "test22@gmail.com",
+            "password": "$2a$10$8b0vCuZ4Wn493BTWWlvwgOHnJOB0sTYgsrlJckvt2vfRv.bDZmG2e",
+            "avatar": {
+                "public_id": "test_id1",
+                "url": "test_url1"
+            },
+            "role": "user",
+            "resetPasswordToken": "",
+            "resetPasswordExpire": "0001-01-01T00:00:00Z"
+        },
+        "name": "test22",
+        "rating": 4,
+        "comment": "Average Quality Product, not so great"
+    },
+    {
+        "user": {
+            "name": "test22",
+            "email": "test22@gmail.com",
+            "password": "$2a$10$8b0vCuZ4Wn493BTWWlvwgOHnJOB0sTYgsrlJckvt2vfRv.bDZmG2e",
+            "avatar": {
+                "public_id": "test_id1",
+                "url": "test_url1"
+            },
+            "role": "user",
+            "resetPasswordToken": "",
+            "resetPasswordExpire": "0001-01-01T00:00:00Z"
+        },
+        "name": "test22",
+        "rating": 5,
+        "comment": "Average Quality Product, not so great"
+    },
+    {
+        "user": {
+            "name": "test22",
+            "email": "test22@gmail.com",
+            "password": "$2a$10$8b0vCuZ4Wn493BTWWlvwgOHnJOB0sTYgsrlJckvt2vfRv.bDZmG2e",
+            "avatar": {
+                "public_id": "test_id1",
+                "url": "test_url1"
+            },
+            "role": "user",
+            "resetPasswordToken": "",
+            "resetPasswordExpire": "0001-01-01T00:00:00Z"
+        },
+        "name": "test22",
+        "rating": 5,
+        "comment": "Average Quality Product, not so great"
+    }
+]
+
+```
+
+### PUT /product/updateReview
+Returns a success or failed response after updating review of a product
+Sample: http://localhost:8081//product/updateReview
+```
+URL Params
+None
+Data Params
+{
+    "productId" : "62227595235a5df8404aac47",
+    "rating" : "5",
+    "comment" : "Very Good Product
+}
+Headers
+Content-Type: application/json
+
+Success Response:
+Code: 200
+Content:
+```
+```
+{
+    "message": "Review has been updated",
+    "success": true
+}
+```
+
+### DELETE /product/deleteReview/{id}
+
+Returns a success or failed response after deleting review of a particular user for given product
+Sample: http://localhost:8081/product/deleteReview/62227595235a5df8404aac47
+```
+URL Params
+id of product
+Data Params
+None
+Headers
+Content-Type: application/json
+
+Success Response:
+Code: 200
+Content:
+```
+```
+{
+    "message": "Review has been successfully deleted",
+    "success": true
+}
+
+``` 
+
+## Backend Development
 - REST apis for changing roles of an user and deleting an existing user.
+- REST apis for getting,updating and deleting product reviews.
 - Bug fix: Negative product stock or product prices will not be accepted
 - Bug fix: Check for accepting roles either as a user or an admin has been added
+- Bug fix: Check for accepting valid product ratings only (0<=rating<=5) 
+- Improved efficiency : Improved average rating calculation by implementing more efficient method
 
 ## Test results
 
@@ -170,6 +307,18 @@ or
 ### Testing /user/delete/{id}
 
 ![alt text](https://github.com/Pratiksha96/ecommerce-website/blob/main/resources/testImages/DeleteUser.png)
+
+### Testing /product/getreviews/{id}
+
+![alt text](https://github.com/Pratiksha96/ecommerce-website/blob/main/resources/testImages/GetReviews.png)
+
+### Testing /product/updateReview
+
+![alt text](https://github.com/Pratiksha96/ecommerce-website/blob/main/resources/testImages/UpdateReview.png)
+
+### Testing /product/deleteReview/{id}
+
+![alt text](https://github.com/Pratiksha96/ecommerce-website/blob/main/resources/testImages/DeleteReview.png)
 
 ### Testing bug of accepting invalid role change request
 
