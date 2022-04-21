@@ -2,7 +2,10 @@
 As e-commerce is booming, we will be creating an ecommerce website where users will be able to select and purchase 'listed' products by adding them into his/her cart with end-to-end user authentication. Admin will be able to add, update and delete various products and also update roles for users. Admin will also be able to delete some malacious users from the system. For this, multiple roles will be created (user/admin). A user can register himself and then is able to add review for a particular product and also view reviews added by other users for that product and can make his decisions accordingly. User can create new orders and also view them and track them accordingly. Admin can delete or update particular order and can also change its status. So to summarize, in this project we aim to develop an e-commerce store where general purpose items can be sold.
 
 # Demo App Video
-embed video here
+
+
+https://user-images.githubusercontent.com/41561579/164355592-b9b1023f-f08e-4d31-8e9f-5779db8309b4.mp4
+
 
 # How to run
 
