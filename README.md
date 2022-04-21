@@ -30,6 +30,8 @@ To access your app on localhost click below -
 
 # Cypress Test Video
 
+https://user-images.githubusercontent.com/41561579/164346747-ef2ba3e9-d5c2-4a91-ace0-e095c3bd9cda.mp4
+
 # Backend Unit Test Video
 
 https://user-images.githubusercontent.com/18240643/164342856-53d29728-06b6-4f3a-b911-0fd35e14c245.mp4
