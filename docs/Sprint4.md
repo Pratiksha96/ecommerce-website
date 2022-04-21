@@ -349,7 +349,7 @@ A layout is created where a user can add/delete products in a cart on the websit
 ![alt text](https://github.com/Pratiksha96/ecommerce-website/blob/main/resources/testImages/EmptyCart.png)
 
 ### Cart-mobile
-![alt text](https://github.com/Pratiksha96/ecommerce-website/blob/main/resources/testImages/EmptyCart_mobile.png)
+![alt text](https://github.com/Pratiksha96/ecommerce-website/blob/main/resources/testImages/EmptyCart_Mobile.png)
 
 ### Review
 ![alt text](https://github.com/Pratiksha96/ecommerce-website/blob/main/resources/testImages/Review.png)
